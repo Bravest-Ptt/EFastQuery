@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">EFastQuery</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="open_search_view">开启快查英语悬浮窗</string>
+    <string name="close_search_view">关闭快查英语悬浮窗</string>
+    <string name="input_hint">请输入中/英文</string>
+</resources>
