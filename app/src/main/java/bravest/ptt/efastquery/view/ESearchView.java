@@ -4,6 +4,9 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -26,7 +29,7 @@ public class ESearchView implements View.OnClickListener, View.OnLongClickListen
     private static final int LOCATION_RIGHT = 0;
     private static final int LOCATION_LEFT = 1;
 
-    private Activity mActivity;
+    private Context mContext;
     private WindowManager mWm;
     private WindowManager.LayoutParams mLayoutParams;
 
@@ -39,16 +42,16 @@ public class ESearchView implements View.OnClickListener, View.OnLongClickListen
     private int mOffsetY = 0;
     private int mState = STATE_IDLE;
 
-    public ESearchView(Activity activity) throws InflaterNotReadyException {
-        mActivity = activity;
-        mWm = (WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE);
+    public ESearchView(Context context) throws InflaterNotReadyException {
+        mContext = context;
+        mWm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         mLayoutParams = new WindowManager.LayoutParams();
         initView();
         initLayoutParams();
     }
 
     private void initView() throws InflaterNotReadyException {
-        LayoutInflater inflater = mActivity.getLayoutInflater();
+        LayoutInflater inflater = LayoutInflater.from(mContext);
         if (inflater == null) {
             throw new InflaterNotReadyException();
         }
@@ -61,24 +64,11 @@ public class ESearchView implements View.OnClickListener, View.OnLongClickListen
         mSearchView.setOnTouchListener(this);
     }
 
-    /**
-     * Call when edit text view is showing.
-     */
-    private void initBackgroundPanel() throws InflaterNotReadyException {
-        LayoutInflater inflater = mActivity.getLayoutInflater();
-        if (inflater == null) {
-            throw new InflaterNotReadyException();
-        }
-        View backgroundPanel = inflater.inflate(R.layout.layout_search_background_panel, null);
-        backgroundPanel.setOnClickListener(this);
-        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-        layoutParams
-    }
-
     private void initLayoutParams() {
         mLayoutParams.flags = mLayoutParams.flags
                 | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
-                | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
+                | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         mLayoutParams.dimAmount = 0.2f;
         mLayoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
         mLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
@@ -87,18 +77,18 @@ public class ESearchView implements View.OnClickListener, View.OnLongClickListen
         mLayoutParams.format = PixelFormat.RGBA_8888;
         mLayoutParams.alpha = 1.0f;
         mLayoutParams.x = mOffsetX;
-        mLayoutParams.y = mOffsetY + getStatusBarHeight(mActivity);
+        mLayoutParams.y = mOffsetY + getStatusBarHeight(mContext);
     }
 
     private int locationInScreen() {
-        int width = mActivity.getResources().getDisplayMetrics().widthPixels;
+        int width = mContext.getResources().getDisplayMetrics().widthPixels;
         if (mOffsetX > (width >> 1)) {
             return LOCATION_LEFT;
         }
         return LOCATION_RIGHT;
     }
 
-    private void showSearchEdit(int location) {
+    private void showSearchPanel(int location) {
         if (location == LOCATION_LEFT) {
             mLeftEditText.setVisibility(View.GONE);
             mRightEditText.setVisibility(View.VISIBLE);
@@ -117,13 +107,18 @@ public class ESearchView implements View.OnClickListener, View.OnLongClickListen
 
     }
 
+    private void toggleSearchButton() {
+        int imageId = mState == STATE_IDLE ? R.mipmap.search_button : android.R.drawable.ic_menu_close_clear_cancel;
+        mSearchButton.setImageDrawable(mContext.getResources().getDrawable(imageId));
+    }
+
+
     private void objectAnimation(int location) {
         View view = location == LOCATION_LEFT ? mLeftEditText : mRightEditText;
-        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(view,);
+//        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(view,);
     }
 
     private void doSearch() {
-
     }
 
     public void showSearchWindow() {
@@ -140,24 +135,38 @@ public class ESearchView implements View.OnClickListener, View.OnLongClickListen
             case R.id.search_view_button:
                 if (mState == STATE_IDLE) {
                     mState = STATE_SHOWING_EDITER;
-                    showSearchEdit(locationInScreen());
+                    showSearchPanel(locationInScreen());
                 } else if (mState == STATE_SHOWING_EDITER){
-                    mState = STATE_SEARCHING;
-                    doSearch();
+                    mState = STATE_IDLE;
+                    hideSearchEdit(locationInScreen());
                 }
-                break;
-            case R.id.search_background_panel:
-                if (mState == STATE_SHOWING_EDITER || mState == STATE_SEARCHING) {
-                    view.setVisibility(View.GONE);
-                    mWm.removeView(view);
-                }
+                toggleSearchButton();
                 break;
         }
     }
 
+    private static final String TAG = "ESearchView";
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
-        return false;
+        Log.d(TAG, "onTouch: ");
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                break;
+            case MotionEvent.ACTION_UP:
+                break;
+            case MotionEvent.ACTION_MOVE:
+                updateFloatLocation(motionEvent);
+                break;
+            case MotionEvent.ACTION_OUTSIDE:
+                break;
+        }
+        return true;
+    }
+
+    private void updateFloatLocation(MotionEvent event) {
+        mLayoutParams.x = (int) event.getRawX();
+        mLayoutParams.y = (int) event.getRawY();
+        mWm.updateViewLayout(mSearchView, mLayoutParams);
     }
 
     @Override
@@ -165,7 +174,7 @@ public class ESearchView implements View.OnClickListener, View.OnLongClickListen
         return false;
     }
 
-    private class InflaterNotReadyException extends Exception {
+    public class InflaterNotReadyException extends Exception {
     }
 
     public static int getStatusBarHeight(Context context) {

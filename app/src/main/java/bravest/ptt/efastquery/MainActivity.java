@@ -1,6 +1,9 @@
 package bravest.ptt.efastquery;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -13,8 +16,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import bravest.ptt.efastquery.data.TranslateManager;
+import bravest.ptt.efastquery.view.ESearchView;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private ESearchView mview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +31,11 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        try {
+            mview = new ESearchView(this);
+        } catch (ESearchView.InflaterNotReadyException e) {
+            e.printStackTrace();
+        }
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,6 +62,17 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.card_open:
             case R.id.card_open_tv:
+                if (Build.VERSION.SDK_INT >= 23) {
+                    if (Settings.canDrawOverlays(this)) {
+                        mview.showSearchWindow();
+                    } else {
+                        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                        startActivity(intent);
+                    }
+                }else {
+                    mview.showSearchWindow();
+                }
+
                 break;
             default:
                 break;
