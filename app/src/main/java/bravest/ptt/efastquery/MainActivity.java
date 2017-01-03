@@ -1,11 +1,13 @@
 package bravest.ptt.efastquery;
 
+import android.content.ComponentName;
 import android.content.Intent;
-import android.os.Build;
+import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,13 +18,29 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import bravest.ptt.efastquery.data.TranslateManager;
-import bravest.ptt.efastquery.view.ESearchView;
+import bravest.ptt.efastquery.view.ESearchFloatButton;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private ESearchView mview;
+    public static final String TAG = "MainActivity";
+
+    private ESearchFloatButton mView;
+    private MainService mMainService;
+
+    private ServiceConnection mMainConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            Log.d(TAG, "onServiceConnected");
+            mMainService = ((MainService.MainBinder)iBinder).getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            Log.d(TAG, "onServiceDisconnected");
+            mMainService = null;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,11 +49,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        try {
-            mview = new ESearchView(this);
-        } catch (ESearchView.InflaterNotReadyException e) {
-            e.printStackTrace();
-        }
+        bindService();
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,24 +70,26 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+    private void bindService() {
+        Intent intent = new Intent(this, MainService.class);
+        bindService(intent, mMainConnection, BIND_AUTO_CREATE);
+    }
+
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.card_close:
             case R.id.card_close_tv:
+                Log.d(TAG, "onClick: ");
+                if (mMainService != null) {
+                    mMainService.hideFloatingWindow();
+                }
                 break;
             case R.id.card_open:
             case R.id.card_open_tv:
-                if (Build.VERSION.SDK_INT >= 23) {
-                    if (Settings.canDrawOverlays(this)) {
-                        mview.showSearchWindow();
-                    } else {
-                        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-                        startActivity(intent);
-                    }
-                }else {
-                    mview.showSearchWindow();
+                Log.d(TAG, "onClick: ");
+                if (mMainService != null) {
+                    mMainService.showFloatingWindow();
                 }
-
                 break;
             default:
                 break;

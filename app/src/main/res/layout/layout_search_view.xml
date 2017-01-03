@@ -2,37 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="20dp"
-    android:background="@drawable/search_selector"
+    android:background="@drawable/search_floating"
     android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/search_view_input_left"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/search_button_padding"
-        android:hint="@string/input_hint"
-        android:singleLine="true"
-        android:textColorHint="@android:color/holo_orange_dark"
-        android:textSize="@dimen/input_text_size"
-        android:visibility="visible" />
-
-    <ImageView
-        android:id="@+id/search_view_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:padding="@dimen/search_button_padding"
-        android:src="@mipmap/search_button" />
-
-    <EditText
-        android:id="@+id/search_view_input_right"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/search_button_padding"
-        android:hint="@string/input_hint"
-        android:singleLine="true"
-        android:textColorHint="@android:color/holo_orange_dark"
-        android:textSize="@dimen/input_text_size"
-        android:visibility="visible"/>
+    <TextView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:gravity="center"
+        android:text="E"
+        android:textColor="@android:color/holo_orange_dark"
+        android:textStyle="italic|bold" />
 </LinearLayout>
