@@ -8,4 +8,6 @@
     <string name="open_search_view">开启快查英语悬浮窗</string>
     <string name="close_search_view">关闭快查英语悬浮窗</string>
     <string name="input_hint">请输入中/英文</string>
+    <string name="translate_error">查询失败</string>
+    <string name="translate_hint">在此输入需要翻译的文本</string>
 </resources>

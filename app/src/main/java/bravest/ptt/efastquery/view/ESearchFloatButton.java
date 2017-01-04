@@ -1,50 +1,34 @@
 package bravest.ptt.efastquery.view;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
-import android.widget.EditText;
-import android.widget.ImageView;
 
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.utils.Utils;
 
-/**
- * Created by root on 12/26/16.
- */
+public class ESearchFloatButton implements View.OnLongClickListener, View.OnTouchListener {
 
-public class ESearchFloatButton implements View.OnClickListener, View.OnLongClickListener, View.OnTouchListener {
-
+    private static final String TAG = "ESearchFloatButton";
     private static final int STATE_IDLE = 0;
-    private static final int STATE_SEARCHING = 1;
-    private static final int STATE_SHOWING_EDITER = 2;
-    private static final int LOCATION_RIGHT = 0;
-    private static final int LOCATION_LEFT = 1;
+    private static final float DISTANCE = 15.0f;
+    private static final int WHAT_HIDE_ALPHA = 1;
 
     private Context mContext;
     private WindowManager mWm;
     private WindowManager.LayoutParams mLayoutParams;
     private View mSearchView;
 
-    private int mOffsetX = 0;
-    private int mOffsetY = 0;
-    private int mState = STATE_IDLE;
+    private float mDownX, mDownY, mOldDownX, mOldDownY;
+    private long mDownTimeMillis;
 
     public ESearchFloatButton(Context context) throws InflaterNotReadyException {
         mContext = context;
@@ -59,7 +43,7 @@ public class ESearchFloatButton implements View.OnClickListener, View.OnLongClic
         if (inflater == null) {
             throw new InflaterNotReadyException();
         }
-        mSearchView = inflater.inflate(R.layout.layout_search_view, null);
+        mSearchView = inflater.inflate(R.layout.layout_floating_button, null);
         mSearchView.setOnTouchListener(this);
     }
 
@@ -72,37 +56,22 @@ public class ESearchFloatButton implements View.OnClickListener, View.OnLongClic
         mLayoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
         mLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
         mLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        mLayoutParams.gravity = Gravity.LEFT | Gravity.TOP;
+        mLayoutParams.gravity = Gravity.START | Gravity.TOP;
         mLayoutParams.format = PixelFormat.RGBA_8888;
         mLayoutParams.alpha = 1.0f;
-        mLayoutParams.x = mOffsetX;
-        mLayoutParams.y = mOffsetY + getStatusBarHeight(mContext);
+        mLayoutParams.x = Utils.getScreenWidth(mContext);
+        mLayoutParams.y = Utils.getScreenHeight(mContext) * 2 / 4;
     }
 
-    private int locationInScreen() {
-        int width = Utils.getScreenWidth(mContext);
-        if (mOffsetX > (width >> 1)) {
-            return LOCATION_LEFT;
-        }
-        return LOCATION_RIGHT;
-    }
-
-    private void showSearchPanel(int location) {
-    }
-
-    private void hideSearchEdit(int location) {
-
-    }
-
-    private void toggleSearchButton() {
-    }
 
     private ValueAnimator alignAnimator(float x, float y) {
-        ValueAnimator animator = null;
+        ValueAnimator animator;
         if (x <= Utils.getScreenWidth(mContext) / 2) {
-            animator = ValueAnimator.ofObject(new PointEvaluator(), new Point((int)x, (int)y), new Point(0, (int)y));
+            animator = ValueAnimator.ofObject(new PointEvaluator()
+                    , new Point((int)x, (int)y), new Point(0, (int)y));
         }else {
-            animator = ValueAnimator.ofObject(new PointEvaluator(), new Point((int)x, (int)y), new Point(Utils.getScreenWidth(mContext), (int)y));
+            animator = ValueAnimator.ofObject(new PointEvaluator(),
+                    new Point((int)x, (int)y), new Point(Utils.getScreenWidth(mContext), (int)y));
         }
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -122,29 +91,29 @@ public class ESearchFloatButton implements View.OnClickListener, View.OnLongClic
             Point endPoint = (Point) to;
             float x = startPoint.x + fraction * (endPoint.x - startPoint.x);
             float y = startPoint.y + fraction * (endPoint.y - startPoint.y);
-            Point point = new Point((int)x, (int)y);
-            return point;
+            return new Point((int)x, (int)y);
         }
     }
 
-    private void doSearch() {
-    }
-
+    private boolean mIsShowing = false;
     public void showSearchWindow() {
-        mWm.addView(mSearchView,mLayoutParams);
+        if (!mIsShowing) {
+            mIsShowing = true;
+            mWm.addView(mSearchView,mLayoutParams);
+        }
     }
 
     public void hideSearchWindow() {
-        mWm.removeView(mSearchView);
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
+        if (mIsShowing) {
+            mIsShowing = false;
+            mWm.removeView(mSearchView);
         }
     }
 
-    private static final String TAG = "ESearchFloatButton";
+    private void showMainPanel() {
+
+    }
+
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         switch (motionEvent.getAction()) {
@@ -153,32 +122,56 @@ public class ESearchFloatButton implements View.OnClickListener, View.OnLongClic
                 break;
             case MotionEvent.ACTION_UP:
                 up(motionEvent);
-                break;
             case MotionEvent.ACTION_MOVE:
                 move(motionEvent);
                 break;
             case MotionEvent.ACTION_OUTSIDE:
                 break;
         }
-        return true;
+        return false;
     }
 
-    private void down(MotionEvent event) {
 
+    private void down(MotionEvent event) {
+        mOldDownX = mDownX;
+        mOldDownY = mDownY;
+        mDownX = event.getRawX();
+        mDownY = event.getRawY();
+        mLayoutParams.alpha = 1.0f;
+        mDownTimeMillis = System.currentTimeMillis();
+        mWm.updateViewLayout(mSearchView, mLayoutParams);
     }
 
     private void up(MotionEvent event) {
-        ValueAnimator animator = alignAnimator((int)event.getRawX(), (int)event.getRawY());
-        animator.start();
+        float x = event.getRawX();
+        float y = event.getRawY();
+        if (x >= mDownX - DISTANCE && x <= mDownX + DISTANCE
+                && y >= mDownY - DISTANCE && y <= mDownY + DISTANCE) {
+            if (System.currentTimeMillis() - mDownTimeMillis > 1200) {
+                //long click
+            } else {
+                //click
+                Log.d(TAG, "up: click");
+
+            }
+        } else {
+            ValueAnimator animator = alignAnimator((int) event.getRawX(), (int) event.getRawY());
+            animator.start();
+        }
     }
 
     private void move(MotionEvent event) {
-        updateFloatLocation((int)event.getRawX(), (int)event.getRawY());
+        float x = event.getRawX();
+        float y = event.getRawY();
+        if (!(x >= mDownX - DISTANCE && x <= mDownX + DISTANCE
+                && y >= mDownY - DISTANCE && y <= mDownY + DISTANCE)) {
+            updateFloatLocation((int)x, (int)y);
+        }
     }
 
     private void updateFloatLocation(int x, int y) {
-        mLayoutParams.x = x;
-        mLayoutParams.y = y;
+        mLayoutParams.x = x - mSearchView.getMeasuredWidth() / 2;
+        mLayoutParams.y = y - Utils.getStatusBarHeight(mContext) - (mSearchView.getMeasuredHeight() / 2);
         mWm.updateViewLayout(mSearchView, mLayoutParams);
     }
 
@@ -187,14 +180,6 @@ public class ESearchFloatButton implements View.OnClickListener, View.OnLongClic
         return false;
     }
 
-    public class InflaterNotReadyException extends Exception {
-    }
-
-    public static int getStatusBarHeight(Context context) {
-        if (context == null) {
-            return 0;
-        }
-        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
-        return (int) context.getResources().getDimension(resourceId);
+    public static class InflaterNotReadyException extends Exception {
     }
 }

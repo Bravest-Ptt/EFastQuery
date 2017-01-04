@@ -10,7 +10,7 @@ import org.json.JSONObject;
  * Created by root on 12/27/16.
  */
 
-class Result {
+public class Result {
 
     private static final String TAG = "Result";
     //RESULT-NORMAL

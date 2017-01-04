@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity
     private void bindService() {
         Intent intent = new Intent(this, MainService.class);
         bindService(intent, mMainConnection, BIND_AUTO_CREATE);
+        startService(intent);
     }
 
     public void onClick(View view) {

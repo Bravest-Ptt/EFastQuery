@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_panel_background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorSearchMainPanelBackground"
+    android:clickable="true">
+
+
+    <LinearLayout
+        android:id="@+id/main_panel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/search_main_panel"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/main_panel_search"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/main_panel_search_edit"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:background="@drawable/search_main_panel"
+                android:hint="@string/translate_hint"
+                android:paddingLeft="16dp"
+                android:textColorHint="@color/colorTranslateHint"
+                android:textSize="13sp" />
+
+            <ImageButton
+                android:id="@+id/main_panel_search_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/search_main_panel"
+                android:clickable="true"
+                android:src="@mipmap/search_button" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/main_panel_show"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_weight="5"
+            android:background="@color/colorSearchMainPanel">
+
+            <ListView
+                android:id="@+id/main_panel_show_history"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <ScrollView
+                android:id="@+id/main_panel_show_result"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorSearchMainPanel"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/main_panel_show_result_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorSearchMainPanel"
+                    android:gravity="top"
+                    android:inputType="none" />
+            </ScrollView>
+        </RelativeLayout>
+
+    </LinearLayout>
+</RelativeLayout>

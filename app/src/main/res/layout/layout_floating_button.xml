@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/float_button"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/search_floating"
-    android:orientation="horizontal">
+    android:background="@drawable/search_floating_selector"
+    android:orientation="horizontal"
+    android:clickable="true">
 
     <TextView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="@dimen/float_button_text_view"
+        android:layout_height="@dimen/float_button_text_view"
         android:gravity="center"
         android:text="E"
+        android:clickable="false"
         android:textColor="@android:color/holo_orange_dark"
         android:textStyle="italic|bold" />
 </LinearLayout>

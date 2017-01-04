@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 
+import bravest.ptt.efastquery.R;
+
 /**
  * Created by root on 12/27/16.
  */
@@ -16,6 +18,7 @@ public class TranslateManager {
 
     private Request mRequest;
     private long mKey;
+    private TranslateListener mListener;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -25,6 +28,9 @@ public class TranslateManager {
                 case Result.RESULT_SUCCESS:
                     if (mKey == mRequest.getKey()) {
                         mRequest.setHasResponse(true);
+                        if (mListener != null) {
+                            mListener.onTranslateSuccess((Result) msg.obj);
+                        }
                     }
                     break;
             }
@@ -47,6 +53,9 @@ public class TranslateManager {
                 case Result.RESULT_UNSUPPORTED:
                     if (mKey == mRequest.getKey()) {
                         mRequest.setHasResponse(true);
+                        if (mListener != null) {
+                            mListener.onTranslateFailed(mContext.getString(R.string.translate_error));
+                        }
                     }
                     break;
             }
@@ -63,11 +72,18 @@ public class TranslateManager {
             if (mRequest != null && (mRequest.getKey() == mKey) && !mRequest.hasResponse()) {
                 return;
             }
+            if (mListener != null) {
+                mListener.onTranslateStart();
+            }
             mRequest = new Request(request, mHandler, mErrorHandler);
             mKey = mRequest.getKey();
             mEngine.setRequest(mRequest).start();
         } catch (TranslateEngine.NotSetRequestException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setTranslateListener(TranslateListener listener) {
+        mListener = listener;
     }
 }
