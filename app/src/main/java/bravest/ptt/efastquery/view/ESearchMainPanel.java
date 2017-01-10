@@ -158,10 +158,10 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
         if (mTm != null && !TextUtils.isEmpty(mMainInput.getText())) {
             String input = mMainInput.getText().toString();
             Log.d(TAG, "doSearch: input = " + input);
-            if (!input.matches("^[a-zA-Z0-9]+")) {
-                Log.d("ptt", "doSearch: return");
-                return;
-            }
+//            if (!input.matches("^[a-zA-Z0-9]+")) {
+//                Log.d("ptt", "doSearch: return");
+//                return;
+//            }
             Utils.hideSoftInput(mContext, mMainInput);
             mTm.translate(input);
         }
