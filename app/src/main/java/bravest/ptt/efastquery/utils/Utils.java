@@ -5,6 +5,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.res.Resources;
 import android.text.TextUtils;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import java.util.List;
 
@@ -50,5 +52,19 @@ public class Utils {
         }
         int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
         return (int) context.getResources().getDimension(resourceId);
+    }
+
+    public static void popSoftInput(Context context, EditText editText) {
+        editText.setFocusable(true);
+        editText.setFocusableInTouchMode(true);
+        editText.requestFocus();
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.showSoftInput(editText, 0);
+    }
+
+    public static void hideSoftInput(Context context, EditText editText) {
+        editText.clearFocus();
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
     }
 }

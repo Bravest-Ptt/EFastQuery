@@ -89,6 +89,39 @@ public class Result {
         Log.d(TAG, "parseWeb: web = " + web);
     }
 
+    public String getResult() {
+        String result = "query : " + query + "\n";
+
+        try {
+            if (translation != null) {
+                result += "translations : ";
+                int transLength = translation.length();
+                for (int i = 0; i < transLength; i++) {
+                    result += (i == 0) ? translation.getString(i) : "; " + translation.getString(i);
+                }
+                result += "\n";
+            }
+
+            if (explains != null) {
+                result += "explains : ";
+                int explainsLength = explains.length();
+                for (int i = 0; i < explainsLength; i++) {
+                    result += (i == 0) ? explains.getString(i) : "; " + explains.getString(i);
+                }
+                result += "\n";
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+
+        return result + "phonetic : " + phonetic + "\n"
+                + "us_phonetic : " + us_phonetic + "\n"
+                + "uk_phonetic : " + uk_phonetic + ";";
+    }
+
     public class YouDaoItem {
         public static final String YOUDAO_ERRORCODE = "errorCode";
         public static final String YOUDAO_QUERY = "query";

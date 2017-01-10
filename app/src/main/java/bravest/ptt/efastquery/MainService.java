@@ -53,14 +53,14 @@ public class MainService extends Service {
         if (mView == null) return;
         if (Build.VERSION.SDK_INT >= 23) {
             if (Settings.canDrawOverlays(this)) {
-                mView.showSearchWindow();
+                mView.showFloatButton();
             } else {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         } else {
-            mView.showSearchWindow();
+            mView.showFloatButton();
         }
     }
 
@@ -68,6 +68,6 @@ public class MainService extends Service {
         if (mView == null) {
             return;
         }
-        mView.hideSearchWindow();
+        mView.hideFloatButton();
     }
 }

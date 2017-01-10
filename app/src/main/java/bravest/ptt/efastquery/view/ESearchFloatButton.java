@@ -15,19 +15,20 @@ import android.view.WindowManager;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.utils.Utils;
 
-public class ESearchFloatButton implements View.OnLongClickListener, View.OnTouchListener {
+public class ESearchFloatButton implements View.OnLongClickListener, View.OnTouchListener, ViewVisibleListener {
 
     private static final String TAG = "ESearchFloatButton";
-    private static final int STATE_IDLE = 0;
     private static final float DISTANCE = 15.0f;
-    private static final int WHAT_HIDE_ALPHA = 1;
 
     private Context mContext;
     private WindowManager mWm;
     private WindowManager.LayoutParams mLayoutParams;
     private View mSearchView;
+    private ESearchMainPanel mMainPanel;
+    private ViewVisibleListener mMainPanelVisibleListener;
+    private boolean mIsShowing = false;
 
-    private float mDownX, mDownY, mOldDownX, mOldDownY;
+    private float mDownX, mDownY;
     private long mDownTimeMillis;
 
     public ESearchFloatButton(Context context) throws InflaterNotReadyException {
@@ -36,6 +37,7 @@ public class ESearchFloatButton implements View.OnLongClickListener, View.OnTouc
         mLayoutParams = new WindowManager.LayoutParams();
         initView();
         initLayoutParams();
+        initMainPanel();
     }
 
     private void initView() throws InflaterNotReadyException {
@@ -63,6 +65,14 @@ public class ESearchFloatButton implements View.OnLongClickListener, View.OnTouc
         mLayoutParams.y = Utils.getScreenHeight(mContext) * 2 / 4;
     }
 
+    private void initMainPanel() {
+        try {
+            mMainPanel = new ESearchMainPanel(mContext, mWm, this);
+            mMainPanel.setViewVisibleListener(this);
+        } catch (InflaterNotReadyException e) {
+            e.printStackTrace();
+        }
+    }
 
     private ValueAnimator alignAnimator(float x, float y) {
         ValueAnimator animator;
@@ -84,6 +94,24 @@ public class ESearchFloatButton implements View.OnLongClickListener, View.OnTouc
         return animator;
     }
 
+    /**
+     * This is Main panel's show action instead of float button.
+     */
+    @Override
+    public void onShow() {
+        //Main panel show, float button hide
+        hideFloatButton();
+    }
+
+    /**
+     * This is Main panel's hide action instead of float button.
+     */
+    @Override
+    public void onHide() {
+        //Main panel hide, float button show.
+        showFloatButton();
+    }
+
     private class PointEvaluator implements TypeEvaluator {
         @Override
         public Object evaluate(float fraction, Object from, Object to) {
@@ -95,23 +123,43 @@ public class ESearchFloatButton implements View.OnLongClickListener, View.OnTouc
         }
     }
 
-    private boolean mIsShowing = false;
-    public void showSearchWindow() {
+    public void showFloatButton() {
         if (!mIsShowing) {
             mIsShowing = true;
+            if (mWm == null) {
+                return;
+            }
             mWm.addView(mSearchView,mLayoutParams);
+            if (mMainPanelVisibleListener != null) {
+                mMainPanelVisibleListener.onShow();
+            }
         }
     }
 
-    public void hideSearchWindow() {
+    public void hideFloatButton() {
+        if (mIsShowing) {
+            mIsShowing = false;
+            if (mWm == null) {
+                return;
+            }
+            mWm.removeView(mSearchView);
+            if (mMainPanelVisibleListener != null) {
+                mMainPanelVisibleListener.onHide();
+            }
+        }
+    }
+
+    private boolean mClosed = false;
+
+    public void forceCloseFloatButton() {
         if (mIsShowing) {
             mIsShowing = false;
             mWm.removeView(mSearchView);
+            mWm = null;
+            mMainPanel = null;
+            mMainPanelVisibleListener = null;
+            mClosed = true;
         }
-    }
-
-    private void showMainPanel() {
-
     }
 
     @Override
@@ -133,8 +181,6 @@ public class ESearchFloatButton implements View.OnLongClickListener, View.OnTouc
 
 
     private void down(MotionEvent event) {
-        mOldDownX = mDownX;
-        mOldDownY = mDownY;
         mDownX = event.getRawX();
         mDownY = event.getRawY();
         mLayoutParams.alpha = 1.0f;
@@ -152,7 +198,11 @@ public class ESearchFloatButton implements View.OnLongClickListener, View.OnTouc
             } else {
                 //click
                 Log.d(TAG, "up: click");
-
+                if (mMainPanel.isShowing()) {
+                    mMainPanel.hideSearchPanel();
+                } else {
+                    mMainPanel.showSearchPanel();
+                }
             }
         } else {
             ValueAnimator animator = alignAnimator((int) event.getRawX(), (int) event.getRawY());
@@ -181,5 +231,9 @@ public class ESearchFloatButton implements View.OnLongClickListener, View.OnTouc
     }
 
     public static class InflaterNotReadyException extends Exception {
+    }
+
+    public void setViewVisibleListener(ViewVisibleListener listener) {
+        mMainPanelVisibleListener = listener;
     }
 }

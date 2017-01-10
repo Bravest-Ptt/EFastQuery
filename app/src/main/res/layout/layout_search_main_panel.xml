@@ -71,7 +71,9 @@
                     android:layout_height="match_parent"
                     android:background="@color/colorSearchMainPanel"
                     android:gravity="top"
-                    android:inputType="none" />
+                    android:inputType="none"
+                    android:enabled="false"
+                    android:textColor="@android:color/holo_orange_dark"/>
             </ScrollView>
         </RelativeLayout>
 
