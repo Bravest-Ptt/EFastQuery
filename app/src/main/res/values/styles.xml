@@ -8,7 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
@@ -17,4 +17,106 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="main_panel_background">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/colorSearchMainPanelBackground</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+    <style name="main_panel">
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:background">@drawable/search_main_panel</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="main_panel_search">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="main_panel_search_edit">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">4</item>
+        <item name="android:background">@drawable/search_main_panel</item>
+        <item name="android:hint">@string/translate_hint</item>
+        <item name="android:imeOptions">actionSearch</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColorHint">@color/colorTranslateHint</item>
+        <item name="android:textSize">13dp</item>
+    </style>
+
+    <style name="main_panel_search_button">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/search_main_panel</item>
+        <item name="android:clickable">true</item>
+        <item name="android:src">@mipmap/search_button</item>
+    </style>
+
+    <style name="main_panel_show">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">5</item>
+        <item name="android:background">@color/colorSearchMainPanel</item>
+        <item name="android:layout_marginBottom">6dp</item>
+        <item name="android:layout_marginLeft">6dp</item>
+        <item name="android:layout_marginRight">6dp</item>
+    </style>
+
+    <style name="main_panel_show_history">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="main_panel_show_result">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/colorSearchMainPanel</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="main_panel_show_result_text">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/colorSearchMainPanel</item>
+        <item name="android:enabled">false</item>
+        <item name="android:gravity">top</item>
+        <item name="android:inputType">none</item>
+        <item name="android:textColor">@android:color/holo_orange_dark</item>
+    </style>
+
+    <style name="main_panel_functions">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">0dp</item>
+        <item name="android:layout_above">@+id/main_panel</item>
+        <item name="android:layout_alignLeft">@+id/main_panel</item>
+        <item name="android:background">#00000000</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:paddingTop">6dp</item>
+    </style>
+
+    <style name="main_panel_speak">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">4dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:src">@mipmap/speak</item>
+    </style>
+
+    <style name="main_panel_favorite">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">4dp</item>
+        <item name="android:layout_marginRight">4dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:src">@mipmap/favorite</item>
+    </style>
 </resources>

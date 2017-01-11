@@ -2,9 +2,15 @@ package bravest.ptt.efastquery.view;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.speech.tts.TextToSpeech;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -20,6 +26,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Locale;
 
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.data.Result;
@@ -32,7 +41,7 @@ import bravest.ptt.efastquery.view.ESearchFloatButton.*;
  * Created by root on 1/4/17.
  */
 
-class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewVisibleListener {
+class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewVisibleListener,TextToSpeech.OnInitListener, TextWatcher {
 
     private static final int WHAT_SEARCHING = 0x011;
     private static final int WHAT_DONE = 0x012;
@@ -41,6 +50,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
     private WindowManager mWm;
     private ESearchFloatButton mButton;
     private TranslateManager mTm;
+    private TextToSpeech mTTS;
     private ViewVisibleListener mButtonVisibleListener;
 
 
@@ -50,9 +60,14 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
     private EditText mMainInput;
     private View mMainShowResultPanel;
     private EditText mMainShowResultText;
-    private ListView mMainShowHistory;
+    private RecyclerView mMainShowHistory;
+
+    private FloatingActionButton mFabSpeak;
+    private FloatingActionButton mFabFavorite;
 
     private WindowManager.LayoutParams mLayoutParams;
+
+    private Result mLastResult;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -76,6 +91,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
         mLayoutParams = new WindowManager.LayoutParams();
         mTm = new TranslateManager(mContext);
         mTm.setTranslateListener(this);
+        mTTS = new TextToSpeech(mContext, this);
 
         initViews();
         initLayoutParams();
@@ -95,10 +111,10 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
         mMain.setOnClickListener(this);
 
         //Panel
-        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mMainPanel.getLayoutParams();
-        layoutParams.width = Utils.getScreenWidth(mContext) * 7 / 12;
-        layoutParams.height = Utils.getScreenHeight(mContext) * 5 / 12;
-        mMainPanel.setLayoutParams(layoutParams);
+        RelativeLayout.LayoutParams mainParams = (RelativeLayout.LayoutParams) mMainPanel.getLayoutParams();
+        mainParams.width = Utils.getScreenWidth(mContext) * 8 / 12;
+        mainParams.height = Utils.getScreenHeight(mContext) * 6 / 12;
+        mMainPanel.setLayoutParams(mainParams);
 
         //Search button
         mMainSearch.setOnClickListener(this);
@@ -114,6 +130,13 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
                 return true;
             }
         });
+        mMainInput.addTextChangedListener(this);
+
+        //init functions
+        mFabSpeak = (FloatingActionButton) mMain.findViewById(R.id.main_panel_speak);
+        mFabFavorite = (FloatingActionButton) mMain.findViewById(R.id.main_panel_favorite);
+        mFabSpeak.setOnClickListener(this);
+        mFabFavorite.setOnClickListener(this);
 
         initShowPanel();
     }
@@ -121,12 +144,17 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
     private void initShowPanel() {
         mMainShowResultPanel = mMain.findViewById(R.id.main_panel_show_result);
         mMainShowResultText = (EditText) mMain.findViewById(R.id.main_panel_show_result_text);
-        mMainShowHistory = (ListView) mMain.findViewById(R.id.main_panel_show_history);
+        mMainShowHistory = (RecyclerView) mMain.findViewById(R.id.main_panel_show_history);
 
         //init
         mMainShowResultText.setLineSpacing(0,1.1f);
 
         //Init history
+        //slide to left show 'delete' from history database
+        //slide to right show 'favorite' status & 'voice'
+        //click show details, dismiss history
+        //long click show checkbox && show fab in top (favorite, delete, select all, deselect all)
+//        mMainShowHistory
 
     }
 
@@ -148,6 +176,17 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
             case R.id.main_panel_search_button:
                 Log.d("ptt", "onClick: search_");
                 doSearch();
+                break;
+            case R.id.main_panel_speak:
+                if (mLastResult != null) {
+                    if (TextUtils.equals(mMainInput.getText(),mLastResult.query)) {
+                        startTTS(mLastResult.query);
+                    }
+                }
+                Log.d(TAG, "onClick: speak");
+                break;
+            case R.id.main_panel_favorite:
+                Log.d(TAG, "onClick: favorite");
                 break;
         }
     }
@@ -176,6 +215,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
     @Override
     public void onTranslateSuccess(Result result) {
         Log.d("ptt", "onTranslateSuccess: ");
+        mLastResult = result;
         mMainShowResultText.setText(result.getResult());
     }
 
@@ -237,5 +277,55 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
     private void toggleVisible(boolean translating) {
         mMainShowHistory.setVisibility(translating ? View.GONE : View.VISIBLE);
         mMainShowResultPanel.setVisibility(translating ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS) {
+            int result = mTTS.setLanguage(Locale.US);
+            if (result == TextToSpeech.LANG_MISSING_DATA
+                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Toast.makeText(mContext, "Data missing or unsupported", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void startTTS(String result) {
+        if (mTTS != null && !mTTS.isSpeaking()) {
+            mTTS.setPitch(0.5f);
+            if (TextUtils.isEmpty(result)) {
+                result = "No result";
+            }
+            if (Build.VERSION.SDK_INT >=Build.VERSION_CODES.LOLLIPOP) {
+                mTTS.speak(result, TextToSpeech.QUEUE_FLUSH, null, null);
+            } else {
+                mTTS.speak(result, TextToSpeech.QUEUE_FLUSH, null);
+            }
+        }
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        Log.d(TAG, "beforeTextChanged: ");
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        Log.d(TAG, "onTextChanged: ");
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+        Log.d(TAG, "afterTextChanged: ");
+        if (editable.length() == 0) {
+            //show all history
+
+            //reset result
+            mLastResult = null;
+        } else {
+            //show query in history, if no,
+
+            //
+        }
     }
 }

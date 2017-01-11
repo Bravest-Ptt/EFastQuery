@@ -35,6 +35,7 @@ public class MainService extends Service {
 
     @Override
     public void onCreate() {
+        this.setTheme(R.style.AppTheme);
         super.onCreate();
         Log.d(TAG, "onCreate: ");
         try {

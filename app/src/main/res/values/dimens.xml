@@ -15,4 +15,7 @@
     <dimen name="search_button_padding">8dp</dimen>
     <dimen name="input_padding">16dp</dimen>
     <dimen name="float_button_text_view">40dp</dimen>
+
+    <dimen name="fab_size">48px</dimen>
+    <dimen name="fab_padding">6px</dimen>
 </resources>

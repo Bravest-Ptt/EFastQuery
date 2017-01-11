@@ -11,6 +11,10 @@
     <color name="colorSearchMainPanelBackground">#55000000</color>
     <color name="colorSearchMainPanel">#FAFAFA</color>
     <color name="colorTranslateHint">#66111111</color>
+
+
+    <color name="colorFAB">#FF4081</color>
+    <color name="colorFABPressed">#FF1081</color>
 </resources>
 
 
