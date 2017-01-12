@@ -22,9 +22,9 @@ public class EFastQueryDBHelper extends SQLiteOpenHelper {
     private void createTable(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS history (" +
                 "_id INTEGER PRIMARY KEY," +
-                "time TimeStamp NOT NULL DEFAULT (datetime(CURRENT_TIMESTAMP,'localtime'))," +
-                "request TEXT," +
-                "result TEXT);");
+                "date TimeStamp NOT NULL DEFAULT (datetime(CURRENT_TIMESTAMP,'localtime'))," +
+                "request TEXT NOT NULL," +
+                "result TEXT NOT NULL);");
     }
 
     @Override

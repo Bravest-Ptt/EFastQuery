@@ -28,12 +28,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.data.Result;
 import bravest.ptt.efastquery.data.TranslateListener;
 import bravest.ptt.efastquery.data.TranslateManager;
+import bravest.ptt.efastquery.model.HistoryModel;
+import bravest.ptt.efastquery.provider.EFastQueryDbUtils;
+import bravest.ptt.efastquery.provider.HistoryManager;
 import bravest.ptt.efastquery.utils.Utils;
 import bravest.ptt.efastquery.view.ESearchFloatButton.*;
 
@@ -41,18 +45,25 @@ import bravest.ptt.efastquery.view.ESearchFloatButton.*;
  * Created by root on 1/4/17.
  */
 
-class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewVisibleListener,TextToSpeech.OnInitListener, TextWatcher {
+class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewVisibleListener, TextToSpeech.OnInitListener, TextWatcher {
 
     private static final int WHAT_SEARCHING = 0x011;
     private static final int WHAT_DONE = 0x012;
+    private static final int STATE_INPUT = 0x033;
+    private static final int STATE_TRANS_SUCCESS = 0x044;
 
     private Context mContext;
     private WindowManager mWm;
     private ESearchFloatButton mButton;
     private TranslateManager mTm;
     private TextToSpeech mTTS;
+    private HistoryManager mHm;
+    private FABManager mFm;
     private ViewVisibleListener mButtonVisibleListener;
 
+
+
+    private int mState = STATE_INPUT;
 
     private View mMain;
     private View mMainPanel;
@@ -92,6 +103,8 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
         mTm = new TranslateManager(mContext);
         mTm.setTranslateListener(this);
         mTTS = new TextToSpeech(mContext, this);
+        mHm = new HistoryManager(mContext);
+        mFm = new FABManager();
 
         initViews();
         initLayoutParams();
@@ -138,6 +151,9 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
         mFabSpeak.setOnClickListener(this);
         mFabFavorite.setOnClickListener(this);
 
+        mFm.addFAB(mFabSpeak);
+        mFm.addFAB(mFabFavorite);
+
         initShowPanel();
     }
 
@@ -147,7 +163,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
         mMainShowHistory = (RecyclerView) mMain.findViewById(R.id.main_panel_show_history);
 
         //init
-        mMainShowResultText.setLineSpacing(0,1.1f);
+        mMainShowResultText.setLineSpacing(0, 1.1f);
 
         //Init history
         //slide to left show 'delete' from history database
@@ -179,7 +195,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
                 break;
             case R.id.main_panel_speak:
                 if (mLastResult != null) {
-                    if (TextUtils.equals(mMainInput.getText(),mLastResult.query)) {
+                    if (TextUtils.equals(mMainInput.getText(), mLastResult.query)) {
                         startTTS(mLastResult.query);
                     }
                 }
@@ -192,31 +208,37 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
     }
 
     private static final String TAG = "ptt";
+    private String mRequest;
 
     private void doSearch() {
         if (mTm != null && !TextUtils.isEmpty(mMainInput.getText())) {
-            String input = mMainInput.getText().toString();
-            Log.d(TAG, "doSearch: input = " + input);
+            mRequest = mMainInput.getText().toString();
+            Log.d(TAG, "doSearch: input = " + mRequest);
 //            if (!input.matches("^[a-zA-Z0-9]+")) {
 //                Log.d("ptt", "doSearch: return");
 //                return;
 //            }
             Utils.hideSoftInput(mContext, mMainInput);
-            mTm.translate(input);
+            mTm.translate(mRequest);
         }
     }
 
     @Override
     public void onTranslateStart() {
         mHandler.sendEmptyMessage(WHAT_SEARCHING);
-        toggleVisible(true);
     }
 
     @Override
     public void onTranslateSuccess(Result result) {
         Log.d("ptt", "onTranslateSuccess: ");
+        toggleVisible(true);
+        mState = STATE_TRANS_SUCCESS;
         mLastResult = result;
-        mMainShowResultText.setText(result.getResult());
+        mFm.popUpFAB(FABManager.ACTION_TRANS_SUCCESS);
+        mMainShowResultText.setText(result.getResultWithQuery());
+        if (!mHm.isRequestExist(mRequest)) {
+            mHm.insertHistory(result);
+        }
     }
 
     @Override
@@ -296,7 +318,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
             if (TextUtils.isEmpty(result)) {
                 result = "No result";
             }
-            if (Build.VERSION.SDK_INT >=Build.VERSION_CODES.LOLLIPOP) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 mTTS.speak(result, TextToSpeech.QUEUE_FLUSH, null, null);
             } else {
                 mTTS.speak(result, TextToSpeech.QUEUE_FLUSH, null);
@@ -307,6 +329,11 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
     @Override
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         Log.d(TAG, "beforeTextChanged: ");
+
+        if (mState == STATE_TRANS_SUCCESS) {
+            mFm.pullDownFAB(FABManager.ACTION_INPUT_NULL);
+        }
+        mState = STATE_INPUT;
     }
 
     @Override
@@ -319,6 +346,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
         Log.d(TAG, "afterTextChanged: ");
         if (editable.length() == 0) {
             //show all history
+            toggleVisible(false);
 
             //reset result
             mLastResult = null;

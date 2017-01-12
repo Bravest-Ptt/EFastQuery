@@ -89,7 +89,7 @@ public class Result {
         Log.d(TAG, "parseWeb: web = " + web);
     }
 
-    public String getResult() {
+    public String getResultWithQuery() {
         String result = "query : " + query + "\n";
 
         try {
@@ -120,6 +120,12 @@ public class Result {
         return result + "phonetic : " + phonetic + "\n"
                 + "us_phonetic : " + us_phonetic + "\n"
                 + "uk_phonetic : " + uk_phonetic + ";";
+    }
+
+    public String getResult() {
+        String result = getResultWithQuery();
+        int index = result.indexOf("translations");
+        return result.substring(index);
     }
 
     public class YouDaoItem {
