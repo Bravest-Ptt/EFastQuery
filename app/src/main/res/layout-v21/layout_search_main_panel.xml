@@ -49,9 +49,9 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/main_panel_functions"
-        style="@style/main_panel_functions">
+    <!--<LinearLayout-->
+        <!--android:id="@+id/main_panel_functions"-->
+        <!--style="@style/main_panel_functions">-->
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/main_panel_speak"
@@ -61,6 +61,6 @@
             android:id="@+id/main_panel_favorite"
             style="@style/main_panel_favorite"
             app:backgroundTint="@android:color/holo_orange_dark" />
-    </LinearLayout>
+    <!--</LinearLayout>-->
 
 </RelativeLayout>

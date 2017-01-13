@@ -4,20 +4,17 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.support.design.widget.FloatingActionButton;
+import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.BounceInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import bravest.ptt.efastquery.R;
+import bravest.ptt.efastquery.utils.Utils;
 
 /**
  * Created by root on 1/11/17.
@@ -25,7 +22,7 @@ import bravest.ptt.efastquery.R;
 
 public class FABManager {
     private static final String TAG = "FABManager";
-    private static final int ANIMATION_DELAY = 300;
+    private static final int ANIMATION_DELAY = 250;
 
     public static final int ACTION_INPUT_NULL = 0;
     public static final int ACTION_TRANS_SUCCESS = 1;
@@ -33,9 +30,11 @@ public class FABManager {
     public static final int ACTION_ITEM_DESELECTED = 3;
 
     private HashMap<Integer, View> mFabsMap;
+    private Context mContext;
 
-    public FABManager() {
+    public FABManager(Context context) {
         mFabsMap = new HashMap<>();
+        mContext = context;
     }
 
     public void addFAB(View view) {
@@ -49,9 +48,9 @@ public class FABManager {
     }
 
     public void popUpFAB(int action) {
+        Log.d(TAG, "popUpFAB: action = " + action);
         switch (action) {
             case ACTION_INPUT_NULL:
-                goneAllFABs();
                 break;
             case ACTION_TRANS_SUCCESS:
                 popUpAnimation(mFabsMap.get(R.id.main_panel_speak));
@@ -90,23 +89,50 @@ public class FABManager {
         }
     }
 
-    private void popUpAnimation(View view) {
+    private void popUpAnimation(final View view) {
         if (view.getVisibility() == View.VISIBLE) {
-            return;
+
         }
         Log.d(TAG, "popUpAnimation: ");
+
+        int height = view.getMeasuredHeight();
+        Log.d(TAG, "popUpAnimation: height = " + height);
+        float targetY = Utils.getScreenHeight(mContext) * 1 / 4  - Utils.getStatusBarHeight(mContext)- height ;
+        float srcY = Utils.getScreenHeight(mContext) * 1 / 4 + height;
+        float targetX = Utils.getScreenWidth(mContext) * 1 / 6;
+        float visibleCount = 0;
         view.setAlpha(0);
         view.setVisibility(View.VISIBLE);
+        for (Integer key : mFabsMap.keySet()) {
+            if (mFabsMap.get(key).getId() == view.getId()) {
+                continue;
+            }
+            visibleCount += (mFabsMap.get(key).getVisibility() == View.VISIBLE ? 1 : 0);
+        }
+        final float x = targetX + (visibleCount * (view.getMeasuredWidth() + view.getMeasuredWidth() * 1 / 10));
 
-        int[] locations = new int[2];
-        int height = view.getMeasuredHeight();
-        view.getLocationOnScreen(locations);
+
+        Log.d(TAG, "popUpAnimation: targetY = " + targetY);
+        Log.d(TAG, "popUpAnimation: srcY = " + srcY);
+        Log.d(TAG, "POP targetx= " + targetX);
 
         AnimatorSet set = new AnimatorSet();
 
-        ObjectAnimator transAnimator = ObjectAnimator.ofFloat(view, "translationY", (float) (locations[1] - height - height), locations[1]);
+        ObjectAnimator transAnimator = ObjectAnimator.ofFloat(view, "translationY", srcY, targetY );
         transAnimator.setDuration(ANIMATION_DELAY);
         transAnimator.setInterpolator(new OvershootInterpolator());
+        transAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                view.setTranslationX(x);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+            }
+        });
 
         ObjectAnimator alphaAnimator =  ObjectAnimator.ofFloat(view, "alpha", 0f, 1f);
         alphaAnimator.setDuration(ANIMATION_DELAY);
@@ -117,16 +143,15 @@ public class FABManager {
     }
 
     private void pullDownAnimation(final View view) {
-        if (view.getVisibility() == View.GONE) {
-            return;
-        }
-        int[] locations = new int[2];
+//        if (view.getVisibility() == View.GONE) {
+//            return;
+//        }
         int height = view.getMeasuredHeight();
-        view.getLocationOnScreen(locations);
-
+        float srcY = Utils.getScreenHeight(mContext) * 1 / 4  - Utils.getStatusBarHeight(mContext)- height ;
+        float targetY = Utils.getScreenHeight(mContext) * 1 / 4 + height;
         AnimatorSet set = new AnimatorSet();
 
-        ObjectAnimator transAnimator = ObjectAnimator.ofFloat(view, "translationY", locations[1], (float) (locations[1] - height - height));
+        ObjectAnimator transAnimator = ObjectAnimator.ofFloat(view, "translationY", srcY, targetY);
         transAnimator.setDuration(ANIMATION_DELAY);
         transAnimator.setInterpolator(new AccelerateInterpolator());
 

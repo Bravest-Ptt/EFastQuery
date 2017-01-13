@@ -104,7 +104,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
         mTm.setTranslateListener(this);
         mTTS = new TextToSpeech(mContext, this);
         mHm = new HistoryManager(mContext);
-        mFm = new FABManager();
+        mFm = new FABManager(mContext);
 
         initViews();
         initLayoutParams();

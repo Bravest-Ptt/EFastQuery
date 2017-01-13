@@ -109,7 +109,7 @@
         <item name="android:layout_marginLeft">4dp</item>
         <item name="android:clickable">true</item>
         <item name="android:src">@mipmap/voice</item>
-        <item name="android:visibility">gone</item>
+        <item name="android:visibility">invisible</item>
     </style>
 
     <style name="main_panel_favorite">
@@ -119,7 +119,7 @@
         <item name="android:layout_marginRight">4dp</item>
         <item name="android:clickable">true</item>
         <item name="android:src">@mipmap/favorite</item>
-        <item name="android:visibility">gone</item>
+        <item name="android:visibility">invisible</item>
 
     </style>
 </resources>
