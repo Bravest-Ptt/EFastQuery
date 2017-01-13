@@ -10,7 +10,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 
 import bravest.ptt.efastquery.R;
@@ -150,16 +149,15 @@ public class ESearchFloatButton implements View.OnLongClickListener, View.OnTouc
         }
     }
 
-    private boolean mClosed = false;
-
     public void forceCloseFloatButton() {
         if (mIsShowing) {
-            mIsShowing = false;
             mWm.removeView(mSearchView);
+            mMainPanel.destroy();
+
+            mIsShowing = false;
             mWm = null;
             mMainPanel = null;
             mMainPanelVisibleListener = null;
-            mClosed = true;
         }
     }
 

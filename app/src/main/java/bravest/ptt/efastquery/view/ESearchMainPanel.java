@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -18,25 +19,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethod;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.data.Result;
 import bravest.ptt.efastquery.data.TranslateListener;
 import bravest.ptt.efastquery.data.TranslateManager;
-import bravest.ptt.efastquery.model.HistoryModel;
-import bravest.ptt.efastquery.provider.EFastQueryDbUtils;
 import bravest.ptt.efastquery.provider.HistoryManager;
 import bravest.ptt.efastquery.utils.Utils;
 import bravest.ptt.efastquery.view.ESearchFloatButton.*;
@@ -45,7 +39,8 @@ import bravest.ptt.efastquery.view.ESearchFloatButton.*;
  * Created by root on 1/4/17.
  */
 
-class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewVisibleListener, TextToSpeech.OnInitListener, TextWatcher {
+class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewVisibleListener,
+        TextToSpeech.OnInitListener, TextWatcher ,View.OnKeyListener{
 
     private static final int WHAT_SEARCHING = 0x011;
     private static final int WHAT_DONE = 0x012;
@@ -122,6 +117,10 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
 
         //Main background
         mMain.setOnClickListener(this);
+        mMain.setFocusable(true);
+        mMain.setFocusableInTouchMode(true);
+
+        mMain.setOnKeyListener(this);
 
         //Panel
         RelativeLayout.LayoutParams mainParams = (RelativeLayout.LayoutParams) mMainPanel.getLayoutParams();
@@ -144,6 +143,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
             }
         });
         mMainInput.addTextChangedListener(this);
+        mMainInput.setOnKeyListener(this);
 
         //init functions
         mFabSpeak = (FloatingActionButton) mMain.findViewById(R.id.main_panel_speak);
@@ -236,7 +236,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
         mLastResult = result;
         mFm.popUpFAB(FABManager.ACTION_TRANS_SUCCESS);
         mMainShowResultText.setText(result.getResultWithQuery());
-        if (!mHm.isRequestExist(mRequest)) {
+        if (!mHm.isRequestExist(mRequest) && !TextUtils.isEmpty(result.explains.toString())) {
             mHm.insertHistory(result);
         }
     }
@@ -355,5 +355,41 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
 
             //
         }
+    }
+
+
+
+    public void destroy() {
+        mTTS.stop();
+        mTTS.shutdown();
+        if (mIsShowing) {
+            mWm.removeView(mMain);
+        }
+        mHm = null;
+        mTm = null;
+        mFm = null;
+        mWm = null;
+        mTTS = null;
+        mButtonVisibleListener = null;
+        mFabSpeak = null;
+        mFabFavorite = null;
+        mMainInput = null;
+        mMain = null;
+        mMainSearch = null;
+        mMainShowResultPanel = null;
+        mMainShowResultText = null;
+        mMainShowHistory = null;
+        mMainPanel = null;
+        mButton = null;
+        mLayoutParams = null;
+        mHandler = null;
+    }
+
+    @Override
+    public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+        if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_BACK) {
+            hideSearchPanel();
+        }
+        return false;
     }
 }

@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity
 
     public static final String TAG = "MainActivity";
 
-    private ESearchFloatButton mView;
     private MainService mMainService;
 
     private ServiceConnection mMainConnection = new ServiceConnection() {

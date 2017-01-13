@@ -51,7 +51,13 @@ public class MainService extends Service {
     }
 
     public void showFloatingWindow() {
-        if (mView == null) return;
+        if (mView == null) {
+            try {
+                mView = new ESearchFloatButton(this);
+            } catch (ESearchFloatButton.InflaterNotReadyException e) {
+                e.printStackTrace();
+            }
+        }
         if (Build.VERSION.SDK_INT >= 23) {
             if (Settings.canDrawOverlays(this)) {
                 mView.showFloatButton();
@@ -69,6 +75,15 @@ public class MainService extends Service {
         if (mView == null) {
             return;
         }
-        mView.hideFloatButton();
+        mView.forceCloseFloatButton();
+        mView = null;
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mView != null) {
+            mView.forceCloseFloatButton();
+        }
+        super.onDestroy();
     }
 }

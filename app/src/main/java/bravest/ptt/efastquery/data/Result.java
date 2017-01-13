@@ -125,7 +125,7 @@ public class Result {
     public String getResult() {
         String result = getResultWithQuery();
         int index = result.indexOf("translations");
-        return result.substring(index);
+        return index == -1 ? result : result.substring(index);
     }
 
     public class YouDaoItem {
