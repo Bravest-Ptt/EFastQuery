@@ -2,41 +2,65 @@ package bravest.ptt.efastquery.view;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+
+import bravest.ptt.efastquery.R;
+import bravest.ptt.efastquery.model.HistoryModule;
 
 /**
  * Created by root on 1/11/17.
  */
 
-public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryHolder>{
+public class HistoryAdapter extends RecyclerView.Adapter<ViewHolder> implements View.OnClickListener {
 
     private Context mContext;
+    private ArrayList<HistoryModule> mData;
 
-    public HistoryAdapter(Context context) {
+    public HistoryAdapter(Context context, ArrayList<HistoryModule> data) {
         mContext = context;
+        this.mData = data;
     }
 
     @Override
-    public HistoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        HistoryHolder holder = new HistoryHolder(null);
-        return null;
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        if (inflater == null) {
+            return null;
+        }
+        return new ViewHolder(inflater.inflate(R.layout.item_holder, null));
     }
 
     @Override
-    public void onBindViewHolder(HistoryHolder holder, int position) {
-
+    public void onBindViewHolder(ViewHolder viewHolder, int position) {
+        viewHolder.tv_content.setText(position);
+        viewHolder.iv_voice.setOnClickListener(this);
+        viewHolder.iv_favourite.setOnClickListener(this);
+        viewHolder.iv_delete.setOnClickListener(this);
     }
 
     @Override
     public int getItemCount() {
+        if (mData != null) {
+            return mData.size();
+        }
         return 0;
     }
 
-    public class HistoryHolder extends RecyclerView.ViewHolder{
-
-        public HistoryHolder(View itemView) {
-            super(itemView);
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.item_voice:
+                break;
+            case R.id.item_favourite:
+                break;
+            case R.id.item_delete:
+                break;
+            default:
+                break;
         }
     }
 }

@@ -15,7 +15,7 @@ import android.view.WindowManager;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.utils.Utils;
 
-public class ESearchFloatButton implements View.OnLongClickListener, View.OnTouchListener, ViewVisibleListener {
+public class ESearchFloatButton implements View.OnLongClickListener, View.OnTouchListener, FloatPanelVisibleListener {
 
     private static final String TAG = "ESearchFloatButton";
     private static final float DISTANCE = 15.0f;
@@ -25,7 +25,7 @@ public class ESearchFloatButton implements View.OnLongClickListener, View.OnTouc
     private WindowManager.LayoutParams mLayoutParams;
     private View mSearchView;
     private ESearchMainPanel mMainPanel;
-    private ViewVisibleListener mMainPanelVisibleListener;
+    private FloatPanelVisibleListener mMainPanelVisibleListener;
     private boolean mIsShowing = false;
 
     private float mDownX, mDownY;
@@ -232,7 +232,7 @@ public class ESearchFloatButton implements View.OnLongClickListener, View.OnTouc
     public static class InflaterNotReadyException extends Exception {
     }
 
-    public void setViewVisibleListener(ViewVisibleListener listener) {
+    public void setViewVisibleListener(FloatPanelVisibleListener listener) {
         mMainPanelVisibleListener = listener;
     }
 }

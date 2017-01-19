@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.mcxtzhang.swipemenulib.SwipeMenuLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:clickable="true"
+    android:paddingBottom="1dp">
+
+    <TextView
+        android:id="@+id/item_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="center"
+        android:text="History" />
+
+
+    <ImageView
+        android:id="@+id/item_voice"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:background="#d9dee4"
+        android:src="@mipmap/voice_item" />
+
+    <ImageView
+        android:id="@+id/item_favourite"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:background="#ecd50a"
+        android:src="@mipmap/favorite_item" />
+
+    <ImageView
+        android:id="@+id/item_delete"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:background="#ff4a57"
+        android:src="@mipmap/delete_item" />
+</com.mcxtzhang.swipemenulib.SwipeMenuLayout>

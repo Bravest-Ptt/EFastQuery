@@ -2,6 +2,7 @@ package bravest.ptt.efastquery.view;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -11,7 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -25,21 +25,24 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.data.Result;
 import bravest.ptt.efastquery.data.TranslateListener;
 import bravest.ptt.efastquery.data.TranslateManager;
+import bravest.ptt.efastquery.model.HistoryModule;
 import bravest.ptt.efastquery.provider.HistoryManager;
 import bravest.ptt.efastquery.utils.Utils;
 import bravest.ptt.efastquery.view.ESearchFloatButton.*;
+import bravest.ptt.efastquery.view.Loader.Loader;
 
 /**
  * Created by root on 1/4/17.
  */
 
-class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewVisibleListener,
+class ESearchMainPanel implements View.OnClickListener, TranslateListener, FloatPanelVisibleListener,
         TextToSpeech.OnInitListener, TextWatcher ,View.OnKeyListener{
 
     private static final int WHAT_SEARCHING = 0x011;
@@ -54,9 +57,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
     private TextToSpeech mTTS;
     private HistoryManager mHm;
     private FABManager mFm;
-    private ViewVisibleListener mButtonVisibleListener;
-
-
+    private FloatPanelVisibleListener mButtonVisibleListener;
 
     private int mState = STATE_INPUT;
 
@@ -74,6 +75,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
     private WindowManager.LayoutParams mLayoutParams;
 
     private Result mLastResult;
+    private ArrayList<HistoryModule> mHistoryArray;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -100,9 +102,15 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
         mTTS = new TextToSpeech(mContext, this);
         mHm = new HistoryManager(mContext);
         mFm = new FABManager(mContext);
+        mHistoryArray = new ArrayList<>();
 
+        initHistoryData();
         initViews();
         initLayoutParams();
+    }
+
+    private void initHistoryData() {
+        Loader.init(mHm).progress(null);
     }
 
     private void initViews() throws InflaterNotReadyException {
@@ -292,7 +300,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
         showSearchPanel();
     }
 
-    public void setViewVisibleListener(ViewVisibleListener listener) {
+    public void setViewVisibleListener(FloatPanelVisibleListener listener) {
         mButtonVisibleListener = listener;
     }
 
@@ -357,9 +365,8 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
         }
     }
 
-
-
     public void destroy() {
+        mHistoryArray.clear();
         mTTS.stop();
         mTTS.shutdown();
         if (mIsShowing) {
@@ -383,13 +390,33 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, ViewV
         mButton = null;
         mLayoutParams = null;
         mHandler = null;
+        mHistoryArray = null;
     }
 
     @Override
     public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
-        if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_BACK) {
+        if (keyEvent.getAction() == KeyEvent.ACTION_DOWN
+                && (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_HOME)) {
             hideSearchPanel();
         }
         return false;
+    }
+
+    private class HistoryLoader extends AsyncTask {
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Object[] values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+        }
     }
 }

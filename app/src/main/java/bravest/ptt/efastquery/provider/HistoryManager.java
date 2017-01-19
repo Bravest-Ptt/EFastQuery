@@ -4,13 +4,12 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.provider.Settings;
 import android.util.Log;
 
 import java.util.ArrayList;
 
 import bravest.ptt.efastquery.data.Result;
-import bravest.ptt.efastquery.model.HistoryModel;
+import bravest.ptt.efastquery.model.HistoryModule;
 import bravest.ptt.efastquery.provider.EFastQueryDbUtils.*;
 
 /**
@@ -28,13 +27,13 @@ public class HistoryManager {
         mResolver = mContext.getContentResolver();
     }
 
-    public ArrayList<HistoryModel> getAllHistory() {
-        ArrayList<HistoryModel> historyList = new ArrayList<>();
+    public ArrayList<HistoryModule> getAllHistory() {
+        ArrayList<HistoryModule> historyList = new ArrayList<>();
 
         Cursor cursor = mResolver.query(History.CONTENT_URI, null, null, null, History.DATE + " DESC");
         if (cursor != null) {
             while (cursor.moveToNext()) {
-                HistoryModel model = new HistoryModel();
+                HistoryModule model = new HistoryModule();
                 model.request = cursor.getString(cursor.getColumnIndex(History.REQUEST));
                 Log.d(TAG, "getAllHistory: model.request = " + model.request);
                 model.result = cursor.getString(cursor.getColumnIndex(History.RESULT));
