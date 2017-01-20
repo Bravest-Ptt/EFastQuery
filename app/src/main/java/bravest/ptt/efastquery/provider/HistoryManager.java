@@ -27,8 +27,10 @@ public class HistoryManager {
         mResolver = mContext.getContentResolver();
     }
 
-    public ArrayList<HistoryModule> getAllHistory() {
-        ArrayList<HistoryModule> historyList = new ArrayList<>();
+    public ArrayList<HistoryModule> getAllHistory(ArrayList<HistoryModule> historyList) {
+        if (historyList == null) {
+            historyList = new ArrayList<>();
+        }
 
         Cursor cursor = mResolver.query(History.CONTENT_URI, null, null, null, History.DATE + " DESC");
         if (cursor != null) {
@@ -56,6 +58,12 @@ public class HistoryManager {
         values.put(History.REQUEST, result.query);
         values.put(History.RESULT, result.getResult());
         mResolver.insert(History.CONTENT_URI, values);
+    }
+
+    public void updateHistory(String request) {
+        ContentValues values = new ContentValues();
+        values.put(History.DATE, System.currentTimeMillis());
+        mResolver.update(History.CONTENT_URI, values, History.REQUEST+"=?",new String[]{request});
     }
 
     public boolean isRequestExist(String request) {

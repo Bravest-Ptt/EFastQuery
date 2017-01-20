@@ -21,9 +21,12 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.jpardogo.android.googleprogressbar.library.GoogleProgressBar;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -43,12 +46,15 @@ import bravest.ptt.efastquery.view.Loader.Loader;
  */
 
 class ESearchMainPanel implements View.OnClickListener, TranslateListener, FloatPanelVisibleListener,
-        TextToSpeech.OnInitListener, TextWatcher ,View.OnKeyListener{
+        TextToSpeech.OnInitListener, TextWatcher, View.OnKeyListener {
+
+    private static final String TAG = "ptt";
 
     private static final int WHAT_SEARCHING = 0x011;
     private static final int WHAT_DONE = 0x012;
     private static final int STATE_INPUT = 0x033;
     private static final int STATE_TRANS_SUCCESS = 0x044;
+    private static final int STATE_TRANS_FAILED = 0x055;
 
     private Context mContext;
     private WindowManager mWm;
@@ -68,6 +74,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
     private View mMainShowResultPanel;
     private EditText mMainShowResultText;
     private RecyclerView mMainShowHistory;
+    private ProgressBar mProgressBar;
 
     private FloatingActionButton mFabSpeak;
     private FloatingActionButton mFabFavorite;
@@ -76,6 +83,10 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
 
     private Result mLastResult;
     private ArrayList<HistoryModule> mHistoryArray;
+    private HistoryAdapter mHistoryAdapter;
+
+    private String mRequest;
+    private boolean mIsShowing = false;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -104,13 +115,15 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
         mFm = new FABManager(mContext);
         mHistoryArray = new ArrayList<>();
 
-        initHistoryData();
         initViews();
         initLayoutParams();
+        initHistoryData();
     }
 
     private void initHistoryData() {
-        Loader.init(mHm).progress(null);
+        Loader.init(mHm, mHistoryArray).progress(mProgressBar);
+        mHistoryAdapter = new HistoryAdapter(mContext, mHistoryArray);
+        mMainShowHistory.setAdapter(mHistoryAdapter);
     }
 
     private void initViews() throws InflaterNotReadyException {
@@ -169,6 +182,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
         mMainShowResultPanel = mMain.findViewById(R.id.main_panel_show_result);
         mMainShowResultText = (EditText) mMain.findViewById(R.id.main_panel_show_result_text);
         mMainShowHistory = (RecyclerView) mMain.findViewById(R.id.main_panel_show_history);
+        mProgressBar = (ProgressBar) mMain.findViewById(R.id.google_progressbar);
 
         //init
         mMainShowResultText.setLineSpacing(0, 1.1f);
@@ -215,19 +229,22 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
         }
     }
 
-    private static final String TAG = "ptt";
-    private String mRequest;
-
     private void doSearch() {
-        if (mTm != null && !TextUtils.isEmpty(mMainInput.getText())) {
+        String input = mMainInput.getText().toString();
+        if (mTm != null && !TextUtils.isEmpty(input)) {
+            if (mRequest == input) {
+                return;
+            }
             mRequest = mMainInput.getText().toString();
-            Log.d(TAG, "doSearch: input = " + mRequest);
-//            if (!input.matches("^[a-zA-Z0-9]+")) {
-//                Log.d("ptt", "doSearch: return");
-//                return;
-//            }
-            Utils.hideSoftInput(mContext, mMainInput);
+
+            //Translate
             mTm.translate(mRequest);
+
+            //Hide soft input keyboard
+            Utils.hideSoftInput(mContext, mMainInput);
+
+            //Dismiss history, show result & progressbar
+            toggleVisible(true);
         }
     }
 
@@ -239,11 +256,13 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
     @Override
     public void onTranslateSuccess(Result result) {
         Log.d("ptt", "onTranslateSuccess: ");
-        toggleVisible(true);
         mState = STATE_TRANS_SUCCESS;
         mLastResult = result;
+        mProgressBar.setVisibility(View.GONE);
+
         mFm.popUpFAB(FABManager.ACTION_TRANS_SUCCESS);
         mMainShowResultText.setText(result.getResultWithQuery());
+
         if (!mHm.isRequestExist(mRequest) && !TextUtils.isEmpty(result.explains.toString())) {
             mHm.insertHistory(result);
         }
@@ -252,10 +271,12 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
     @Override
     public void onTranslateFailed(String error) {
         Log.d("ptt", "onTranslateFailed: " + error);
+        mState = STATE_TRANS_FAILED;
+        mLastResult = null;
+        mProgressBar.setVisibility(View.GONE);
+
         mMainShowResultText.setText(error);
     }
-
-    private boolean mIsShowing = false;
 
     public void showSearchPanel() {
         if (!mIsShowing) {
@@ -307,8 +328,13 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
     private void toggleVisible(boolean translating) {
         mMainShowHistory.setVisibility(translating ? View.GONE : View.VISIBLE);
         mMainShowResultPanel.setVisibility(translating ? View.VISIBLE : View.GONE);
+        if (translating) {
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
     }
 
+
+    //Voice init
     @Override
     public void onInit(int status) {
         if (status == TextToSpeech.SUCCESS) {
@@ -320,6 +346,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
         }
     }
 
+    //Voice speak
     private void startTTS(String result) {
         if (mTTS != null && !mTTS.isSpeaking()) {
             mTTS.setPitch(0.5f);
@@ -334,21 +361,21 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
         }
     }
 
+    //Input TextWatcher
     @Override
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        Log.d(TAG, "beforeTextChanged: ");
-
         if (mState == STATE_TRANS_SUCCESS) {
             mFm.pullDownFAB(FABManager.ACTION_INPUT_NULL);
         }
         mState = STATE_INPUT;
     }
 
+    //Input TextWatcher
     @Override
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        Log.d(TAG, "onTextChanged: ");
     }
 
+    //Input TextWatcher
     @Override
     public void afterTextChanged(Editable editable) {
         Log.d(TAG, "afterTextChanged: ");
@@ -365,6 +392,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
         }
     }
 
+    //Destroy all object
     public void destroy() {
         mHistoryArray.clear();
         mTTS.stop();
@@ -400,23 +428,5 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
             hideSearchPanel();
         }
         return false;
-    }
-
-    private class HistoryLoader extends AsyncTask {
-
-        @Override
-        protected Object doInBackground(Object[] objects) {
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(Object[] values) {
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-            super.onPostExecute(o);
-        }
     }
 }

@@ -2,6 +2,7 @@ package bravest.ptt.efastquery.view.Loader;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -16,15 +17,17 @@ import bravest.ptt.efastquery.provider.HistoryManager;
 public class Loader extends AsyncTask {
 
     private HistoryManager mHm;
+    private ArrayList<HistoryModule> mHistoryList;
 
     private View mProgressBar;
 
-    private Loader(HistoryManager hm) {
+    private Loader(HistoryManager hm,  ArrayList<HistoryModule> hl) {
         this.mHm = hm;
+        this.mHistoryList = hl;
     }
 
-    public static Loader init(HistoryManager hm) {
-        return new Loader(hm);
+    public static Loader init(HistoryManager hm, ArrayList<HistoryModule> hl) {
+        return new Loader(hm, hl);
     }
 
     public Loader progress(View progress) {
@@ -42,10 +45,10 @@ public class Loader extends AsyncTask {
 
     @Override
     protected Object doInBackground(Object[] objects) {
-        if (mHm == null) {
+        if (mHm == null || mHistoryList == null) {
             return null;
         }
-        return mHm.getAllHistory();
+        return mHm.getAllHistory(mHistoryList);
     }
 
     @Override

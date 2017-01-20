@@ -2,6 +2,7 @@ package bravest.ptt.efastquery.view;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,8 @@ import bravest.ptt.efastquery.model.HistoryModule;
  */
 
 public class HistoryAdapter extends RecyclerView.Adapter<ViewHolder> implements View.OnClickListener {
+
+    private static final String TAG = "ptt";
 
     private Context mContext;
     private ArrayList<HistoryModule> mData;
@@ -45,6 +48,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<ViewHolder> implements 
     @Override
     public int getItemCount() {
         if (mData != null) {
+            Log.d(TAG, "getItemCount: = " + mData.size());
             return mData.size();
         }
         return 0;

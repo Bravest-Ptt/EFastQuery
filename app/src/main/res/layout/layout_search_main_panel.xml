@@ -45,21 +45,26 @@
                     android:id="@+id/main_panel_show_result_text"
                     style="@style/main_panel_show_result_text" />
             </ScrollView>
+
+            <include
+                layout="@layout/google_progressbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
         </RelativeLayout>
     </LinearLayout>
 
     <!--<LinearLayout-->
-        <!--android:id="@+id/main_panel_functions"-->
-        <!--style="@style/main_panel_functions">-->
+    <!--android:id="@+id/main_panel_functions"-->
+    <!--style="@style/main_panel_functions">-->
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/main_panel_speak"
-            style="@style/main_panel_speak" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/main_panel_speak"
+        style="@style/main_panel_speak" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/main_panel_favorite"
-            style="@style/main_panel_favorite"
-            app:backgroundTint="@android:color/holo_orange_dark" />
-<!--    </LinearLayout>-->
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/main_panel_favorite"
+        style="@style/main_panel_favorite"
+        app:backgroundTint="@android:color/holo_orange_dark" />
+    <!--    </LinearLayout>-->
 
 </RelativeLayout>
