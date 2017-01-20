@@ -1,5 +1,5 @@
 # EFastQuery
-A float window for query English words.
+A float window for query English words which based on YouDao Translation OPEN API。
 
 Support ：
 1、History record.
