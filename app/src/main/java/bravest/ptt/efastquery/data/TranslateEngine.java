@@ -21,6 +21,13 @@ import java.net.URLEncoder;
 
 class TranslateEngine {
 
+    static{
+        System.loadLibrary("EFastQuery");
+    }
+
+    private native String getKeyIdFromNative();
+    private native String getKeySecretFromNative();
+
     private static final String YOUDAO_ID = "phonekeeper";
     private static final String YOUDAO_SECRET = "377725472";
 
@@ -46,6 +53,8 @@ class TranslateEngine {
     }
 
     public void start() throws NotSetRequestException {
+        getKeyIdFromNative();
+        getKeySecretFromNative();
         mStartCounter += 1;
         if (mSetCounter < mStartCounter) {
             throw new NotSetRequestException();
