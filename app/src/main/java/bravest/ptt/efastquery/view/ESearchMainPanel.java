@@ -46,7 +46,7 @@ import bravest.ptt.efastquery.view.Loader.Loader;
  */
 
 class ESearchMainPanel implements View.OnClickListener, TranslateListener, FloatPanelVisibleListener,
-        TextToSpeech.OnInitListener, TextWatcher, View.OnKeyListener {
+        TextToSpeech.OnInitListener, TextWatcher, View.OnKeyListener, View.OnFocusChangeListener {
 
     private static final String TAG = "ptt";
 
@@ -55,6 +55,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
     private static final int STATE_INPUT = 0x033;
     private static final int STATE_TRANS_SUCCESS = 0x044;
     private static final int STATE_TRANS_FAILED = 0x055;
+    private static final int STATE_TRANSLATING = 0x066;
 
     private Context mContext;
     private WindowManager mWm;
@@ -163,6 +164,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
                 return true;
             }
         });
+        mMainInput.setOnFocusChangeListener(this);
         mMainInput.addTextChangedListener(this);
         mMainInput.setOnKeyListener(this);
 
@@ -232,7 +234,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
     private void doSearch() {
         String input = mMainInput.getText().toString();
         if (mTm != null && !TextUtils.isEmpty(input)) {
-            if (mRequest == input) {
+            if (TextUtils.equals(mRequest, input)) {
                 return;
             }
             mRequest = mMainInput.getText().toString();
@@ -243,6 +245,9 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
             //Hide soft input keyboard
             Utils.hideSoftInput(mContext, mMainInput);
 
+            //Clear show text view
+            mMainShowResultText.setText("");
+
             //Dismiss history, show result & progressbar
             toggleVisible(true);
         }
@@ -250,6 +255,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
 
     @Override
     public void onTranslateStart() {
+        mState = STATE_TRANSLATING;
         mHandler.sendEmptyMessage(WHAT_SEARCHING);
     }
 
@@ -257,13 +263,16 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
     public void onTranslateSuccess(Result result) {
         Log.d("ptt", "onTranslateSuccess: ");
         mState = STATE_TRANS_SUCCESS;
+        if (result == null) {
+            return;
+        }
         mLastResult = result;
         mProgressBar.setVisibility(View.GONE);
 
         mFm.popUpFAB(FABManager.ACTION_TRANS_SUCCESS);
         mMainShowResultText.setText(result.getResultWithQuery());
 
-        if (!mHm.isRequestExist(mRequest) && !TextUtils.isEmpty(result.explains.toString())) {
+        if (!mHm.isRequestExist(mRequest) && result.explains != null) {
             mHm.insertHistory(result);
         }
     }
@@ -285,7 +294,9 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
             if (mButtonVisibleListener != null) {
                 mButtonVisibleListener.onShow();
             }
-            mMainInput.setFocusable(true);
+            if (mState != STATE_TRANSLATING) {
+                Utils.popSoftInput(mContext,mMainInput);
+            }
         }
     }
 
@@ -296,6 +307,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
             if (mButtonVisibleListener != null) {
                 mButtonVisibleListener.onHide();
             }
+            Utils.hideSoftInput(mContext, mMainInput);
         }
     }
 
@@ -424,9 +436,18 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
     @Override
     public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
         if (keyEvent.getAction() == KeyEvent.ACTION_DOWN
-                && (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_HOME)) {
+                && (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_MENU)) {
             hideSearchPanel();
         }
         return false;
+    }
+
+    @Override
+    public void onFocusChange(View view, boolean b) {
+        if (view.getId() == R.id.main_panel_search_edit) {
+            if (!b) {
+                Utils.hideSoftInput(mContext, mMainInput);
+            }
+        }
     }
 }

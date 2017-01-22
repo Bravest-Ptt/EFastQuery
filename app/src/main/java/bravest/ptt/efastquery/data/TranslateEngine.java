@@ -1,7 +1,10 @@
 package bravest.ptt.efastquery.data;
 
+import android.content.Context;
+import android.content.res.AssetManager;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,6 +18,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import bravest.ptt.efastquery.data.Key;
+
 /**
  * Created by root on 12/27/16.
  */
@@ -25,15 +30,16 @@ class TranslateEngine {
         System.loadLibrary("EFastQuery");
     }
 
-    private native String getKeyIdFromNative();
-    private native String getKeySecretFromNative();
+    private native Key getKey(AssetManager assetManager);
 
+    private static final String TAG = "TranslateEngine";
     private static final String YOUDAO_ID = "phonekeeper";
     private static final String YOUDAO_SECRET = "377725472";
 
     private static final int CONNECTION_TIME_OUT = 3000;
 
     private Request mRequest;
+    private Context mContext;
 
     private int mSetCounter = 0;
     private int mStartCounter = 0;
@@ -43,7 +49,8 @@ class TranslateEngine {
         mSetCounter += 1;
     }
 
-    public TranslateEngine() {
+    public TranslateEngine(Context context) {
+        mContext = context;
     }
 
     public TranslateEngine setRequest(Request request) {
@@ -53,8 +60,14 @@ class TranslateEngine {
     }
 
     public void start() throws NotSetRequestException {
-        getKeyIdFromNative();
-        getKeySecretFromNative();
+        Key key = getKey(mContext.getAssets());
+        if (key == null) {
+            key = new Key(YOUDAO_ID, YOUDAO_SECRET);
+        }
+        Log.d(TAG, "start: key id : " + key.keyId + ", key secret : " + key.keySecret);
+
+        final Key finalKey = key;
+
         mStartCounter += 1;
         if (mSetCounter < mStartCounter) {
             throw new NotSetRequestException();
@@ -65,9 +78,9 @@ class TranslateEngine {
                 BufferedReader resultReader = null;
                 try {
                     String urlPath = "http://fanyi.youdao.com/openapi.do?keyfrom="
-                            + YOUDAO_ID
+                            + finalKey.keyId
                             + "&key="
-                            + YOUDAO_SECRET
+                            + finalKey.keySecret
                             + "&type=data&doctype=json&version=1.1&q="
                             + URLEncoder.encode(mRequest.mRequest, "utf-8");
                     URL getUrl = new URL(urlPath);

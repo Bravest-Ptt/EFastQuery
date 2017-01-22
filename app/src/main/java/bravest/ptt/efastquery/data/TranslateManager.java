@@ -81,7 +81,7 @@ public class TranslateManager {
 
     public TranslateManager(Context context) {
         this.mContext = context;
-        mEngine = new TranslateEngine();
+        mEngine = new TranslateEngine(context);
     }
 
     public void translate(String request) {

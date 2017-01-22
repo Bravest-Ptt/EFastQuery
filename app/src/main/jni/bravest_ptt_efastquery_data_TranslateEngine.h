@@ -14,16 +14,8 @@ extern "C" {
  * Method:    getKeyIdFromNative
  * Signature: ()Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_bravest_ptt_efastquery_data_TranslateEngine_getKeyIdFromNative
-  (JNIEnv *, jobject);
-
-/*
- * Class:     bravest_ptt_efastquery_data_TranslateEngine
- * Method:    getKeySecretFromNative
- * Signature: ()Ljava/lang/String;
- */
-JNIEXPORT jstring JNICALL Java_bravest_ptt_efastquery_data_TranslateEngine_getKeySecretFromNative
-  (JNIEnv *, jobject);
+JNIEXPORT jobject JNICALL Java_bravest_ptt_efastquery_data_TranslateEngine_getKey
+  (JNIEnv *, jobject, jobject);
 
 #ifdef __cplusplus
 }
