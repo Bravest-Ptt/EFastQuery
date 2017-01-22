@@ -26,6 +26,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<ViewHolder> implements 
     public HistoryAdapter(Context context, ArrayList<HistoryModule> data) {
         mContext = context;
         this.mData = data;
+        if (mData != null) {
+            Log.d(TAG, "HistoryAdapter: mData.size = " + mData.size());
+        }
     }
 
     @Override
@@ -39,7 +42,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<ViewHolder> implements 
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        viewHolder.tv_content.setText(position);
+        viewHolder.tv_content.setText(mData.get(position).result);
         viewHolder.iv_voice.setOnClickListener(this);
         viewHolder.iv_favourite.setOnClickListener(this);
         viewHolder.iv_delete.setOnClickListener(this);

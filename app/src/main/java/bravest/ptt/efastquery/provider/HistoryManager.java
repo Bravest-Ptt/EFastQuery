@@ -27,10 +27,8 @@ public class HistoryManager {
         mResolver = mContext.getContentResolver();
     }
 
-    public ArrayList<HistoryModule> getAllHistory(ArrayList<HistoryModule> historyList) {
-        if (historyList == null) {
-            historyList = new ArrayList<>();
-        }
+    public ArrayList<HistoryModule> getAllHistory() {
+        ArrayList<HistoryModule> historyList = new ArrayList<>();
 
         Cursor cursor = mResolver.query(History.CONTENT_URI, null, null, null, History.DATE + " DESC");
         if (cursor != null) {
@@ -49,15 +47,17 @@ public class HistoryManager {
         return historyList;
     }
 
-    public void insertHistory(Result result) {
+    public long insertHistory(Result result) {
         if (result == null) {
-            return;
+            return 0;
         }
         ContentValues values = new ContentValues();
-        values.put(History.DATE, System.currentTimeMillis());
+        long time = System.currentTimeMillis();
+        values.put(History.DATE, time);
         values.put(History.REQUEST, result.query);
         values.put(History.RESULT, result.getResult());
         mResolver.insert(History.CONTENT_URI, values);
+        return time;
     }
 
     public void updateHistory(String request) {

@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -31,6 +32,7 @@ import com.jpardogo.android.googleprogressbar.library.GoogleProgressBar;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import bravest.ptt.efastquery.MainService;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.data.Result;
 import bravest.ptt.efastquery.data.TranslateListener;
@@ -122,8 +124,11 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
     }
 
     private void initHistoryData() {
-        Loader.init(mHm, mHistoryArray).progress(mProgressBar);
+        //Loader.init(mHm, mHistoryArray).progress(mProgressBar).execute();
+        mHistoryArray = mHm.getAllHistory();
         mHistoryAdapter = new HistoryAdapter(mContext, mHistoryArray);
+
+        mMainShowHistory.setLayoutManager(new LinearLayoutManager(mContext));
         mMainShowHistory.setAdapter(mHistoryAdapter);
     }
 
@@ -273,7 +278,16 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
         mMainShowResultText.setText(result.getResultWithQuery());
 
         if (!mHm.isRequestExist(mRequest) && result.explains != null) {
-            mHm.insertHistory(result);
+            //Add history in database.
+            long insertTime = mHm.insertHistory(result);
+
+            //Add history in memory
+            HistoryModule module = new HistoryModule();
+            module.request = result.query;
+            module.date = insertTime + "";
+            module.result = result.getResult();
+            mHistoryArray.add(0, module);
+            mHistoryAdapter.notifyItemInserted(0);
         }
     }
 

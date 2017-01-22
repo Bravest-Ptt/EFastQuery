@@ -17,13 +17,11 @@ import bravest.ptt.efastquery.provider.HistoryManager;
 public class Loader extends AsyncTask {
 
     private HistoryManager mHm;
-    private ArrayList<HistoryModule> mHistoryList;
 
     private View mProgressBar;
 
     private Loader(HistoryManager hm,  ArrayList<HistoryModule> hl) {
         this.mHm = hm;
-        this.mHistoryList = hl;
     }
 
     public static Loader init(HistoryManager hm, ArrayList<HistoryModule> hl) {
@@ -45,10 +43,10 @@ public class Loader extends AsyncTask {
 
     @Override
     protected Object doInBackground(Object[] objects) {
-        if (mHm == null || mHistoryList == null) {
+        if (mHm == null) {
             return null;
         }
-        return mHm.getAllHistory(mHistoryList);
+        return null;
     }
 
     @Override
