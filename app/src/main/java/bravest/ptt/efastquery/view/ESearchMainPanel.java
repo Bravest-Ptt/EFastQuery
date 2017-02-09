@@ -2,6 +2,7 @@ package bravest.ptt.efastquery.view;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
@@ -42,6 +43,9 @@ import bravest.ptt.efastquery.provider.HistoryManager;
 import bravest.ptt.efastquery.utils.Utils;
 import bravest.ptt.efastquery.view.ESearchFloatButton.*;
 import bravest.ptt.efastquery.view.Loader.Loader;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by root on 1/4/17.
@@ -73,6 +77,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
     private View mMain;
     private View mMainPanel;
     private ImageButton mMainSearch;
+    private ImageButton mMainClean;
     private EditText mMainInput;
     private View mMainShowResultPanel;
     private EditText mMainShowResultText;
@@ -140,6 +145,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
         mMain = inflater.inflate(R.layout.layout_search_main_panel, null);
         mMainPanel = mMain.findViewById(R.id.main_panel);
         mMainSearch = (ImageButton) mMain.findViewById(R.id.main_panel_search_button);
+        mMainClean = (ImageButton) mMain.findViewById(R.id.main_panel_search_clean);
         mMainInput = (EditText) mMain.findViewById(R.id.main_panel_search_edit);
 
         //Main background
@@ -157,6 +163,9 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
 
         //Search button
         mMainSearch.setOnClickListener(this);
+
+        //Clean button
+        mMainClean.setOnClickListener(this);
 
         //Search edit text
         mMainInput.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
@@ -232,6 +241,9 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
                 break;
             case R.id.main_panel_favorite:
                 Log.d(TAG, "onClick: favorite");
+                break;
+            case R.id.main_panel_search_clean:
+                mMainInput.setText("");
                 break;
         }
     }
@@ -409,12 +421,16 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
             //show all history
             toggleVisible(false);
 
+            //hide clean button
+            mMainClean.setVisibility(View.GONE);
+
             //reset result
             mLastResult = null;
         } else {
             //show query in history, if no,
 
-            //
+            //show clean button
+            mMainClean.setVisibility(View.VISIBLE);
         }
     }
 

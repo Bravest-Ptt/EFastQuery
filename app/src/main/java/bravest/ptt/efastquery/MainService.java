@@ -38,11 +38,6 @@ public class MainService extends Service {
         this.setTheme(R.style.AppTheme);
         super.onCreate();
         Log.d(TAG, "onCreate: ");
-        try {
-            mView = new ESearchFloatButton(this);
-        } catch (ESearchFloatButton.InflaterNotReadyException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override

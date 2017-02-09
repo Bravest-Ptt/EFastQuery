@@ -24,6 +24,8 @@ android {
     }
 }
 
+apply plugin: 'com.neenbedankt.android-apt' //butter knife
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -37,4 +39,6 @@ dependencies {
     //Add google progress bar
     compile 'com.jpardogo.googleprogressbar:library:1.2.0'
     testCompile 'junit:junit:4.12'
+    compile 'com.jakewharton:butterknife:8.2.1' //butter knife
+    apt 'com.jakewharton:butterknife-compiler:8.2.1' //butter knife
 }

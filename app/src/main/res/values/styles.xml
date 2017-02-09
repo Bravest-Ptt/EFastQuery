@@ -40,7 +40,7 @@
     <style name="main_panel_search_edit">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_weight">4</item>
+        <item name="android:layout_weight">5</item>
         <item name="android:background">@drawable/search_main_panel</item>
         <item name="android:hint">@string/translate_hint</item>
         <item name="android:imeOptions">actionSearch</item>
@@ -48,6 +48,16 @@
         <item name="android:singleLine">true</item>
         <item name="android:textColorHint">@color/colorTranslateHint</item>
         <item name="android:textSize">13dp</item>
+    </style>
+
+    <style name="main_panel_search_clean">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/search_main_panel</item>
+        <item name="android:clickable">true</item>
+        <item name="android:visibility">gone</item>
+        <item name="android:src">@mipmap/delete_input</item>
     </style>
 
     <style name="main_panel_search_button">
