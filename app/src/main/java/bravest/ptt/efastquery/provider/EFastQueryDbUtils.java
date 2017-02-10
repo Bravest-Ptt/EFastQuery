@@ -18,6 +18,11 @@ public class EFastQueryDbUtils {
         public static final Uri CONTENT_URI = Uri.parse("content://bravest.ptt.efastquery/history");
         public static final String DATE = "date";
         public static final String REQUEST = "request";
-        public static final String RESULT = "result";
+        public static final String TRANSLATIONS = "translations";
+        public static final String EXPLAINS = "explains";
+        public static final String WEBS = "webs";
+        public static final String PHONETIC = "phonetic";
+        public static final String US_PHONETIC = "us_phonetic";
+        public static final String UK_PHONETIC = "uk_phonetic";
     }
 }

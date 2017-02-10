@@ -26,7 +26,8 @@
 
             <ImageButton
                 android:id="@+id/main_panel_search_clean"
-                style="@style/main_panel_search_clean" />
+                style="@style/main_panel_search_clean"
+                android:foreground="?android:selectableItemBackgroundBorderless" />
 
             <ImageButton
                 android:id="@+id/main_panel_search_button"

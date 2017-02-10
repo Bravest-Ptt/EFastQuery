@@ -6,6 +6,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 
 import bravest.ptt.efastquery.data.Result;
@@ -27,20 +29,29 @@ public class HistoryManager {
         mResolver = mContext.getContentResolver();
     }
 
-    public ArrayList<HistoryModule> getAllHistory() {
-        ArrayList<HistoryModule> historyList = new ArrayList<>();
+    public ArrayList<Result> getAllHistory() {
+        ArrayList<Result> historyList = new ArrayList<>();
 
         Cursor cursor = mResolver.query(History.CONTENT_URI, null, null, null, History.DATE + " DESC");
         if (cursor != null) {
             while (cursor.moveToNext()) {
-                HistoryModule model = new HistoryModule();
-                model.request = cursor.getString(cursor.getColumnIndex(History.REQUEST));
-                Log.d(TAG, "getAllHistory: model.request = " + model.request);
-                model.result = cursor.getString(cursor.getColumnIndex(History.RESULT));
-                Log.d(TAG, "getAllHistory: model.result = " + model.result);
-                model.date = cursor.getString(cursor.getColumnIndex(History.DATE));
-                Log.d(TAG, "getAllHistory: model.date = " + model.date);
-                historyList.add(model);
+                Result result = new Result();
+
+                result.query = cursor.getString(cursor.getColumnIndex(History.REQUEST));
+
+                result.setTranslateString(cursor.getString(cursor.getColumnIndex(History.TRANSLATIONS)));
+
+                result.setExplainString(cursor.getString(cursor.getColumnIndex(History.EXPLAINS)));
+
+                result.setWebString(cursor.getString(cursor.getColumnIndex(History.WEBS)));
+
+                result.phonetic = cursor.getString(cursor.getColumnIndex(History.PHONETIC));
+
+                result.uk_phonetic = cursor.getString(cursor.getColumnIndex(History.UK_PHONETIC));
+
+                result.us_phonetic = cursor.getString(cursor.getColumnIndex(History.US_PHONETIC));
+
+                historyList.add(result);
             }
             cursor.close();
         }
@@ -53,17 +64,32 @@ public class HistoryManager {
         }
         ContentValues values = new ContentValues();
         long time = System.currentTimeMillis();
+
         values.put(History.DATE, time);
+
         values.put(History.REQUEST, result.query);
-        values.put(History.RESULT, result.getResult());
+
+        values.put(History.TRANSLATIONS, result.getTranslateString());
+
+        values.put(History.EXPLAINS, result.getExplainsString());
+
+        values.put(History.WEBS, result.getWebString());
+
+        values.put(History.PHONETIC, result.phonetic);
+
+        values.put(History.UK_PHONETIC, result.uk_phonetic);
+
+        values.put(History.US_PHONETIC, result.us_phonetic);
+
         mResolver.insert(History.CONTENT_URI, values);
+
         return time;
     }
 
-    public void updateHistory(String request) {
+    public void updateHistoryTime(String request) {
         ContentValues values = new ContentValues();
         values.put(History.DATE, System.currentTimeMillis());
-        mResolver.update(History.CONTENT_URI, values, History.REQUEST+"=?",new String[]{request});
+        mResolver.update(History.CONTENT_URI, values, History.REQUEST + "=?", new String[]{request});
     }
 
     public boolean isRequestExist(String request) {

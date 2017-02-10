@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             Log.d(TAG, "onServiceConnected");
-            mMainService = ((MainService.MainBinder)iBinder).getService();
+            mMainService = ((MainService.MainBinder) iBinder).getService();
         }
 
         @Override
@@ -50,15 +50,6 @@ public class MainActivity extends AppCompatActivity
 
         bindService();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -76,20 +67,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void onClick(View view) {
-        switch(view.getId()) {
+        switch (view.getId()) {
             case R.id.card_close:
             case R.id.card_close_tv:
-                Log.d(TAG, "onClick: ");
-                if (mMainService != null) {
-                    mMainService.hideFloatingWindow();
-                }
+                hideFloatingWindow();
                 break;
             case R.id.card_open:
             case R.id.card_open_tv:
-                Log.d(TAG, "onClick: ");
-                if (mMainService != null) {
-                    mMainService.showFloatingWindow();
-                }
+                showFloatingWindow();
                 break;
             default:
                 break;
@@ -109,7 +94,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -134,22 +118,31 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        switch (id) {
+            case R.id.nav_open:
+                showFloatingWindow();
+                break;
+            case R.id.nav_close:
+                hideFloatingWindow();
+                break;
+            default:
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void showFloatingWindow() {
+        if (mMainService != null) {
+            mMainService.showFloatingWindow();
+        }
+    }
+
+    private void hideFloatingWindow() {
+        if (mMainService != null) {
+            mMainService.hideFloatingWindow();
+        }
     }
 }

@@ -24,7 +24,12 @@ public class EFastQueryDBHelper extends SQLiteOpenHelper {
                 "_id INTEGER PRIMARY KEY," +
                 "date TimeStamp NOT NULL DEFAULT (datetime(CURRENT_TIMESTAMP,'localtime'))," +
                 "request TEXT NOT NULL," +
-                "result TEXT NOT NULL);");
+                "translations TEXT," +
+                "explains TEXT," +
+                "webs TEXT," +
+                "phonetic TEXT," +
+                "us_phonetic TEXT," +
+                "uk_phonetic TEXT);");
     }
 
     @Override

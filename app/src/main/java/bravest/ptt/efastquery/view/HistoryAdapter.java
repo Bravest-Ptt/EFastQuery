@@ -10,48 +10,49 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import bravest.ptt.efastquery.R;
+import bravest.ptt.efastquery.data.Result;
 import bravest.ptt.efastquery.model.HistoryModule;
+import bravest.ptt.efastquery.model.Module;
 
 /**
  * Created by root on 1/11/17.
  */
 
-public class HistoryAdapter extends RecyclerView.Adapter<ViewHolder> implements View.OnClickListener {
+public class HistoryAdapter extends RecyclerView.Adapter<HistoryHolder> implements View.OnClickListener {
 
     private static final String TAG = "ptt";
 
     private Context mContext;
-    private ArrayList<HistoryModule> mData;
+    private ArrayList<Result> mData;
 
-    public HistoryAdapter(Context context, ArrayList<HistoryModule> data) {
+    public HistoryAdapter(Context context, ArrayList<Result> data) {
         mContext = context;
         this.mData = data;
-        if (mData != null) {
-            Log.d(TAG, "HistoryAdapter: mData.size = " + mData.size());
-        }
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public HistoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         if (inflater == null) {
             return null;
         }
-        return new ViewHolder(inflater.inflate(R.layout.item_holder, null));
+        return new HistoryHolder(inflater.inflate(R.layout.item_holder, null));
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        viewHolder.tv_content.setText(mData.get(position).result);
-        viewHolder.iv_voice.setOnClickListener(this);
-        viewHolder.iv_favourite.setOnClickListener(this);
-        viewHolder.iv_delete.setOnClickListener(this);
+    public void onBindViewHolder(HistoryHolder historyHolder, int position) {
+        Result result = mData.get(position);
+
+        historyHolder.tv_content_request.setText(result.query);
+        historyHolder.tv_content_explains.setText(mData.get(position).getExplainsString());
+        historyHolder.iv_voice.setOnClickListener(this);
+        historyHolder.iv_favourite.setOnClickListener(this);
+        historyHolder.iv_delete.setOnClickListener(this);
     }
 
     @Override
     public int getItemCount() {
         if (mData != null) {
-            Log.d(TAG, "getItemCount: = " + mData.size());
             return mData.size();
         }
         return 0;
@@ -65,6 +66,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<ViewHolder> implements 
             case R.id.item_favourite:
                 break;
             case R.id.item_delete:
+                break;
+            case R.id.item_content_explains:
+            case R.id.item_content_request:
+
                 break;
             default:
                 break;

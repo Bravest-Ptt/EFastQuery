@@ -1,6 +1,9 @@
 package bravest.ptt.efastquery.view;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.PixelFormat;
 import android.media.Image;
 import android.os.AsyncTask;
@@ -21,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -90,7 +94,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
     private WindowManager.LayoutParams mLayoutParams;
 
     private Result mLastResult;
-    private ArrayList<HistoryModule> mHistoryArray;
+    private ArrayList<Result> mHistoryArray;
     private HistoryAdapter mHistoryAdapter;
 
     private String mRequest;
@@ -110,6 +114,8 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
         }
     };
 
+    private HomeRecentReceiver mHomeRecentReceiver;
+
     public ESearchMainPanel(Context context, WindowManager wm, ESearchFloatButton button) throws InflaterNotReadyException {
         mContext = context;
         mWm = wm;
@@ -122,6 +128,9 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
         mHm = new HistoryManager(mContext);
         mFm = new FABManager(mContext);
         mHistoryArray = new ArrayList<>();
+
+        mHomeRecentReceiver = new HomeRecentReceiver();
+        mContext.registerReceiver(mHomeRecentReceiver, new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
 
         initViews();
         initLayoutParams();
@@ -204,6 +213,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
         mMainShowResultText.setLineSpacing(0, 1.1f);
 
         //Init history
+        mMainShowHistory.addOnScrollListener(new ROnScrollListener());
         //slide to left show 'delete' from history database
         //slide to right show 'favorite' status & 'voice'
         //click show details, dismiss history
@@ -294,13 +304,25 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
             long insertTime = mHm.insertHistory(result);
 
             //Add history in memory
-            HistoryModule module = new HistoryModule();
-            module.request = result.query;
-            module.date = insertTime + "";
-            module.result = result.getResult();
-            mHistoryArray.add(0, module);
+            mHistoryArray.add(0, result);
+
             mHistoryAdapter.notifyItemInserted(0);
+        } else if (mHm.isRequestExist(mRequest)){
+            Result exist = getResultFromArray(mRequest);
+
+            int index = mHistoryArray.indexOf(exist);
+
+            mHistoryArray.remove(exist);
+
+            mHistoryAdapter.notifyItemRemoved(index);
+
+            mHistoryArray.add(0,exist);
+
+            mHistoryAdapter.notifyItemInserted(0);
+
+            mHm.updateHistoryTime(mRequest);
         }
+        mMainShowHistory.scrollToPosition(0);
     }
 
     @Override
@@ -310,7 +332,22 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
         mLastResult = null;
         mProgressBar.setVisibility(View.GONE);
 
-        mMainShowResultText.setText(error);
+        //If database contains this request, the array in memory must contains it.
+        if (mHm.isRequestExist(mRequest)) {
+            Result result = getResultFromArray(mRequest);
+            mMainShowResultText.setText(result.getResult());
+        } else {
+            mMainShowResultText.setText(error);
+        }
+    }
+
+    private Result getResultFromArray(String request) {
+        for (Result result : mHistoryArray) {
+            if (TextUtils.equals(result.query, request)) {
+                return result;
+            }
+        }
+        return null;
     }
 
     public void showSearchPanel() {
@@ -321,7 +358,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
                 mButtonVisibleListener.onShow();
             }
             if (mState != STATE_TRANSLATING) {
-                Utils.popSoftInput(mContext,mMainInput);
+                Utils.popSoftInput(mContext, mMainInput);
             }
         }
     }
@@ -359,10 +396,13 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
         showSearchPanel();
     }
 
+    //The visible callback for FloatPanel
     public void setViewVisibleListener(FloatPanelVisibleListener listener) {
         mButtonVisibleListener = listener;
     }
 
+    //Toggle the two view's visible property
+    //mMainShowHistory show , mMainShowResultPanel hide
     private void toggleVisible(boolean translating) {
         mMainShowHistory.setVisibility(translating ? View.GONE : View.VISIBLE);
         mMainShowResultPanel.setVisibility(translating ? View.VISIBLE : View.GONE);
@@ -402,7 +442,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
     //Input TextWatcher
     @Override
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        if (mState == STATE_TRANS_SUCCESS) {
+        if (mState == STATE_TRANS_SUCCESS || mState == STATE_TRANS_FAILED) {
             mFm.pullDownFAB(FABManager.ACTION_INPUT_NULL);
         }
         mState = STATE_INPUT;
@@ -461,10 +501,17 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
         mLayoutParams = null;
         mHandler = null;
         mHistoryArray = null;
+
+        //unregister broadcast
+        if (mHomeRecentReceiver != null ) {
+            mContext.unregisterReceiver(mHomeRecentReceiver);
+            mHomeRecentReceiver = null;
+        }
     }
 
     @Override
     public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+        //Main panel will be hidden when user press back key or outside district.
         if (keyEvent.getAction() == KeyEvent.ACTION_DOWN
                 && (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_MENU)) {
             hideSearchPanel();
@@ -474,9 +521,42 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener, Float
 
     @Override
     public void onFocusChange(View view, boolean b) {
+        //We hide keyboard when edit input not be focusable.
         if (view.getId() == R.id.main_panel_search_edit) {
             if (!b) {
                 Utils.hideSoftInput(mContext, mMainInput);
+            }
+        }
+    }
+
+    class ROnScrollListener extends RecyclerView.OnScrollListener {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            if (Utils.isKeyboardShowing(mContext)) {
+                Utils.hideSoftInput(mContext, mMainInput);
+            }
+        }
+    }
+
+    class HomeRecentReceiver extends BroadcastReceiver {
+        private static final String REASON = "reason";
+        private static final String RECENT_APPS = "recentapps";
+        private static final String HOME_KEY = "homekey";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (TextUtils.equals(action,Intent.ACTION_CLOSE_SYSTEM_DIALOGS)) {
+                String reason = intent.getStringExtra(REASON);
+                switch (reason) {
+                    case RECENT_APPS:
+                    case HOME_KEY:
+                        hideSearchPanel();
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }

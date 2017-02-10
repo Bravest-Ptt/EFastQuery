@@ -31,6 +31,8 @@ public class Result {
 
     private JSONObject mResult;
 
+
+    //Parsed
     public String error_code;
     public String query;
 
@@ -43,9 +45,16 @@ public class Result {
 
     public JSONArray web;
 
+    private String translation_str;
+    private String explains_str;
+    private String web_str;
+
     public Result(JSONObject result) {
         this.mResult = result;
         parseJsonResult();
+    }
+
+    public Result() {
     }
 
     private void parseJsonResult() {
@@ -58,8 +67,11 @@ public class Result {
         }
     }
 
+    private static final String JSON_SPLIT = "; ";
+
     private void parseTranslation() throws JSONException {
         translation = mResult.getJSONArray(YouDaoItem.YOUDAO_TRANSLATION);
+        translation_str = jsonArray2String(translation, JSON_SPLIT);
     }
 
     private void parseBasic() throws JSONException {
@@ -80,6 +92,7 @@ public class Result {
             explains = basic.has(YouDaoItem.YOUDAO_EXPLAINS)
                     ? basic.getJSONArray(YouDaoItem.YOUDAO_EXPLAINS)
                     : null;
+            explains_str = jsonArray2String(explains, JSON_SPLIT);
             Log.d(TAG, "parseBasic: explains = " + explains);
         }
     }
@@ -87,6 +100,7 @@ public class Result {
     private void parseWeb() throws JSONException {
         web = mResult.getJSONArray(YouDaoItem.YOUDAO_WEB);
         Log.d(TAG, "parseWeb: web = " + web);
+        web_str = jsonArray2String(web, JSON_SPLIT);
     }
 
     public String getResultWithQuery() {
@@ -97,7 +111,7 @@ public class Result {
                 result += "translations : ";
                 int transLength = translation.length();
                 for (int i = 0; i < transLength; i++) {
-                    result += (i == 0) ? translation.getString(i) : "; " + translation.getString(i);
+                    result += translation.getString(i) + ";";
                 }
                 result += "\n";
             }
@@ -106,7 +120,7 @@ public class Result {
                 result += "explains : ";
                 int explainsLength = explains.length();
                 for (int i = 0; i < explainsLength; i++) {
-                    result += (i == 0) ? explains.getString(i) : "; " + explains.getString(i);
+                    result += explains.getString(i) + ";";
                 }
                 result += "\n";
 
@@ -114,7 +128,6 @@ public class Result {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
 
 
         return result + "phonetic : " + phonetic + "\n"
@@ -140,4 +153,72 @@ public class Result {
         public static final String YOUDAO_US_PHONETIC = "us-phonetic";
         public static final String YOUDAO_EXPLAINS = "explains";
     }
+
+    public String getTranslateString() {
+        return translation_str;
+    }
+
+    public void setTranslateString(String trans) {
+        translation_str = trans;
+        if (translation == null) {
+            translation = string2JsonArray(trans, JSON_SPLIT);
+        }
+    }
+
+    public String getExplainsString() {
+        return explains_str;
+    }
+
+    public void setExplainString(String explain) {
+        explains_str = explain;
+        if (explains == null) {
+            explains = string2JsonArray(explain, JSON_SPLIT);
+        }
+    }
+
+    public String getWebString() {
+        return web_str;
+    }
+
+    public void setWebString(String webstirng) {
+        web_str = webstirng;
+        if (web == null) {
+            web = string2JsonArray(webstirng, JSON_SPLIT);
+        }
+    }
+
+    private String jsonArray2String(JSONArray jsonArray, String split) {
+        String result = "";
+        if (jsonArray == null) {
+            return result;
+        }
+        try {
+            int length = jsonArray.length();
+            for (int i = 0; i < length; i++) {
+                if (i != length - 1)
+                    result += jsonArray.getString(i) + split;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }finally {
+            return result;
+        }
+    }
+
+    private JSONArray string2JsonArray(String original, String split) {
+        if (original == "") return null;
+        JSONArray jsonArray = new JSONArray();
+        String[] array = original.split(split);
+        for (String str:array) {
+            jsonArray.put(str);
+        }
+        return jsonArray;
+    }
+
+//    public Result copy(Result src) {
+//        Result copy = new Result();
+//        copy.query = src.query;
+//        copy.translation = src.translation;
+//
+//    }
 }

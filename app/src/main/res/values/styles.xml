@@ -82,6 +82,7 @@
     <style name="main_panel_show_history">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_margin">6dp</item>
     </style>
 
     <style name="main_panel_show_result">
