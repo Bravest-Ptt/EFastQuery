@@ -16,7 +16,6 @@ public class HistoryHolder extends RecyclerView.ViewHolder implements View.OnCli
     TextView tv_content_request;
     TextView tv_content_explains;
     ImageView iv_voice;
-    ImageView iv_favourite;
     ImageView iv_delete;
     View ln_view;
 
@@ -30,13 +29,11 @@ public class HistoryHolder extends RecyclerView.ViewHolder implements View.OnCli
         tv_content_request = (TextView) itemView.findViewById(R.id.item_content_request);
         tv_content_explains = (TextView) itemView.findViewById(R.id.item_content_explains);
         iv_voice = (ImageView) itemView.findViewById(R.id.item_voice);
-        iv_favourite = (ImageView) itemView.findViewById(R.id.item_favourite);
         iv_delete = (ImageView) itemView.findViewById(R.id.item_delete);
 
         ln_view = itemView.findViewById(R.id.item_content);
 
         iv_voice.setOnClickListener(this);
-        iv_favourite.setOnClickListener(this);
         iv_delete.setOnClickListener(this);
         ln_view.setOnClickListener(this);
     }

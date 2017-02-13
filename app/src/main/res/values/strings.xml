@@ -10,4 +10,9 @@
     <string name="input_hint">请输入中/英文</string>
     <string name="translate_error">查询失败</string>
     <string name="translate_hint">在此输入需要翻译的文本</string>
+
+    <string name="export_file">导出</string>
+    <string name="import_file">导入</string>
+    <string name="favorite_book">单词本</string>
+    <string name="home">首页</string>
 </resources>

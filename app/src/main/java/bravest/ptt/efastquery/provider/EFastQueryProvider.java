@@ -20,8 +20,6 @@ public class EFastQueryProvider extends ContentProvider {
     private static final String TAG = "EFastQueryProvider";
     private static final String PACKAGE_NAME = "bravest.ptt.efastquery";
     private static final String DATABASE_NAME = "efastquery.db";
-    private static final int HISTORY = 1;
-    private static final int HISTORY_ID = 2;
 
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     private EFastQueryDBHelper mOpenHelper;
@@ -29,6 +27,8 @@ public class EFastQueryProvider extends ContentProvider {
     static {
         sUriMatcher.addURI(PACKAGE_NAME, "history", 1);
         sUriMatcher.addURI(PACKAGE_NAME, "history/#", 2);
+        sUriMatcher.addURI(PACKAGE_NAME, "favorite", 3);
+        sUriMatcher.addURI(PACKAGE_NAME, "favorite/#", 4);
     }
 
     private void getDatabaseHelper() {
@@ -63,6 +63,14 @@ public class EFastQueryProvider extends ContentProvider {
                 sqliteQueryBuilder.appendWhere("_id=");
                 sqliteQueryBuilder.appendWhere(uri.getLastPathSegment());
                 break;
+            case 3:
+                sqliteQueryBuilder.setTables("favorite");
+                break;
+            case 4:
+                sqliteQueryBuilder.setTables("favorite");
+                sqliteQueryBuilder.appendWhere("_id=");
+                sqliteQueryBuilder.appendWhere(uri.getLastPathSegment());
+                break;
             default:
                 throw new IllegalArgumentException("Unknown uri " + uri);
         }
@@ -84,6 +92,10 @@ public class EFastQueryProvider extends ContentProvider {
                 return "vnd.android.cursor.dir/history";
             case 2:
                 return "vnd.android.cursor.item/history";
+            case 3:
+                return "vnd.android.cursor.dir/favorite";
+            case 4:
+                return "vnd.android.cursor.item/favorite";
             default:
                 throw new IllegalArgumentException("Unknown URI");
         }
@@ -103,6 +115,10 @@ public class EFastQueryProvider extends ContentProvider {
             case 1:
             case 2:
                 rowId = db.insert("history", null, values);
+                break;
+            case 3:
+            case 4:
+                rowId = db.insert("favorite", null, values);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URL");
@@ -127,6 +143,12 @@ public class EFastQueryProvider extends ContentProvider {
             case 2:
                 affectedRows = db.delete("history", "_id=" + uri.getLastPathSegment() + " AND ( " + where + " )", whereArgs);
                 break;
+            case 3:
+                affectedRows = db.delete("favorite", where, whereArgs);
+                break;
+            case 4:
+                affectedRows = db.delete("favorite", "_id=" + uri.getLastPathSegment() + " AND ( " + where + " )", whereArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Cannot delete from URI: " + uri);
         }
@@ -146,6 +168,12 @@ public class EFastQueryProvider extends ContentProvider {
                 break;
             case 2:
                 affectedRows = db.update("history", values, "_id" + uri.getLastPathSegment(), null);
+                break;
+            case 3:
+                affectedRows = db.update("favorite", values, where, whereArgs);
+                break;
+            case 4:
+                affectedRows = db.update("favorite", values, "_id" + uri.getLastPathSegment(), null);
                 break;
             default:
                 throw new UnsupportedOperationException("Cannot update URI: " + uri);

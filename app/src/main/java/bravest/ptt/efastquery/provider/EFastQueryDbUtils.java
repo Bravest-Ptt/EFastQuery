@@ -13,16 +13,31 @@ public class EFastQueryDbUtils {
 
     private static final String TAG = "EFastQueryDbUtils";
 
-    public static abstract interface History extends BaseColumns {
-        public static final String TABLE_NAME = "history";
-        public static final Uri CONTENT_URI = Uri.parse("content://bravest.ptt.efastquery/history");
-        public static final String DATE = "date";
-        public static final String REQUEST = "request";
-        public static final String TRANSLATIONS = "translations";
-        public static final String EXPLAINS = "explains";
-        public static final String WEBS = "webs";
-        public static final String PHONETIC = "phonetic";
-        public static final String US_PHONETIC = "us_phonetic";
-        public static final String UK_PHONETIC = "uk_phonetic";
+    public interface History extends BaseColumns {
+        String TABLE_NAME = "history";
+        Uri CONTENT_URI = Uri.parse("content://bravest.ptt.efastquery/history");
+        String DATE = "date";
+        String REQUEST = "request";
+        String TRANSLATIONS = "translations";
+        String EXPLAINS = "explains";
+        String WEBS = "webs";
+        String PHONETIC = "phonetic";
+        String US_PHONETIC = "us_phonetic";
+        String UK_PHONETIC = "uk_phonetic";
+        String FAVORITE = "favorite";
+    }
+
+    public interface Favorite extends BaseColumns {
+        String TABLE_NAME = "favorite";
+        Uri CONTENT_URI = Uri.parse("content://bravest.ptt.efastquery/favorite");
+        String DATE = "date";
+        String REQUEST = "request";
+        String TRANSLATIONS = "translations";
+        String EXPLAINS = "explains";
+        String WEBS = "webs";
+        String PHONETIC = "phonetic";
+        String US_PHONETIC = "us_phonetic";
+        String UK_PHONETIC = "uk_phonetic";
+        String GROUPS = "groups";
     }
 }

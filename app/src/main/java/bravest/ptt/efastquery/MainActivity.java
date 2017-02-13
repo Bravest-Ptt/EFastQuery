@@ -3,8 +3,12 @@ package bravest.ptt.efastquery;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.ColorStateList;
+import android.content.res.XmlResourceParser;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.ColorRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -18,6 +22,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+
+import java.io.IOException;
+
 import bravest.ptt.efastquery.view.ESearchFloatButton;
 
 public class MainActivity extends AppCompatActivity
@@ -26,6 +36,8 @@ public class MainActivity extends AppCompatActivity
     public static final String TAG = "MainActivity";
 
     private MainService mMainService;
+
+    private NavigationView mNavigationView;
 
     private ServiceConnection mMainConnection = new ServiceConnection() {
         @Override
@@ -56,8 +68,31 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mNavigationView.setNavigationItemSelectedListener(this);
+
+        /*
+        //Creates a ColorStateList from an XML document using given a set of Resources
+        //and a Resource.Theme.
+
+        //The resource defined in 'color' subdirectory which in resource directory.
+
+        //If you want show original pictures color, you can use 'null' as the param for setItemIconTintList
+
+        ColorStateList colorStateList = null;
+        try {
+            XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+            if (Build.VERSION.SDK_INT < 23) {
+                colorStateList = ColorStateList.createFromXml(getResources(),parser);
+            } else {
+                colorStateList = ColorStateList.createFromXml(getResources(),parser,null);
+            }
+        } catch (XmlPullParserException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+        mNavigationView.setItemIconTintList(null);
     }
 
     private void bindService() {
@@ -118,6 +153,9 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        @ColorRes
+        int colorId = R.color.nav_default;
+
         switch (id) {
             case R.id.nav_open:
                 showFloatingWindow();
@@ -125,8 +163,25 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_close:
                 hideFloatingWindow();
                 break;
+            case R.id.nav_home:
+                colorId = R.color.nav_home_selector;
+                break;
+            case R.id.nav_export:
+                colorId = R.color.nav_export_selector;
+                break;
+            case R.id.nav_import:
+                colorId = R.color.nav_import_selector;
+                break;
+            case R.id.nav_favorite_book:
+                colorId = R.color.nav_favorite_selector;
+                break;
             default:
                 break;
+        }
+        if (Build.VERSION.SDK_INT < 23) {
+            mNavigationView.setItemTextColor(this.getResources().getColorStateList(colorId));
+        } else {
+            mNavigationView.setItemTextColor(this.getResources().getColorStateList(colorId, null));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -22,6 +22,15 @@
     <color name="MaterialBluegray_50_4_item_voice">#eceff1</color>
     <color name="MaterialYellow_400_4_item_favorite">#ffee58</color>
     <color name="MaterialBluegray_500_4_item_delete">#f44336</color>
+
+    //indicator
+    <color name="icon_color_icon_font">#8a8a8a</color>
+    <color name="first_icon_color_red">#f44336</color>
+    <color name="fourth_icon_color_purple">#9c27b0</color>
+    <color name="second_icon_color_orange">#ff9800</color>
+    <color name="third_icon_color_blue">#03a9f4</color>
+
+    <color name="nav_item_text_color_default">#263238</color>
 </resources>
 
 

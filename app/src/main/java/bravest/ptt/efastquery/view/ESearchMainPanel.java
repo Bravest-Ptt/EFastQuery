@@ -30,7 +30,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -38,6 +37,7 @@ import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.data.Result;
 import bravest.ptt.efastquery.data.TranslateListener;
 import bravest.ptt.efastquery.data.TranslateManager;
+import bravest.ptt.efastquery.provider.FavoriteManager;
 import bravest.ptt.efastquery.provider.HistoryManager;
 import bravest.ptt.efastquery.utils.Utils;
 import bravest.ptt.efastquery.view.ESearchFloatButton.*;
@@ -64,7 +64,8 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
     private TranslateManager mTm;
     private TextToSpeech mTTS;
     private HistoryManager mHm;
-    private FABManager mFm;
+    private FABManager mFABm;
+    private FavoriteManager mFm;
     private FloatPanelVisibleListener mButtonVisibleListener;
 
     private int mState = STATE_INPUT;
@@ -117,7 +118,8 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         mTm.setTranslateListener(this);
         mTTS = new TextToSpeech(mContext, this);
         mHm = new HistoryManager(mContext);
-        mFm = new FABManager(mContext);
+        mFABm = new FABManager(mContext);
+        mFm = new FavoriteManager(mContext);
         mHistoryArray = new ArrayList<>();
 
         mHomeRecentReceiver = new HomeRecentReceiver();
@@ -139,9 +141,6 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
             public void onItemClicked(View view, int position) {
                 switch (view.getId()) {
                     case R.id.item_voice:
-                        break;
-                    case R.id.item_favourite:
-
                         break;
                     case R.id.item_delete:
                         handleTransaction(position, mHistoryArray.get(position), TRANSACTION_DELETE);
@@ -211,8 +210,8 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         mFabSpeak.setOnClickListener(this);
         mFabFavorite.setOnClickListener(this);
 
-        mFm.addFAB(mFabSpeak);
-        mFm.addFAB(mFabFavorite);
+        mFABm.addFAB(mFabSpeak);
+        mFABm.addFAB(mFabFavorite);
 
         initShowPanel();
     }
@@ -266,6 +265,11 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
                 break;
             case R.id.main_panel_favorite:
                 Log.d(TAG, "onClick: favorite");
+                if (mFm.isFavoriteExist(mRequest)) {
+                    mFm.deleteFavorite(mRequest);
+                } else {
+                    mFm.insertFavorite(getResultFromArray(mRequest), null);
+                }
                 break;
             case R.id.main_panel_search_clean:
                 mMainInput.setText("");
@@ -328,7 +332,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         mLastResult = result;
         mProgressBar.setVisibility(View.GONE);
 
-        mFm.popUpFAB(FABManager.ACTION_TRANS_SUCCESS);
+        mFABm.popUpFAB(FABManager.ACTION_TRANS_SUCCESS);
         mMainShowResultText.setText(result.getResultWithQuery());
     }
 
@@ -500,7 +504,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
     @Override
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         if (mState == STATE_TRANS_SUCCESS || mState == STATE_TRANS_FAILED) {
-            mFm.pullDownFAB(FABManager.ACTION_INPUT_NULL);
+            mFABm.pullDownFAB(FABManager.ACTION_INPUT_NULL);
         }
         mState = STATE_INPUT;
     }
@@ -541,7 +545,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         }
         mHm = null;
         mTm = null;
-        mFm = null;
+        mFABm = null;
         mWm = null;
         mTTS = null;
         mButtonVisibleListener = null;

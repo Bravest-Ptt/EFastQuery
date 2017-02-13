@@ -20,6 +20,7 @@ public class EFastQueryDBHelper extends SQLiteOpenHelper {
     }
 
     private void createTable(SQLiteDatabase db) {
+        //Create history
         db.execSQL("CREATE TABLE IF NOT EXISTS history (" +
                 "_id INTEGER PRIMARY KEY," +
                 "date TimeStamp NOT NULL DEFAULT (datetime(CURRENT_TIMESTAMP,'localtime'))," +
@@ -29,7 +30,35 @@ public class EFastQueryDBHelper extends SQLiteOpenHelper {
                 "webs TEXT," +
                 "phonetic TEXT," +
                 "us_phonetic TEXT," +
-                "uk_phonetic TEXT);");
+                "uk_phonetic TEXT," +
+                "favorite INTEGER DEFAULT 0);");
+
+        //Create Favorite
+        db.execSQL("CREATE TABLE IF NOT EXISTS favorite (" +
+                "_id INTEGER PRIMARY KEY," +
+                "date TimeStamp NOT NULL DEFAULT (datetime(CURRENT_TIMESTAMP,'localtime'))," +
+                "request TEXT NOT NULL," +
+                "translations TEXT," +
+                "explains TEXT," +
+                "webs TEXT," +
+                "phonetic TEXT," +
+                "us_phonetic TEXT," +
+                "uk_phonetic TEXT," +
+                "groups TEXT DEFAULT 'null');");
+
+        db.execSQL("CREATE TRIGGER favorite_insert_listener" +
+                " AFTER INSERT" +
+                " ON favorite" +
+                " BEGIN" +
+                " UPDATE history SET favorite=1 WHERE (request=NEW.request);" +
+                " END;");
+
+        db.execSQL("CREATE TRIGGER favorite_delete_listener" +
+                " BEFORE DELETE" +
+                " ON favorite" +
+                " BEGIN" +
+                " UPDATE history SET favorite=0 WHERE (request=OLD.request);" +
+                " END;");
     }
 
     @Override

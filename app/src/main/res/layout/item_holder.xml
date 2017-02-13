@@ -39,17 +39,9 @@
         android:id="@+id/item_voice"
         android:layout_width="@dimen/item_width"
         android:layout_height="@dimen/item_height"
-        android:background="@color/MaterialBluegray_50_4_item_voice"
-        android:padding="@dimen/item_image_padding"
-        android:src="@mipmap/voice_item" />
-
-    <ImageView
-        android:id="@+id/item_favourite"
-        android:layout_width="@dimen/item_width"
-        android:layout_height="@dimen/item_height"
         android:background="@color/MaterialYellow_400_4_item_favorite"
         android:padding="@dimen/item_image_padding"
-        android:src="@mipmap/favorite_item" />
+        android:src="@mipmap/voice_item" />
 
     <ImageView
         android:id="@+id/item_delete"

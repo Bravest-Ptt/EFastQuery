@@ -2,18 +2,33 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@mipmap/home_nav"
+            android:title="@string/home" />
+        <item
+            android:id="@+id/nav_export"
+            android:icon="@mipmap/export_nav"
+            android:title="@string/export_file" />
+        <item
+            android:id="@+id/nav_import"
+            android:icon="@mipmap/import_nav"
+            android:title="@string/import_file" />
+        <item
+            android:id="@+id/nav_favorite_book"
+            android:icon="@mipmap/favorite_nav"
+            android:title="@string/favorite_book" />
     </group>
 
     <item android:title="Settings">
         <menu>
             <item
                 android:id="@+id/nav_open"
-                android:icon="@android:drawable/ic_menu_search"
+                android:icon="@mipmap/search_button"
                 android:title="@string/open_search_view" />
             <item
                 android:id="@+id/nav_close"
-                android:icon="@android:drawable/ic_menu_close_clear_cancel"
+                android:icon="@mipmap/delete_input"
                 android:title="@string/close_search_view" />
         </menu>
     </item>
