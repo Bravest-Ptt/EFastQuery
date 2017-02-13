@@ -6,11 +6,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 /**
  * Created by root on 12/27/16.
  */
 
-public class Result {
+public class Result implements Serializable {
 
     private static final String TAG = "Result";
     //RESULT-NORMAL
@@ -71,7 +73,9 @@ public class Result {
 
     private void parseTranslation() throws JSONException {
         translation = mResult.getJSONArray(YouDaoItem.YOUDAO_TRANSLATION);
+        Log.d(TAG, "parseTranslation: translation = " + translation.getString(0));
         translation_str = jsonArray2String(translation, JSON_SPLIT);
+        Log.d(TAG, "parseTranslation: parse trans = " + translation_str);
     }
 
     private void parseBasic() throws JSONException {
@@ -155,10 +159,12 @@ public class Result {
     }
 
     public String getTranslateString() {
+        Log.d(TAG, "getTranslateString: get = " + translation_str);
         return translation_str;
     }
 
     public void setTranslateString(String trans) {
+        Log.d(TAG, "setTranslateString: trans = " + trans);
         translation_str = trans;
         if (translation == null) {
             translation = string2JsonArray(trans, JSON_SPLIT);
@@ -194,8 +200,9 @@ public class Result {
         }
         try {
             int length = jsonArray.length();
+            Log.d(TAG, "jsonArray2String: length = "  + length);
             for (int i = 0; i < length; i++) {
-                if (i != length - 1)
+                if (i != length - 1 || length == 1)
                     result += jsonArray.getString(i) + split;
             }
         } catch (JSONException e) {

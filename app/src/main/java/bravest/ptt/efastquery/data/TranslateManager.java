@@ -4,6 +4,7 @@ package bravest.ptt.efastquery.data;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import bravest.ptt.efastquery.R;
 
@@ -12,6 +13,8 @@ import bravest.ptt.efastquery.R;
  */
 
 public class TranslateManager {
+
+    private static final String TAG = "TranslateManager";
 
     private Context mContext;
     private TranslateEngine mEngine;
@@ -29,7 +32,8 @@ public class TranslateManager {
                     if (mKey == mRequest.getKey()) {
                         mRequest.setHasResponse(true);
                         if (mListener != null) {
-                            mListener.onTranslateSuccess((Result) msg.obj);
+                            Log.d(TAG, "handleMessage: " + ((Result) msg.getData().getSerializable("result")).getTranslateString());
+                            mListener.onTranslateSuccess(msg.getData().getSerializable("result"));
                         }
                     }
                     break;

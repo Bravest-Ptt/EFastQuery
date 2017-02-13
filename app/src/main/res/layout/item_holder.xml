@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.mcxtzhang.swipemenulib.SwipeMenuLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
+    android:layout_height="45dp"
     android:clickable="true"
     android:paddingBottom="1dp">
 
     <LinearLayout
+        android:id="@+id/item_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="center"
         android:orientation="horizontal"
         android:paddingBottom="5dp">
 
         <TextView
             android:id="@+id/item_content_request"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:background="?android:attr/selectableItemBackground"
+            android:layout_height="@dimen/item_height"
             android:gravity="center"
             android:text="History"
             android:textColor="#000000" />
@@ -23,8 +25,7 @@
         <TextView
             android:id="@+id/item_content_explains"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="?android:attr/selectableItemBackground"
+            android:layout_height="@dimen/item_height"
             android:gravity="center"
             android:minWidth="5000dp"
             android:paddingLeft="4dp"
@@ -36,25 +37,25 @@
 
     <ImageView
         android:id="@+id/item_voice"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="#d9dee4"
-        android:padding="8dp"
+        android:layout_width="@dimen/item_width"
+        android:layout_height="@dimen/item_height"
+        android:background="@color/MaterialBluegray_50_4_item_voice"
+        android:padding="@dimen/item_image_padding"
         android:src="@mipmap/voice_item" />
 
     <ImageView
         android:id="@+id/item_favourite"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="#ecd50a"
-        android:padding="8dp"
+        android:layout_width="@dimen/item_width"
+        android:layout_height="@dimen/item_height"
+        android:background="@color/MaterialYellow_400_4_item_favorite"
+        android:padding="@dimen/item_image_padding"
         android:src="@mipmap/favorite_item" />
 
     <ImageView
         android:id="@+id/item_delete"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="#ff4a57"
-        android:padding="8dp"
+        android:layout_width="@dimen/item_width"
+        android:layout_height="@dimen/item_height"
+        android:background="@color/MaterialBluegray_500_4_item_delete"
+        android:padding="@dimen/item_image_padding"
         android:src="@mipmap/delete_item" />
 </com.mcxtzhang.swipemenulib.SwipeMenuLayout>

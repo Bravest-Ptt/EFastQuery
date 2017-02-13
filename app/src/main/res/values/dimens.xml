@@ -18,4 +18,8 @@
 
     <dimen name="fab_size">48px</dimen>
     <dimen name="fab_padding">6px</dimen>
+
+    <dimen name="item_height">45dp</dimen>
+    <dimen name="item_width">45dp</dimen>
+    <dimen name="item_image_padding">8dp</dimen>
 </resources>

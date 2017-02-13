@@ -19,6 +19,9 @@
     <color name="MaterialBlue_500">#2196f3</color>
     <color name="MaterialBlue_600">#1e88e5</color>
 
+    <color name="MaterialBluegray_50_4_item_voice">#eceff1</color>
+    <color name="MaterialYellow_400_4_item_favorite">#ffee58</color>
+    <color name="MaterialBluegray_500_4_item_delete">#f44336</color>
 </resources>
 
 

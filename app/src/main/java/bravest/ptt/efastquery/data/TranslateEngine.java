@@ -2,6 +2,7 @@ package bravest.ptt.efastquery.data;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.os.Bundle;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
@@ -12,6 +13,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -95,7 +97,7 @@ class TranslateEngine {
                     if (TextUtils.equals(errorCode, S.s(Result.RESULT_SUCCESS))) {
                         Message resultMessage = Message.obtain();
                         resultMessage.what = Result.RESULT_SUCCESS;
-                        resultMessage.obj = new Result(resultJson);
+                        resultMessage.setData(newResult(resultJson));
                         mRequest.mHandler.sendMessage(resultMessage);
                     } else {
                         mRequest.mErrHandler.sendEmptyMessage(S.i(errorCode));
@@ -126,6 +128,11 @@ class TranslateEngine {
         askForYouDao.start();
     }
 
+    private Bundle newResult(JSONObject resultJson) {
+        Bundle b = new Bundle();
+        b.putSerializable("result", new Result(resultJson));
+        return b;
+    }
     class NotSetRequestException extends Exception {
 
     }
