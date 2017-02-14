@@ -31,6 +31,23 @@
     <color name="third_icon_color_blue">#03a9f4</color>
 
     <color name="nav_item_text_color_default">#263238</color>
+
+    //home
+    <color name="home_red_500_4_toolbar">#f44336</color>
+    <color name="home_red_600_4_status_bar">#e53935</color>
+
+    //export
+    <color name="export_orange_200_4_card_view">#ffe0b2</color>
+    <color name="export_orange_500_4_toolbar">#ff9800</color>
+    <color name="export_orange_600_4_status_bar">#fb8c00</color>
+
+    //import
+    <color name="import_blue_500_4_toolbar">#2196f3</color>
+    <color name="import_blue_600_4_status_bar">#1e88e5</color>
+
+    //favorite
+    <color name="favorite_purple_500_4_toolbar">#9c27b0</color>
+    <color name="favorite_purple_600_4_status_bar">#8e24aa</color>
 </resources>
 
 

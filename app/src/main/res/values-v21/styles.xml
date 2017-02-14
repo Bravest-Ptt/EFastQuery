@@ -17,4 +17,10 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
+
+    <style name="AppTheme.export" parent="AppTheme.NoActionBar">
+        <item name="colorPrimary">@color/export_orange_500_4_toolbar</item>
+        <item name="colorPrimaryDark">@color/export_orange_600_4_status_bar</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
 </resources>

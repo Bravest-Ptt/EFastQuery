@@ -1,11 +1,14 @@
 package bravest.ptt.efastquery.data.wordbook;
 
+import android.util.Log;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,21 +25,29 @@ import javax.xml.parsers.ParserConfigurationException;
 
 public class XmlParser {
 
+    private static final String TAG = "PXmlParser";
+
     private XmlParser() {
 
     }
 
-    public XmlParser getInstance() {
+    public static XmlParser getInstance() {
         return new XmlParser();
     }
 
 
     public ArrayList<WordBook> parseXml(String fileName) {
         ArrayList<WordBook> datas = new ArrayList<>();
+        File file = new File(fileName);
+        if (!file.exists()) {
+            Log.d(TAG, "parseXml: file not exist");
+            return datas;
+        }
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
-            Document doc = db.parse(fileName);
+            Document doc = db.parse(file);
+            Log.d(TAG, "parseXml: filename = " + fileName);
 
             doc.getDocumentElement().normalize();
             NodeList nlRoot = doc.getElementsByTagName(XmlBuilder.ELEMENT_ROOT);
@@ -45,6 +56,7 @@ public class XmlParser {
             NodeList nlItem = eleRoot.getElementsByTagName(XmlBuilder.ELEMENT_ITEM);
             int itemLength = nlItem.getLength();
 
+            Log.d(TAG, "parseXml: itemlength = " +itemLength);
             for (int i = 0; i < itemLength; i++) {
                 Element eleItem = (Element) nlItem.item(i);
                 WordBook data = new WordBook();
@@ -83,13 +95,15 @@ public class XmlParser {
             }
 
         } catch (ParserConfigurationException e) {
+            Log.d(TAG, "parseXml: e " + e + 1);
             System.out.println(e.getMessage());
         } catch (SAXException e) {
+            Log.d(TAG, "parseXml: e " + e + 2);
             System.out.println(e.getMessage());
         } catch (IOException e) {
+            Log.d(TAG, "parseXml: e " + e + 3);
             System.out.println(e.getMessage());
-        }finally {
-            return datas;
         }
+        return datas;
     }
 }

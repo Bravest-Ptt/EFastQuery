@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">EFastQuery</string>
+    <string name="app_name">快查英语</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -12,7 +12,23 @@
     <string name="translate_hint">在此输入需要翻译的文本</string>
 
     <string name="export_file">导出</string>
+    <string name="export_file_desc">
+        将单词本中的单词以文件形式保存到手机。\n
+        目前支持导出以下格式：\n
+        <font color="#2196f3">.doc</font>  可用于打印，不可用于导入。\n
+        <font color="#2196f3">.txt</font> 可用于打印，不可用于导入。\n
+        <font color="#2196f3">.xml</font> 可用于导入【快查英语App】和【有道词典PC版】。您可通过【有道词典PC版】将单词本导入并同步至有道云。</string>
+    <string name="export_doc">.doc</string>
+    <string name="export_txt">.txt</string>
+    <string name="export_xml">.xml</string>
+    <string name="export_doc_desc"></string>
+
     <string name="import_file">导入</string>
     <string name="favorite_book">单词本</string>
     <string name="home">首页</string>
+
+    <string name="permission_not_granted">获取『读写外部存储』权限失败，将导致导入和导出功能无法正常使用！</string>
+    <string name="select_file_import">选择xml文件导入</string>
+    <string name="please_install_file_manager">请先安装文件管理器</string>
+    <string name="just_support_xml">目前仅支持有道词典PC版导出的.xml格式导入！</string>
 </resources>

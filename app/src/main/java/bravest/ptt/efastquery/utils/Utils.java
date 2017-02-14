@@ -1,14 +1,21 @@
 package bravest.ptt.efastquery.utils;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -85,5 +92,42 @@ public class Utils {
     public static boolean isKeyboardShowing(Context context) {
         InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         return inputMethodManager.isActive();
+    }
+
+    @TargetApi(value = Build.VERSION_CODES.M)
+    public static boolean requestPermissions(Activity activity, int requestCode, String[] permissions) {
+        List<String> deniedPermissions = findDeniedPermissions(activity, permissions);
+        if (deniedPermissions.size() > 0) {
+            activity.requestPermissions(deniedPermissions.toArray(new String[deniedPermissions.size()]), requestCode);
+            return false;
+        }
+        return true;
+    }
+
+    @TargetApi(value = Build.VERSION_CODES.M)
+    public static List<String> findDeniedPermissions(Activity activity, String... permissions) {
+        List<String> denyPermissions = new ArrayList<>();
+        for (String value : permissions) {
+            if (activity.checkSelfPermission(value) != PackageManager.PERMISSION_GRANTED) {
+                denyPermissions.add(value);
+            }
+        }
+        return denyPermissions;
+    }
+    private static boolean isOverMarshmallow() {
+        return Build.VERSION.SDK_INT >= 23;
+    }
+
+    //StatusBar
+    public static void setWindowStatusBarColor(Activity activity, int colorResId) {
+        try{
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+                Window window = activity.getWindow();
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.setStatusBarColor(activity.getResources().getColor(colorResId));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

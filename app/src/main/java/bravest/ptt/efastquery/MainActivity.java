@@ -1,16 +1,27 @@
 package bravest.ptt.efastquery;
 
+import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.ColorRes;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -21,23 +32,46 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-import bravest.ptt.efastquery.view.ESearchFloatButton;
+import bravest.ptt.efastquery.data.wordbook.WordBook;
+import bravest.ptt.efastquery.data.wordbook.XmlBuilder;
+import bravest.ptt.efastquery.data.wordbook.XmlParser;
+import bravest.ptt.efastquery.fragment.ExportFragment;
+import bravest.ptt.efastquery.fragment.FavoriteFragment;
+import bravest.ptt.efastquery.fragment.ImportFragment;
+import bravest.ptt.efastquery.fragment.MainFragment;
+import bravest.ptt.efastquery.utils.Utils;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final String TAG = "MainActivity";
 
+    public static final int REQUEST_CODE = 100;
+
     private MainService mMainService;
 
     private NavigationView mNavigationView;
+    private Toolbar mToolbar;
+
+    private FragmentManager mFragmentManager;
+    private HashMap<Integer, Fragment> mFragmentMap;
+    private MainFragment mMainFragment;
+    private ExportFragment mExportFragment;
+    private ImportFragment mImportFragment;
+    private FavoriteFragment mFavoriteFragment;
+
+    private Fragment mCurrentFragment;
+
 
     private ServiceConnection mMainConnection = new ServiceConnection() {
         @Override
@@ -68,8 +102,43 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        //navigation View
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
+        mNavigationView.setCheckedItem(R.id.nav_home);
+        mNavigationView.setItemTextColor(this.getResources().getColorStateList(R.color.nav_home_selector));
+
+        //Toolbar
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        //Init fragment
+        mFragmentManager = getSupportFragmentManager();
+        mFragmentMap = new HashMap<>();
+        mMainFragment = new MainFragment();
+        mExportFragment = new ExportFragment();
+        mImportFragment = new ImportFragment();
+        mFavoriteFragment = new FavoriteFragment();
+        mFragmentMap.put(R.id.nav_home, mMainFragment);
+        mFragmentMap.put(R.id.nav_export,mExportFragment);
+        mFragmentMap.put(R.id.nav_import,mImportFragment);
+        mFragmentMap.put(R.id.nav_favorite_book,mFavoriteFragment);
+
+        //set default fragment
+        initFragments(R.id.nav_home);
+
+        //CheckPermission
+        if (Build.VERSION.SDK_INT >= 23) {
+            boolean allGranted = Utils.requestPermissions(this, REQUEST_CODE, new String[] {
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+            });
+
+            if (allGranted) {
+//                XmlBuilder xmlBuilder = XmlBuilder.getInstance();
+//                ArrayList<WordBook> data = new ArrayList<>();
+//                xmlBuilder.domCreateXML(data,null);
+            }
+        }
 
         /*
         //Creates a ColorStateList from an XML document using given a set of Resources
@@ -95,10 +164,38 @@ public class MainActivity extends AppCompatActivity
         mNavigationView.setItemIconTintList(null);
     }
 
+    private void initFragments(int id) {
+        Fragment current = mFragmentMap.get(id);
+        Fragment old = mCurrentFragment;
+        if (current == null) {
+            return;
+        }
+
+        //One fragment transaction @method commit can not be used twice, it will cause "commit already called".
+        FragmentTransaction transaction = mFragmentManager.beginTransaction();
+        transaction.replace(R.id.content_view, current);
+        mCurrentFragment = current;
+        transaction.commit();
+    }
+
     private void bindService() {
         Intent intent = new Intent(this, MainService.class);
         bindService(intent, mMainConnection, BIND_AUTO_CREATE);
         startService(intent);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode != 100) return;
+        for (int i = 0; i < permissions.length; i++) {
+            if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                continue;
+            }
+            if (TextUtils.equals(permissions[i], Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    || TextUtils.equals(permissions[i], Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                Toast.makeText(this,getString(R.string.permission_not_granted),Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     public void onClick(View view) {
@@ -156,6 +253,7 @@ public class MainActivity extends AppCompatActivity
         @ColorRes
         int colorId = R.color.nav_default;
 
+        initFragments(id);
         switch (id) {
             case R.id.nav_open:
                 showFloatingWindow();
@@ -164,29 +262,56 @@ public class MainActivity extends AppCompatActivity
                 hideFloatingWindow();
                 break;
             case R.id.nav_home:
-                colorId = R.color.nav_home_selector;
+                setStatusBarToolBarHeader(
+                        R.string.home,
+                        R.color.home_red_500_4_toolbar,
+                        R.color.home_red_600_4_status_bar,
+                        R.color.nav_home_selector);
                 break;
             case R.id.nav_export:
-                colorId = R.color.nav_export_selector;
+                setStatusBarToolBarHeader(
+                        R.string.export_file,
+                        R.color.export_orange_500_4_toolbar,
+                        R.color.export_orange_600_4_status_bar,
+                        R.color.nav_export_selector);
                 break;
             case R.id.nav_import:
-                colorId = R.color.nav_import_selector;
+                setStatusBarToolBarHeader(
+                        R.string.import_file,
+                        R.color.import_blue_500_4_toolbar,
+                        R.color.import_blue_600_4_status_bar,
+                        R.color.nav_import_selector);
                 break;
             case R.id.nav_favorite_book:
-                colorId = R.color.nav_favorite_selector;
+                setStatusBarToolBarHeader(
+                        R.string.favorite_book,
+                        R.color.favorite_purple_500_4_toolbar,
+                        R.color.favorite_purple_600_4_status_bar,
+                        R.color.nav_favorite_selector);
                 break;
             default:
                 break;
-        }
-        if (Build.VERSION.SDK_INT < 23) {
-            mNavigationView.setItemTextColor(this.getResources().getColorStateList(colorId));
-        } else {
-            mNavigationView.setItemTextColor(this.getResources().getColorStateList(colorId, null));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void setStatusBarToolBarHeader(int titleString, int mainColor, int statusBarColor, int itemColor) {
+        //Toolbar
+        mToolbar.setTitle(getString(titleString));
+        mToolbar.setBackgroundColor(getResources().getColor(mainColor));
+        //Status bar color
+        Utils.setWindowStatusBarColor(this, statusBarColor);
+        //Head color
+        mNavigationView.getHeaderView(0).setBackgroundColor(getResources().getColor(mainColor));
+        //navigation item color
+        if (Build.VERSION.SDK_INT < 23) {
+            mNavigationView.setItemTextColor(this.getResources().getColorStateList(itemColor));
+        } else {
+            mNavigationView.setItemTextColor(this.getResources().getColorStateList(itemColor, null));
+        }
     }
 
     private void showFloatingWindow() {
@@ -198,6 +323,40 @@ public class MainActivity extends AppCompatActivity
     private void hideFloatingWindow() {
         if (mMainService != null) {
             mMainService.hideFloatingWindow();
+        }
+    }
+
+    private void showFileChooser() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("text/plain");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        try{
+            startActivityForResult(Intent.createChooser(intent, getString(R.string.select_file_import)),REQUEST_CODE);
+        }catch (ActivityNotFoundException e) {
+            Toast.makeText(this, getString(R.string.please_install_file_manager), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode !=  REQUEST_CODE) {
+            return;
+        }
+        if (resultCode == RESULT_OK) {
+            Uri uri = data.getData();
+            String filePath = "/storage/emulated/0/efastquery/xml/default_1487050240222.xml";
+            if (filePath == null || !filePath.endsWith("xml")) {
+                Toast.makeText(this, getString(R.string.just_support_xml), Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Log.d(TAG, "onActivityResult: filepath = " + filePath);
+
+            ArrayList<WordBook> words = XmlParser.getInstance().parseXml(filePath);
+            Log.d(TAG, "onActivityResult: words size = " + words.size());
+            for (WordBook w : words) {
+                Log.d(TAG, "onActivityResult: word = " + w.getWord() + ", phonetic = " + w.getPhonetic());
+            }
         }
     }
 }
