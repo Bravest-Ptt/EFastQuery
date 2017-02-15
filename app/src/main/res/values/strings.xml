@@ -4,24 +4,44 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <string name="action_search">Search</string>
     <string name="action_settings">Settings</string>
     <string name="open_search_view">开启快查英语悬浮窗</string>
     <string name="close_search_view">关闭快查英语悬浮窗</string>
     <string name="input_hint">请输入中/英文</string>
     <string name="translate_error">查询失败</string>
     <string name="translate_hint">在此输入需要翻译的文本</string>
+    <string name="have_favorite">成功加入单词本%1$s</string>
+    <string name="have_remove_favorite">成功移除单词</string>
 
     <string name="export_file">导出</string>
     <string name="export_file_desc">
-        将单词本中的单词以文件形式保存到手机。\n
-        目前支持导出以下格式：\n
-        <font color="#2196f3">.doc</font>  可用于打印，不可用于导入。\n
-        <font color="#2196f3">.txt</font> 可用于打印，不可用于导入。\n
-        <font color="#2196f3">.xml</font> 可用于导入【快查英语App】和【有道词典PC版】。您可通过【有道词典PC版】将单词本导入并同步至有道云。</string>
+        <font color="#ff5722"><b>将单词本以文件形式保存到手机</b></font>\n
+        支持导出以下格式：\n
+        <font color="#2196f3"><b>.doc .docx</b></font>  可用于打印，不可用于导入。\n
+        <font color="#2196f3"><b>.txt</b></font> 可用于打印，不可用于导入。\n
+        <font color="#2196f3"><b>.xml</b></font> 可用于导入【快查英语App】和【有道词典PC版】。您可通过【有道词典PC版】将单词本导入并同步至有道云。</string>
     <string name="export_doc">.doc</string>
     <string name="export_txt">.txt</string>
     <string name="export_xml">.xml</string>
     <string name="export_doc_desc"></string>
+    <string name="export_file_save_name">保存文件名</string>
+    <string-array name="export_spinner_entries">
+        <item>.xml</item>
+        <item>.doc</item>
+        <item>.docx</item>
+        <item>.txt</item>
+    </string-array>
+
+    <string-array name="export_group_entries">
+        <item>所有单词</item>
+    </string-array>
+    <string name="export_directory_desc"><font color="#000000"><b>文件将保存在</b></font></string>
+    <string name="export_directory_path">/手机存储/efastquery/%1$s/</string>
+    <string name="export_save">保存</string>
+    <string name="export_select_group"><font color="#000000"><b>选择需要导出的单词组</b></font></string>
+    <string name="export_input_file_name"><font color="#000000"><b>输入文件名</b></font></string>
+    <string name="export_group_default">所有单词</string>
 
     <string name="import_file">导入</string>
     <string name="favorite_book">单词本</string>

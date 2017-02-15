@@ -1,12 +1,18 @@
 package bravest.ptt.efastquery.provider;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.util.ArraySet;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
+import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.data.Result;
 
 /**
@@ -15,6 +21,9 @@ import bravest.ptt.efastquery.data.Result;
 
 public class FavoriteManager {
     private static final String TAG = "FavoriteManager";
+
+    public static final String SP_NAME = "efastquery.xml";
+    public static final String FM_GROUP = "fm_groups";
 
     private Context mContext;
     private ContentResolver mResolver;
@@ -108,5 +117,23 @@ public class FavoriteManager {
 
     public void deleteAllFavorite() {
         mResolver.delete(EFastQueryDbUtils.Favorite.CONTENT_URI, "_id!=-1", null);
+    }
+
+    public static void createGroup(Context context, String groupName) {
+        SharedPreferences sp = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        Set<String> set = new HashSet<String>();
+        set.add(context.getString(R.string.export_group_default));
+        Set<String> groupSet = sp.getStringSet(FM_GROUP, set);
+        groupSet.add(groupName);
+        editor.putStringSet(FM_GROUP, groupSet);
+        editor.commit();
+    }
+
+    public static String[] getGroup(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
+        Set<String> groupSet = sp.getStringSet(FM_GROUP, new HashSet<String>());
+        String[] groups = (String[]) groupSet.toArray();
+        return groups;
     }
 }

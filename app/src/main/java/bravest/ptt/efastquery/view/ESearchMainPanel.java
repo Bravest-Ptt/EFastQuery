@@ -30,6 +30,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
+
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -78,6 +81,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
     private View mMainShowResultPanel;
     private EditText mMainShowResultText;
     private RecyclerView mMainShowHistory;
+    private TwinklingRefreshLayout mMainHistoryRefresh;
     private ProgressBar mProgressBar;
 
     private FloatingActionButton mFabSpeak;
@@ -221,6 +225,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         mMainShowResultPanel = mMain.findViewById(R.id.main_panel_show_result);
         mMainShowResultText = (EditText) mMain.findViewById(R.id.main_panel_show_result_text);
         mMainShowHistory = (RecyclerView) mMain.findViewById(R.id.main_panel_show_history);
+        mMainHistoryRefresh = (TwinklingRefreshLayout) mMain.findViewById(R.id.main_panel_history_refresh);
         mProgressBar = (ProgressBar) mMain.findViewById(R.id.google_progressbar);
 
         //init
@@ -234,6 +239,27 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         //long click show checkbox && show fab in top (favorite, delete, select all, deselect all)
 //        mMainShowHistory
 
+        mMainHistoryRefresh.setOnRefreshListener(new RefreshListenerAdapter(){
+            @Override
+            public void onRefresh(final TwinklingRefreshLayout refreshLayout) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshLayout.finishRefreshing();
+                    }
+                },2000);
+            }
+
+            @Override
+            public void onLoadMore(final TwinklingRefreshLayout refreshLayout) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshLayout.finishLoadmore();
+                    }
+                },2000);
+            }
+        });
     }
 
     private void initLayoutParams() {
@@ -267,8 +293,14 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
                 Log.d(TAG, "onClick: favorite");
                 if (mFm.isFavoriteExist(mRequest)) {
                     mFm.deleteFavorite(mRequest);
+                    mFabFavorite.setImageResource(R.mipmap.favorite_item);
+                    Toast.makeText(mContext, mContext.getString(R.string.have_remove_favorite), Toast.LENGTH_SHORT).show();
                 } else {
                     mFm.insertFavorite(getResultFromArray(mRequest), null);
+                    mFabFavorite.setImageResource(R.mipmap.favorited);
+                    //get group
+                    String group = "";
+                    Toast.makeText(mContext, mContext.getString(R.string.have_favorite, group), Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.main_panel_search_clean:
@@ -329,6 +361,14 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         if (result == null) {
             return;
         }
+
+        //Update favorite icon
+        if (mFm.isFavoriteExist(result.query)) {
+            mFabFavorite.setImageResource(R.mipmap.favorited);
+        } else {
+            mFabFavorite.setImageResource(R.mipmap.favorite_item);
+        }
+
         mLastResult = result;
         mProgressBar.setVisibility(View.GONE);
 
@@ -355,7 +395,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
                 int index = mHistoryArray.indexOf(exist);
                 mHistoryArray.remove(exist);
                 mHistoryAdapter.notifyItemRemoved(index);
-                mHistoryArray.add(position,exist);
+                mHistoryArray.add(position, exist);
                 mHistoryAdapter.notifyItemInserted(position);
 
                 //Update database
@@ -379,7 +419,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         Log.d(TAG, "onTranslateSuccess: " + result.getTranslateString());
         if (!mHm.isRequestExist(mRequest) && result.explains != null) {
             handleTransaction(0, result, TRANSACTION_INSERT);
-        } else if (mHm.isRequestExist(mRequest)){
+        } else if (mHm.isRequestExist(mRequest)) {
             handleTransaction(0, result, TRANSACTION_UPDATE);
         }
         mMainShowHistory.scrollToPosition(0);
@@ -564,7 +604,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         mHistoryArray = null;
 
         //unregister broadcast
-        if (mHomeRecentReceiver != null ) {
+        if (mHomeRecentReceiver != null) {
             mContext.unregisterReceiver(mHomeRecentReceiver);
             mHomeRecentReceiver = null;
         }
@@ -590,7 +630,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         }
     }
 
-//---------------------------------------Class && Interface---------------------------------------//
+    //---------------------------------------Class && Interface---------------------------------------//
     class ROnScrollListener extends RecyclerView.OnScrollListener {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -609,7 +649,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (TextUtils.equals(action,Intent.ACTION_CLOSE_SYSTEM_DIALOGS)) {
+            if (TextUtils.equals(action, Intent.ACTION_CLOSE_SYSTEM_DIALOGS)) {
                 String reason = intent.getStringExtra(REASON);
                 switch (reason) {
                     case RECENT_APPS:
@@ -623,7 +663,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         }
     }
 
-    public interface ItemClickListener{
+    public interface ItemClickListener {
         void onItemClicked(View view, int position);
     }
 }

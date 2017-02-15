@@ -21,6 +21,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -119,16 +121,16 @@ public class MainActivity extends AppCompatActivity
         mImportFragment = new ImportFragment();
         mFavoriteFragment = new FavoriteFragment();
         mFragmentMap.put(R.id.nav_home, mMainFragment);
-        mFragmentMap.put(R.id.nav_export,mExportFragment);
-        mFragmentMap.put(R.id.nav_import,mImportFragment);
-        mFragmentMap.put(R.id.nav_favorite_book,mFavoriteFragment);
+        mFragmentMap.put(R.id.nav_export, mExportFragment);
+        mFragmentMap.put(R.id.nav_import, mImportFragment);
+        mFragmentMap.put(R.id.nav_favorite_book, mFavoriteFragment);
 
         //set default fragment
         initFragments(R.id.nav_home);
 
         //CheckPermission
         if (Build.VERSION.SDK_INT >= 23) {
-            boolean allGranted = Utils.requestPermissions(this, REQUEST_CODE, new String[] {
+            boolean allGranted = Utils.requestPermissions(this, REQUEST_CODE, new String[]{
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.READ_EXTERNAL_STORAGE
             });
@@ -193,7 +195,7 @@ public class MainActivity extends AppCompatActivity
             }
             if (TextUtils.equals(permissions[i], Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     || TextUtils.equals(permissions[i], Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                Toast.makeText(this,getString(R.string.permission_not_granted),Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.permission_not_granted), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -226,7 +228,40 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.action_search);
+        if (mCurrentFragment instanceof MainFragment) {
+            menu.findItem(R.id.action_settings).setVisible(false);
+            menu.findItem(R.id.action_search).setVisible(true);
+        } else if (mCurrentFragment instanceof ExportFragment) {
+            menu.findItem(R.id.action_settings).setVisible(false);
+            menu.findItem(R.id.action_search).setVisible(false);
+        } else if (mCurrentFragment instanceof ImportFragment) {
+            menu.findItem(R.id.action_settings).setVisible(false);
+            menu.findItem(R.id.action_search).setVisible(false);
+        } else if (mCurrentFragment instanceof FavoriteFragment) {
+            menu.findItem(R.id.action_settings).setVisible(true);
+            menu.findItem(R.id.action_search).setVisible(true);
+        }
+//        SearchView view = (SearchView) MenuItemCompat.getActionView(item);
+//        MenuItemCompat.setOnActionExpandListener(item, new MenuItemCompat.OnActionExpandListener(){
+//
+//            @Override
+//            public boolean onMenuItemActionExpand(MenuItem menuItem) {
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+//                return true;
+//            }
+//        });
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -237,7 +272,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_search) {
             return true;
         }
 
@@ -250,10 +285,8 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        @ColorRes
-        int colorId = R.color.nav_default;
-
         initFragments(id);
+        invalidateOptionsMenu();
         switch (id) {
             case R.id.nav_open:
                 showFloatingWindow();
@@ -299,6 +332,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setStatusBarToolBarHeader(int titleString, int mainColor, int statusBarColor, int itemColor) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            return;
+        }
         //Toolbar
         mToolbar.setTitle(getString(titleString));
         mToolbar.setBackgroundColor(getResources().getColor(mainColor));
@@ -331,16 +367,16 @@ public class MainActivity extends AppCompatActivity
         intent.setType("text/plain");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
-        try{
-            startActivityForResult(Intent.createChooser(intent, getString(R.string.select_file_import)),REQUEST_CODE);
-        }catch (ActivityNotFoundException e) {
+        try {
+            startActivityForResult(Intent.createChooser(intent, getString(R.string.select_file_import)), REQUEST_CODE);
+        } catch (ActivityNotFoundException e) {
             Toast.makeText(this, getString(R.string.please_install_file_manager), Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode !=  REQUEST_CODE) {
+        if (requestCode != REQUEST_CODE) {
             return;
         }
         if (resultCode == RESULT_OK) {

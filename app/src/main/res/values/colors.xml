@@ -37,9 +37,11 @@
     <color name="home_red_600_4_status_bar">#e53935</color>
 
     //export
+    <color name="deep_orange_500_4_card_tip_text">#ff5722</color>
     <color name="export_orange_200_4_card_view">#ffe0b2</color>
     <color name="export_orange_500_4_toolbar">#ff9800</color>
     <color name="export_orange_600_4_status_bar">#fb8c00</color>
+    <color name="export_orange_50_4_input">#fff3e0</color>
 
     //import
     <color name="import_blue_500_4_toolbar">#2196f3</color>
@@ -48,6 +50,7 @@
     //favorite
     <color name="favorite_purple_500_4_toolbar">#9c27b0</color>
     <color name="favorite_purple_600_4_status_bar">#8e24aa</color>
+    <color name="favorite_purple_100_4_item_card">#e1bee7</color>
 </resources>
 
 

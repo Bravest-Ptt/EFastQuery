@@ -9,8 +9,8 @@
     </style>
 
     <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light">
-        <item name="colorPrimary">@color/MaterialBlue_500</item>
-        <item name="colorPrimaryDark">@color/MaterialBlue_600</item>
+        <item name="colorPrimary">@color/home_red_500_4_toolbar</item>
+        <item name="colorPrimaryDark">@color/home_red_600_4_status_bar</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -21,6 +21,6 @@
     <style name="AppTheme.export" parent="AppTheme.NoActionBar">
         <item name="colorPrimary">@color/export_orange_500_4_toolbar</item>
         <item name="colorPrimaryDark">@color/export_orange_600_4_status_bar</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/export_orange_600_4_status_bar</item>
     </style>
 </resources>
