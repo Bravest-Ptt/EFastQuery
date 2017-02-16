@@ -15,6 +15,7 @@ import java.util.Set;
 
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.data.Result;
+import bravest.ptt.efastquery.data.wordbook.WordBook;
 
 /**
  * Created by root on 2/13/17.
@@ -32,6 +33,47 @@ public class FavoriteManager {
     public FavoriteManager(Context context) {
         mContext = context;
         mResolver = mContext.getContentResolver();
+    }
+
+    public ArrayList<WordBook> getGroupFavorite(String group) {
+        if (TextUtils.equals(group, mContext.getString(R.string.export_group_default))) {
+            group = EFastQueryDbUtils.Favorite.GROUPS_DEFAULT_VALUE;
+        }
+        ArrayList<WordBook> FavoriteList = new ArrayList<>();
+
+        String selectionArgs = "group=?";
+        Cursor cursor = mResolver.query(EFastQueryDbUtils.Favorite.CONTENT_URI,
+                null,
+                selectionArgs,
+                new String[]{group},
+                EFastQueryDbUtils.Favorite.DATE + " DESC");
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                Result result = new Result();
+
+                result.query = cursor.getString(cursor.getColumnIndex(EFastQueryDbUtils.Favorite.REQUEST));
+
+                result.setTranslateString(cursor.getString(cursor.getColumnIndex(EFastQueryDbUtils.Favorite.TRANSLATIONS)));
+
+                result.setExplainString(cursor.getString(cursor.getColumnIndex(EFastQueryDbUtils.Favorite.EXPLAINS)));
+
+                result.setWebString(cursor.getString(cursor.getColumnIndex(EFastQueryDbUtils.Favorite.WEBS)));
+
+                result.phonetic = cursor.getString(cursor.getColumnIndex(EFastQueryDbUtils.Favorite.PHONETIC));
+
+                result.uk_phonetic = cursor.getString(cursor.getColumnIndex(EFastQueryDbUtils.Favorite.UK_PHONETIC));
+
+                result.us_phonetic = cursor.getString(cursor.getColumnIndex(EFastQueryDbUtils.Favorite.US_PHONETIC));
+
+                WordBook book = result.getWordBook();
+
+                book.setTags(group);
+
+                FavoriteList.add(book);
+            }
+            cursor.close();
+        }
+        return FavoriteList;
     }
 
     public ArrayList<Result> getAllFavorite() {

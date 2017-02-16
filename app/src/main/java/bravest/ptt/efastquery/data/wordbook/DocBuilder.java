@@ -2,7 +2,9 @@ package bravest.ptt.efastquery.data.wordbook;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.usermodel.Bookmark;
@@ -15,11 +17,15 @@ import org.apache.poi.hwpf.usermodel.TableCell;
 import org.apache.poi.hwpf.usermodel.TableIterator;
 import org.apache.poi.hwpf.usermodel.TableRow;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+
+import bravest.ptt.efastquery.R;
 
 /**
  * Created by pengtian on 2017/2/13.
@@ -29,6 +35,7 @@ public class DocBuilder {
 
     public static final String MODE_DOCX = ".docx";
     public static final String MODE_DOC = ".doc";
+    public static final String DOC_DIR = "doc/";
 
     private static final String TEMPLATE_DOC = "template.doc";
 
@@ -42,15 +49,7 @@ public class DocBuilder {
         return new DocBuilder(context);
     }
 
-    public void createDocFile(String fileName) {
-        if (fileName == null) {
-            return;
-        }
-            createDoc(fileName);
-    }
-
-
-    public void createDoc(String fileName) {
+    public void createDoc(File file, ArrayList<WordBook> data) {
         try {
             if (mContext == null) {
                 return;
@@ -60,19 +59,24 @@ public class DocBuilder {
             InputStream is = assetManager.open(TEMPLATE_DOC);
             HWPFDocument doc = new HWPFDocument(is);
 
-            log(doc.getDocumentText());
             Range range = doc.getRange();
-            //读表格
-            //读列表
+            if (range == null) {
+                Toast.makeText(mContext, mContext.getString(R.string.generate_file_failed), Toast.LENGTH_SHORT).show();
+                return;
+            }
+            int size = data.size();
+            for(int i = 0;i < size; i++) {
+                WordBook book = data.get(i);
+                range.insertAfter(i + "." + book.getWord() + book.getPhonetic() + "\n");
+                range.insertAfter(book.getTrans());
+            }
 
-            //删除range
-            //Range r = new Range(2, 5, doc);
-            //r.delete();//在内存中进行删除，如果需要保存到文件中需要再把它写回文件
             //把当前HWPFDocument写到输出流中
-            doc.write(new FileOutputStream(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "he" +TEMPLATE_DOC));
+            doc.write(new FileOutputStream(file));
             this.closeStream(is);
-
+            Toast.makeText(mContext, mContext.getString(R.string.generate_file_success), Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
+            Toast.makeText(mContext, mContext.getString(R.string.generate_file_failed), Toast.LENGTH_SHORT).show();
             log(e);
             e.printStackTrace();
         }

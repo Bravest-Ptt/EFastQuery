@@ -99,11 +99,6 @@ public class MainActivity extends AppCompatActivity
 
         bindService();
 
-        //test DocBuilder
-        DocBuilder docBuilder = DocBuilder.getInstance(this);
-        //docBuilder.createDoc("");
-        docBuilder.createDocx("");
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);

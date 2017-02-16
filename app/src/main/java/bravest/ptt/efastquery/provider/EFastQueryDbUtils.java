@@ -39,5 +39,6 @@ public class EFastQueryDbUtils {
         String US_PHONETIC = "us_phonetic";
         String UK_PHONETIC = "uk_phonetic";
         String GROUPS = "groups";
+        String GROUPS_DEFAULT_VALUE = "p1n2t3u4tl_l";
     }
 }

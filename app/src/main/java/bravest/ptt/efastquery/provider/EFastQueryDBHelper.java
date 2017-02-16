@@ -41,7 +41,7 @@ public class EFastQueryDBHelper extends SQLiteOpenHelper {
                 "phonetic TEXT," +
                 "us_phonetic TEXT," +
                 "uk_phonetic TEXT," +
-                "groups TEXT DEFAULT 'null');");
+                "groups TEXT DEFAULT 'p1n2t3u4tl_l');");
 
         db.execSQL("CREATE TRIGGER favorite_insert_listener" +
                 " AFTER INSERT" +

@@ -8,6 +8,8 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
+import bravest.ptt.efastquery.data.wordbook.WordBook;
+
 /**
  * Created by root on 12/27/16.
  */
@@ -57,6 +59,10 @@ public class Result implements Serializable {
     }
 
     public Result() {
+    }
+
+    public WordBook getWordBook() {
+        return new WordBook(query, translation_str, phonetic, null);
     }
 
     private void parseJsonResult() {

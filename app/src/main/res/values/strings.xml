@@ -25,6 +25,9 @@
     <string name="export_doc">.doc</string>
     <string name="export_txt">.txt</string>
     <string name="export_xml">.xml</string>
+    <string name="export_doc_dir">doc</string>
+    <string name="export_txt_dir">txt</string>
+    <string name="export_xml_dir">xml</string>
     <string name="export_doc_desc"></string>
     <string name="export_file_save_name">保存文件名</string>
     <string-array name="export_spinner_entries">
@@ -33,6 +36,10 @@
         <item>.docx</item>
         <item>.txt</item>
     </string-array>
+    <string name="export_file_already_exist">文件已经存在</string>
+    <string name="export_file_name_invalid">文件名为空或包含非法字符</string>
+    <string name="generate_file_success">生成文件保存在%1$s</string>
+    <string name="generate_file_failed">文件生成出现异常</string>
 
     <string-array name="export_group_entries">
         <item>所有单词</item>
@@ -43,6 +50,7 @@
     <string name="export_select_group"><font color="#000000"><b>选择需要导出的单词组</b></font></string>
     <string name="export_input_file_name"><font color="#000000"><b>输入文件名</b></font></string>
     <string name="export_group_default">所有单词</string>
+    <string name="export_file_name_need">请输入文件名</string>
 
     <string name="import_file">导入</string>
     <string name="favorite_book">单词本</string>
