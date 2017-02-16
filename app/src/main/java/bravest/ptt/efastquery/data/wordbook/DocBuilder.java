@@ -60,16 +60,10 @@ public class DocBuilder {
             InputStream is = assetManager.open(TEMPLATE_DOC);
             HWPFDocument doc = new HWPFDocument(is);
 
-            this.printInfo(doc.getBookmarks());
-            //输出文本
             log(doc.getDocumentText());
             Range range = doc.getRange();
-//    this.insertInfo(range);
-            this.printInfo(range);
             //读表格
-            this.readTable(range);
             //读列表
-            this.readList(range);
 
             //删除range
             //Range r = new Range(2, 5, doc);
