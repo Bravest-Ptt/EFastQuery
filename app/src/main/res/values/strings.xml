@@ -18,7 +18,8 @@
     <string name="export_file_desc">
         <font color="#ff5722"><b>将单词本以文件形式保存到手机</b></font>\n
         支持导出以下格式：\n
-        <font color="#2196f3"><b>.doc .docx</b></font>  可用于打印，不可用于导入。\n
+        <font color="#2196f3"><b>.doc</b></font> 可用于打印，不可用于导入。\n
+        <font color="#2196f3"><b>.docx</b></font> 可用于打印，不可用于导入。\n
         <font color="#2196f3"><b>.txt</b></font> 可用于打印，不可用于导入。\n
         <font color="#2196f3"><b>.xml</b></font> 可用于导入【快查英语App】和【有道词典PC版】。您可通过【有道词典PC版】将单词本导入并同步至有道云。</string>
     <string name="export_doc">.doc</string>

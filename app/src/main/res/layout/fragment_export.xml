@@ -78,6 +78,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
+                        android:elevation="4dp"
                         android:entries="@array/export_group_entries" />
                 </LinearLayout>
 
@@ -115,6 +116,7 @@
                             style="@style/export_spinner"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:elevation="4dp"
                             android:entries="@array/export_spinner_entries"
                             android:gravity="center" />
                     </LinearLayout>

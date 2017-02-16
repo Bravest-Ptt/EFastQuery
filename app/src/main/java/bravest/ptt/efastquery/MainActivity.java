@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import bravest.ptt.efastquery.data.wordbook.DocBuilder;
 import bravest.ptt.efastquery.data.wordbook.WordBook;
 import bravest.ptt.efastquery.data.wordbook.XmlBuilder;
 import bravest.ptt.efastquery.data.wordbook.XmlParser;
@@ -97,6 +98,11 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         bindService();
+
+        //test DocBuilder
+        DocBuilder docBuilder = DocBuilder.getInstance(this);
+        //docBuilder.createDoc("");
+        docBuilder.createDocx("");
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

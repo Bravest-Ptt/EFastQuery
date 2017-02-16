@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.text.TextUtils;
 import android.util.ArraySet;
 
 import java.util.ArrayList;
@@ -125,7 +126,9 @@ public class FavoriteManager {
         Set<String> set = new HashSet<String>();
         set.add(context.getString(R.string.export_group_default));
         Set<String> groupSet = sp.getStringSet(FM_GROUP, set);
-        groupSet.add(groupName);
+        if (!TextUtils.isEmpty(groupName)) {
+            groupSet.add(groupName);
+        }
         editor.putStringSet(FM_GROUP, groupSet);
         editor.commit();
     }
@@ -133,7 +136,11 @@ public class FavoriteManager {
     public static String[] getGroup(Context context) {
         SharedPreferences sp = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
         Set<String> groupSet = sp.getStringSet(FM_GROUP, new HashSet<String>());
-        String[] groups = (String[]) groupSet.toArray();
+        if (groupSet.size() == 0) {
+            createGroup(context, null);
+            groupSet = sp.getStringSet(FM_GROUP, new HashSet<String>());
+        }
+        String[] groups = groupSet.toArray(new String[groupSet.size()]);
         return groups;
     }
 }

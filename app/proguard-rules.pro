@@ -16,3 +16,5 @@
 #   public *;
 #}
 -keep class com.jpardogo.android.googleprogressbar.** { *; }
+-keepattributes EnclosingMethod
+-keepattributes InnerClasses
