@@ -134,6 +134,6 @@
 
     </style>
 
-    <style name="export_spinner" parent="Platform.Widget.AppCompat.Spinner">
+    <style name="file_manager_spinner" parent="Platform.Widget.AppCompat.Spinner">
     </style>
 </resources>

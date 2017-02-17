@@ -1,136 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:scrollbars="none">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:scrollbars="none">
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/export_tips"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:elevation="4dp"
-            app:cardBackgroundColor="@color/export_orange_200_4_card_view">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="16dp"
-                android:text="@string/export_file_desc"
-                android:textSize="15sp" />
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_alignParentBottom="true"
-            android:layout_weight="1"
-            android:elevation="4dp"
-            app:cardBackgroundColor="@color/export_orange_200_4_card_view">
-
-            <LinearLayout
+            <android.support.v7.widget.CardView
+                android:id="@+id/export_tips"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:layout_alignParentTop="true"
+                android:elevation="4dp"
+                app:cardBackgroundColor="@color/export_orange_200_4_card_view">
 
-                <LinearLayout
-                    android:id="@+id/export_text"
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent"
+                    android:padding="16dp"
+                    android:text="@string/export_file_desc"
+                    android:textSize="15sp" />
+            </android.support.v7.widget.CardView>
 
-                    <TextView
-                        android:id="@+id/export_text_directory_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/export_directory_desc" />
-
-                    <TextView
-                        android:id="@+id/export_text_directory_path"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/export_directory_path" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/export_group"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/export_select_group" />
-
-                    <android.support.v7.widget.AppCompatSpinner
-                        android:id="@+id/export_group_spinner"
-                        style="@style/export_spinner"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:elevation="4dp"
-                        android:entries="@array/export_group_entries" />
-                </LinearLayout>
-
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_alignParentBottom="true"
+                android:layout_weight="1"
+                android:elevation="4dp"
+                app:cardBackgroundColor="@color/export_orange_200_4_card_view">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/export_input_file_name" />
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
                     <LinearLayout
-                        android:id="@+id/export_input_li"
+                        android:id="@+id/export_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:layout_marginTop="24dp"
+                        android:orientation="vertical">
 
-                        <android.support.design.widget.TextInputEditText
-                            android:id="@+id/export_input_li_editor"
-                            android:layout_width="0dp"
+                        <TextView
+                            android:id="@+id/export_text_directory_title"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:layout_weight="4"
-                            android:hint="@string/export_file_save_name"
-                            android:singleLine="true"
-                            android:textSize="14sp"
-                            app:theme="@style/AppTheme.export" />
+                            android:text="@string/export_directory_desc" />
+
+                        <TextView
+                            android:id="@+id/export_text_directory_path"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/export_directory_path" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/export_group"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/export_select_group" />
 
                         <android.support.v7.widget.AppCompatSpinner
-                            android:id="@+id/export_input_li_spinner"
-                            style="@style/export_spinner"
-                            android:layout_width="wrap_content"
+                            android:id="@+id/export_group_spinner"
+                            style="@style/file_manager_spinner"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
                             android:elevation="4dp"
-                            android:entries="@array/export_spinner_entries"
-                            android:gravity="center" />
+                            android:entries="@array/export_group_entries" />
                     </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/export_input_file_name" />
+
+                        <LinearLayout
+                            android:id="@+id/export_input_li"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <android.support.design.widget.TextInputEditText
+                                android:id="@+id/export_input_li_editor"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom"
+                                android:layout_weight="4"
+                                android:hint="@string/export_file_save_name"
+                                android:singleLine="true"
+                                android:textSize="14sp"
+                                app:theme="@style/AppTheme.export" />
+
+                            <android.support.v7.widget.AppCompatSpinner
+                                android:id="@+id/export_input_li_spinner"
+                                style="@style/file_manager_spinner"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:elevation="4dp"
+                                android:entries="@array/export_spinner_entries"
+                                android:gravity="center" />
+                        </LinearLayout>
+                    </LinearLayout>
+
                 </LinearLayout>
+            </android.support.v7.widget.CardView>
 
-            </LinearLayout>
-        </android.support.v7.widget.CardView>
+            <Button
+                android:id="@+id/export_save_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|right"
+                android:text="@string/export_save" />
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/export_save_button"
+
+    </ScrollView>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:text="@string/export_save" />
-
-    </LinearLayout>
-</ScrollView>
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp" />
+    </RelativeLayout>
+</FrameLayout>

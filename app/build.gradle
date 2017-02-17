@@ -62,4 +62,6 @@ dependencies {
     compile files('libs/common/commons-logging-1.2.jar')
 //    compile files('libs/poi-ooxml-schemas-3.16-beta2.jar')
 //    compile files('libs/xmlbeans-2.6.0.jar')
+    //Add for android-gif-drawable
+    compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.5'
 }

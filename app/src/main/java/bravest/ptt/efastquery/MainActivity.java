@@ -50,6 +50,7 @@ import bravest.ptt.efastquery.data.wordbook.XmlBuilder;
 import bravest.ptt.efastquery.data.wordbook.XmlParser;
 import bravest.ptt.efastquery.fragment.ExportFragment;
 import bravest.ptt.efastquery.fragment.FavoriteFragment;
+import bravest.ptt.efastquery.fragment.FileManagerFragment;
 import bravest.ptt.efastquery.fragment.ImportFragment;
 import bravest.ptt.efastquery.fragment.MainFragment;
 import bravest.ptt.efastquery.utils.Utils;
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity
     private ExportFragment mExportFragment;
     private ImportFragment mImportFragment;
     private FavoriteFragment mFavoriteFragment;
+    private FileManagerFragment mFileManagerFragment;
 
     private Fragment mCurrentFragment;
 
@@ -118,11 +120,12 @@ public class MainActivity extends AppCompatActivity
         mFragmentManager = getSupportFragmentManager();
         mFragmentMap = new HashMap<>();
         mMainFragment = new MainFragment();
+        mFileManagerFragment = new FileManagerFragment();
         mExportFragment = new ExportFragment();
         mImportFragment = new ImportFragment();
         mFavoriteFragment = new FavoriteFragment();
         mFragmentMap.put(R.id.nav_home, mMainFragment);
-        mFragmentMap.put(R.id.nav_export, mExportFragment);
+        mFragmentMap.put(R.id.nav_export, mFileManagerFragment);
         mFragmentMap.put(R.id.nav_import, mImportFragment);
         mFragmentMap.put(R.id.nav_favorite_book, mFavoriteFragment);
 

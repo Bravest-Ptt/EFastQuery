@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import bravest.ptt.efastquery.R;
+import bravest.ptt.efastquery.callback.ItemClickListener;
 import bravest.ptt.efastquery.data.Result;
 import bravest.ptt.efastquery.data.TranslateListener;
 import bravest.ptt.efastquery.data.TranslateManager;
@@ -50,7 +51,7 @@ import bravest.ptt.efastquery.view.ESearchFloatButton.*;
  */
 
 class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result>, FloatPanelVisibleListener,
-        TextToSpeech.OnInitListener, TextWatcher, View.OnKeyListener, View.OnFocusChangeListener {
+        TextToSpeech.OnInitListener, TextWatcher, View.OnKeyListener, View.OnFocusChangeListener, ItemClickListener {
 
     private static final String TAG = "ptt";
 
@@ -140,24 +141,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         mHistoryArray = mHm.getAllHistory();
 
         mHistoryAdapter = new HistoryAdapter(mContext, mHistoryArray);
-        mHistoryAdapter.setOnItemClickListener(new ItemClickListener() {
-            @Override
-            public void onItemClicked(View view, int position) {
-                switch (view.getId()) {
-                    case R.id.item_voice:
-                        break;
-                    case R.id.item_delete:
-                        handleTransaction(position, mHistoryArray.get(position), TRANSACTION_DELETE);
-                        break;
-                    case R.id.item_content:
-                        Utils.hideSoftInput(mContext, mMainInput);
-                        handleSuccess4View(mHistoryArray.get(position));
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
+        mHistoryAdapter.setOnItemClickListener(this);
 
         mMainShowHistory.setLayoutManager(new LinearLayoutManager(mContext));
         mMainShowHistory.setAdapter(mHistoryAdapter);
@@ -247,7 +231,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
                     public void run() {
                         refreshLayout.finishRefreshing();
                     }
-                },2000);
+                },500);
             }
 
             @Override
@@ -257,7 +241,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
                     public void run() {
                         refreshLayout.finishLoadmore();
                     }
-                },2000);
+                },500);
             }
         });
     }
@@ -630,6 +614,23 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         }
     }
 
+    @Override
+    public void onItemClicked(View view, int position) {
+        switch (view.getId()) {
+            case R.id.item_voice:
+                break;
+            case R.id.item_delete:
+                handleTransaction(position, mHistoryArray.get(position), TRANSACTION_DELETE);
+                break;
+            case R.id.item_content:
+                Utils.hideSoftInput(mContext, mMainInput);
+                handleSuccess4View(mHistoryArray.get(position));
+                break;
+            default:
+                break;
+        }
+    }
+
     //---------------------------------------Class && Interface---------------------------------------//
     class ROnScrollListener extends RecyclerView.OnScrollListener {
         @Override
@@ -661,9 +662,5 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
                 }
             }
         }
-    }
-
-    public interface ItemClickListener {
-        void onItemClicked(View view, int position);
     }
 }

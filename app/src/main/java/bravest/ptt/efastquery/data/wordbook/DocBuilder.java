@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 import bravest.ptt.efastquery.R;
+import bravest.ptt.efastquery.data.Result;
 
 /**
  * Created by pengtian on 2017/2/13.
@@ -49,6 +50,12 @@ public class DocBuilder {
         return new DocBuilder(context);
     }
 
+
+    private static final String DOT = ".";
+    private static final String WORD_PHONETIC_SPACE = " ";
+    private static final String TRANS_SPACE = "    ";
+    private static final String ENTER_CHAR = "\n";
+
     public void createDoc(File file, ArrayList<WordBook> data) {
         try {
             if (mContext == null) {
@@ -67,14 +74,27 @@ public class DocBuilder {
             int size = data.size();
             for(int i = 0;i < size; i++) {
                 WordBook book = data.get(i);
-                range.insertAfter(i + "." + book.getWord() + book.getPhonetic() + "\n");
-                range.insertAfter(book.getTrans());
+                range.insertAfter((i + 1)
+                        + DOT
+                        + book.getWord()
+                        + WORD_PHONETIC_SPACE
+                        + book.getPhonetic()
+                        + ENTER_CHAR);
+                if (book.getTrans().contains(Result.JSON_SPLIT)) {
+                    String[] trans = book.getTrans().split(Result.JSON_SPLIT);
+                    for (String tran : trans) {
+                        range.insertAfter(TRANS_SPACE + tran + ENTER_CHAR);
+                    }
+                } else {
+                    range.insertAfter( TRANS_SPACE + book.getTrans() + ENTER_CHAR);
+                }
+                range.insertAfter(ENTER_CHAR);
             }
 
             //把当前HWPFDocument写到输出流中
             doc.write(new FileOutputStream(file));
             this.closeStream(is);
-            Toast.makeText(mContext, mContext.getString(R.string.generate_file_success), Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, mContext.getString(R.string.generate_file_success, file.getAbsolutePath()), Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             Toast.makeText(mContext, mContext.getString(R.string.generate_file_failed), Toast.LENGTH_SHORT).show();
             log(e);

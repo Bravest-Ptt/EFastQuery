@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import bravest.ptt.efastquery.R;
+import bravest.ptt.efastquery.callback.ItemClickListener;
 import bravest.ptt.efastquery.data.Result;
 
 /**
@@ -21,7 +22,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryHolder> {
     private Context mContext;
     private ArrayList<Result> mData;
 
-    private ESearchMainPanel.ItemClickListener mItemClickListener;
+    private ItemClickListener mItemClickListener;
 
     public HistoryAdapter(Context context, ArrayList<Result> data) {
         mContext = context;
@@ -53,7 +54,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryHolder> {
         return 0;
     }
 
-    public void setOnItemClickListener(ESearchMainPanel.ItemClickListener listener) {
+    public void setOnItemClickListener(ItemClickListener listener) {
         this.mItemClickListener = listener;
     }
 }

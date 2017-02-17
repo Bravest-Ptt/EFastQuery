@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import bravest.ptt.efastquery.R;
+import bravest.ptt.efastquery.callback.ItemClickListener;
 import butterknife.OnClick;
 
 /**
@@ -19,9 +20,9 @@ public class HistoryHolder extends RecyclerView.ViewHolder implements View.OnCli
     ImageView iv_delete;
     View ln_view;
 
-    private ESearchMainPanel.ItemClickListener mItemClickListener;
+    private ItemClickListener mItemClickListener;
 
-    public HistoryHolder(View itemView, ESearchMainPanel.ItemClickListener listener) {
+    public HistoryHolder(View itemView, ItemClickListener listener) {
         super(itemView);
 
         mItemClickListener = listener;

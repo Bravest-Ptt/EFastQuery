@@ -1,5 +1,6 @@
 package bravest.ptt.efastquery.data;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -62,7 +63,7 @@ public class Result implements Serializable {
     }
 
     public WordBook getWordBook() {
-        return new WordBook(query, translation_str, phonetic, null);
+        return new WordBook(query, explains_str, "[" + phonetic + "]", null);
     }
 
     private void parseJsonResult() {
@@ -75,7 +76,7 @@ public class Result implements Serializable {
         }
     }
 
-    private static final String JSON_SPLIT = "; ";
+    public static final String JSON_SPLIT = "; ";
 
     private void parseTranslation() throws JSONException {
         translation = mResult.getJSONArray(YouDaoItem.YOUDAO_TRANSLATION);
@@ -219,7 +220,7 @@ public class Result implements Serializable {
     }
 
     private JSONArray string2JsonArray(String original, String split) {
-        if (original == "") return null;
+        if (TextUtils.isEmpty(original)) return null;
         JSONArray jsonArray = new JSONArray();
         String[] array = original.split(split);
         for (String str:array) {

@@ -3,6 +3,8 @@
 buildscript {
     repositories {
         jcenter()
+        //Add for android-gif-drawable
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.2'
@@ -18,6 +20,8 @@ allprojects {
         jcenter()
         //Add JitPack for SwipeDelMenuLayout
         maven { url "https://jitpack.io"}
+        //Add for android-gif-drawable
+        mavenCentral()
     }
 }
 

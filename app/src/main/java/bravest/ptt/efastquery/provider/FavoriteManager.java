@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.text.TextUtils;
 import android.util.ArraySet;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -36,12 +37,13 @@ public class FavoriteManager {
     }
 
     public ArrayList<WordBook> getGroupFavorite(String group) {
+        Log.d(TAG, "getGroupFavorite: group = " + group);
         if (TextUtils.equals(group, mContext.getString(R.string.export_group_default))) {
             group = EFastQueryDbUtils.Favorite.GROUPS_DEFAULT_VALUE;
         }
         ArrayList<WordBook> FavoriteList = new ArrayList<>();
 
-        String selectionArgs = "group=?";
+        String selectionArgs = EFastQueryDbUtils.Favorite.GROUPS+"=?";
         Cursor cursor = mResolver.query(EFastQueryDbUtils.Favorite.CONTENT_URI,
                 null,
                 selectionArgs,
