@@ -34,7 +34,7 @@ import pl.droidsonroids.gif.GifImageView;
  * Created by root on 2/13/17.
  */
 
-public class ExportFragment extends Fragment implements AdapterView.OnItemSelectedListener, View.OnClickListener{
+public class ExportFragment extends BaseFragment implements AdapterView.OnItemSelectedListener, View.OnClickListener{
 
     private static final String TAG = "ExportFragment";
 
@@ -148,7 +148,7 @@ public class ExportFragment extends Fragment implements AdapterView.OnItemSelect
 
             File file = new File(finalFilePath);
             if (file.exists()) {
-                Toast.makeText(mActivity, getString(R.string.export_file_already_exist), Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity, getString(R.string.file_manager_file_already_exist), Toast.LENGTH_SHORT).show();
                 return;
             }else {
                 try {
@@ -156,7 +156,7 @@ public class ExportFragment extends Fragment implements AdapterView.OnItemSelect
                     file.createNewFile();
                 } catch (IOException e) {
                     Log.d(TAG, "onClick: "  + e);
-                    Toast.makeText(mActivity, getString(R.string.export_file_name_invalid), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, getString(R.string.file_manager_file_name_invalid), Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                     return;
                 }

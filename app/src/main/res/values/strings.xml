@@ -36,8 +36,8 @@
         <item>.docx</item>
         <item>.txt</item>
     </string-array>
-    <string name="export_file_already_exist">文件已经存在</string>
-    <string name="export_file_name_invalid">文件名为空或包含非法字符</string>
+
+
     <string name="generate_file_success">生成文件保存在%1$s</string>
     <string name="generate_file_failed">文件生成出现异常</string>
 
@@ -67,4 +67,13 @@
     <string name="select_file_import">选择xml文件导入</string>
     <string name="please_install_file_manager">请先安装文件管理器</string>
     <string name="just_support_xml">目前仅支持有道词典PC版导出的.xml格式导入！</string>
+
+    <string name="file_manager_file_not_exist">文件已经不存在</string>
+    <string name="file_manager_folder_is_empty">这是一个空文件夹</string>
+    <string name="file_manager_phone_folder">手机存储</string>
+    <string name="file_manager_new_folder">新建文件夹%1$s</string>
+    <string name="file_manager_create">创建</string>
+    <string name="file_manager_cancel">取消</string>
+    <string name="file_manager_file_already_exist">文件已经存在</string>
+    <string name="file_manager_file_name_invalid">文件名为空或包含非法字符</string>
 </resources>

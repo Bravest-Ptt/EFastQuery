@@ -25,6 +25,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -48,6 +49,7 @@ import bravest.ptt.efastquery.data.wordbook.DocBuilder;
 import bravest.ptt.efastquery.data.wordbook.WordBook;
 import bravest.ptt.efastquery.data.wordbook.XmlBuilder;
 import bravest.ptt.efastquery.data.wordbook.XmlParser;
+import bravest.ptt.efastquery.fragment.BaseFragment;
 import bravest.ptt.efastquery.fragment.ExportFragment;
 import bravest.ptt.efastquery.fragment.FavoriteFragment;
 import bravest.ptt.efastquery.fragment.FileManagerFragment;
@@ -68,14 +70,14 @@ public class MainActivity extends AppCompatActivity
     private Toolbar mToolbar;
 
     private FragmentManager mFragmentManager;
-    private HashMap<Integer, Fragment> mFragmentMap;
+    private HashMap<Integer, BaseFragment> mFragmentMap;
     private MainFragment mMainFragment;
     private ExportFragment mExportFragment;
     private ImportFragment mImportFragment;
     private FavoriteFragment mFavoriteFragment;
     private FileManagerFragment mFileManagerFragment;
 
-    private Fragment mCurrentFragment;
+    private BaseFragment mCurrentFragment;
 
 
     private ServiceConnection mMainConnection = new ServiceConnection() {
@@ -171,8 +173,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initFragments(int id) {
-        Fragment current = mFragmentMap.get(id);
-        Fragment old = mCurrentFragment;
+        BaseFragment current = mFragmentMap.get(id);
+        BaseFragment old = mCurrentFragment;
         if (current == null) {
             return;
         }
@@ -398,5 +400,13 @@ public class MainActivity extends AppCompatActivity
                 Log.d(TAG, "onActivityResult: word = " + w.getWord() + ", phonetic = " + w.getPhonetic());
             }
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (mCurrentFragment != null) {
+            return mCurrentFragment.onKeyDown(keyCode, event);
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

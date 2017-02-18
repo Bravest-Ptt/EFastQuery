@@ -17,23 +17,49 @@
             android:layout_height="50dp"
             android:orientation="horizontal">
 
-            <HorizontalScrollView
-                android:id="@+id/file_manager_folder_indicator"
+            <TextView
+                android:id="@+id/file_manager_external_folder"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"/>
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:drawableRight="@mipmap/file_folder_arrow"
+                android:gravity="center"
+                android:text="@string/file_manager_phone_folder"
+                android:textSize="16sp" />
+
+            <HorizontalScrollView
+                android:id="@+id/file_manager_indicator_scroller"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:overScrollMode="never"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/file_manager_folder_indicator"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"></LinearLayout>
+            </HorizontalScrollView>
 
             <ImageView
                 android:id="@+id/file_manager_folder_add"
-                android:padding="15dp"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:layout_gravity="center|right"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:padding="15dp"
                 android:src="@mipmap/add_folder" />
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:background="#cccccc"/>
+            android:background="#cccccc" />
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/file_manager_refresh"
@@ -43,9 +69,18 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/file_manager_content"
                 android:layout_width="match_parent"
-                android:overScrollMode="never"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:overScrollMode="never" />
         </android.support.v4.widget.SwipeRefreshLayout>
+
+        <TextView
+            android:id="@+id/file_manager_content_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/file_manager_folder_is_empty"
+            android:textSize="16sp"
+            android:visibility="gone" />
     </LinearLayout>
 
 
@@ -54,13 +89,13 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:background="#eeeeee"
-            android:layout_alignParentBottom="true"
-            android:padding="16dp"
             android:id="@+id/file_manager_footer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_alignParentBottom="true"
+            android:background="#eeeeee"
+            android:orientation="vertical"
+            android:padding="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -99,7 +134,7 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:background="#cccccc"
-            android:layout_above="@+id/file_manager_footer" />
+            android:layout_above="@+id/file_manager_footer"
+            android:background="#cccccc" />
     </RelativeLayout>
 </FrameLayout>

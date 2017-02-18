@@ -13,7 +13,7 @@ import bravest.ptt.efastquery.R;
  * Created by root on 2/13/17.
  */
 
-public class FavoriteFragment extends Fragment {
+public class FavoriteFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

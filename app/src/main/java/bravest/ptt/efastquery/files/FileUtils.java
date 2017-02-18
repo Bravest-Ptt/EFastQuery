@@ -1,6 +1,8 @@
 package bravest.ptt.efastquery.files;
 
 
+import android.os.Environment;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
@@ -40,6 +42,9 @@ public class FileUtils {
         DFFilter filter = new DFFilter();
         filter.setMode(mode);
         File[] files = curDir.listFiles(filter);
+        if (files == null) {
+            return null;
+        }
         for (File f : files) {
             if (f.isDirectory()) {
                 dirsArray.add(f);
@@ -62,5 +67,23 @@ public class FileUtils {
 
     public static ArrayList<File> getPathContent(String path, int mode) {
         return getPathContent(path, mode, DRecentModifiedComparator.SORT_ORDER_RECENT_MODIFIED);
+    }
+
+    public static String getPathWithoutExternal(String path) throws PathFormatErrorException{
+        String external = Environment.getExternalStorageDirectory().getAbsolutePath();
+        if (!path.contains(external)) {
+            throw new PathFormatErrorException();
+        }
+        PLog.log("before : " + path);
+        path = path.substring(external.length());
+        PLog.log("after : " + path);
+        return path;
+    }
+
+    public static String getPathWithoutExternal(File file) throws PathFormatErrorException{
+        return getPathWithoutExternal(file.getAbsolutePath());
+    }
+
+    public static class PathFormatErrorException extends Exception{
     }
 }
