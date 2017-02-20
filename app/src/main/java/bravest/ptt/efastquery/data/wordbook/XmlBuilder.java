@@ -7,17 +7,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -25,18 +19,19 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import bravest.ptt.efastquery.callback.BuildListener;
 
 /**
  * Created by pengtian on 2017/2/13.
  * Create XML use DOM
  */
 
-public class XmlBuilder {
+public class XmlBuilder extends Builder{
 
     private static final String TAG = "XmlBuilder";
 
@@ -59,7 +54,7 @@ public class XmlBuilder {
         return new XmlBuilder();
     }
 
-    public String domCreateXML(ArrayList<WordBook> datas, String group) {
+    public String createXML(File file, ArrayList<WordBook> datas) {
         String xmlWriter = null;
 
         try {
@@ -122,39 +117,38 @@ public class XmlBuilder {
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperties(properties);
 
-            File xmlDir;
-            File xmlFile;
-            String xmlDirPath = EXTERNAL_DIR + EXTERNAL_XML_DIR;
-            String filepath = group;
-
-            if (filepath == null) {
-                filepath = "default";
-            }
-
-            //check xml directory exist
-            xmlDir = new File(xmlDirPath);
-            Log.d(TAG, "domCreateXML:  xmldir =  " + xmlDirPath);
-            if (!xmlDir.exists()) {
-                Log.d(TAG, "domCreateXML: xml dir not exist");
-                if (xmlDir.mkdirs()) {
-                    Log.d(TAG, "domCreateXML: create dir success");
-                }else {
-                    Log.d(TAG, "domCreateXML: create dir failed");
-                }
-            }
-
-            //check xml file name
-            xmlFile = new File(xmlDirPath,filepath + ".xml");
-            if (!xmlFile.exists()) {
-                xmlFile.createNewFile();
-            } else {
-                xmlFile = new File(xmlDirPath,filepath + "_" +System.currentTimeMillis()+ ".xml");
-                xmlFile.createNewFile();
-            }
+//            File xmlDir;
+//            File xmlFile;
+//            String xmlDirPath = EXTERNAL_DIR + EXTERNAL_XML_DIR;
+//
+//            if (filepath == null) {
+//                filepath = "default";
+//            }
+//
+//            //check xml directory exist
+//            xmlDir = new File(xmlDirPath);
+//            Log.d(TAG, "domCreateXML:  xmldir =  " + xmlDirPath);
+//            if (!xmlDir.exists()) {
+//                Log.d(TAG, "domCreateXML: xml dir not exist");
+//                if (xmlDir.mkdirs()) {
+//                    Log.d(TAG, "domCreateXML: create dir success");
+//                }else {
+//                    Log.d(TAG, "domCreateXML: create dir failed");
+//                }
+//            }
+//
+//            //check xml file name
+//            xmlFile = new File(xmlDirPath,filepath + ".xml");
+//            if (!xmlFile.exists()) {
+//                xmlFile.createNewFile();
+//            } else {
+//                xmlFile = new File(xmlDirPath,filepath + "_" +System.currentTimeMillis()+ ".xml");
+//                xmlFile.createNewFile();
+//            }
 
             Log.d(TAG, "domCreateXML: xmlFile.createNewFile();");
             PrintWriter pw = new PrintWriter(
-                    new FileOutputStream(xmlFile)
+                    new FileOutputStream(file)
             );
 
             DOMSource domSource = new DOMSource(document.getDocumentElement());
@@ -164,23 +158,23 @@ public class XmlBuilder {
             xmlWriter = pw.toString();
 
             pw.close();
+            onResult(file, true);
         } catch (ParserConfigurationException e) {
+            onResult(null, false);
             Log.d(TAG, "domCreateXML: " + e.getLocalizedMessage());
-            e.printStackTrace();
-        } catch (TransformerConfigurationException e) {
-            Log.d(TAG, "domCreateXML: " + e);
-            e.printStackTrace();
         } catch (TransformerException e) {
             Log.d(TAG, "domCreateXML: " + e);
-            e.printStackTrace();
+            onResult(null, false);
         } catch (FileNotFoundException e) {
+            onResult(null, false);
             Log.d(TAG, "domCreateXML: " + e);
-            e.printStackTrace();
-        } catch (IOException e) {
-            Log.d(TAG, "domCreateXML: " + e.getLocalizedMessage());
-            e.printStackTrace();
         }
-
         return xmlWriter;
+    }
+
+    @Override
+    public XmlBuilder setBuildListener(BuildListener listener) {
+        super.setBuildListener(listener);
+        return this;
     }
 }

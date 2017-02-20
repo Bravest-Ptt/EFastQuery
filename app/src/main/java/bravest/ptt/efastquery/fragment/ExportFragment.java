@@ -1,6 +1,7 @@
 package bravest.ptt.efastquery.fragment;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
@@ -23,32 +24,27 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import bravest.ptt.efastquery.R;
+import bravest.ptt.efastquery.callback.BuildListener;
 import bravest.ptt.efastquery.data.wordbook.DocBuilder;
 import bravest.ptt.efastquery.data.wordbook.WordBook;
 import bravest.ptt.efastquery.data.wordbook.XmlBuilder;
+import bravest.ptt.efastquery.files.FileUtils;
 import bravest.ptt.efastquery.provider.FavoriteManager;
+import bravest.ptt.efastquery.utils.PLog;
+import bravest.ptt.efastquery.utils.Utils;
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
+
+import static bravest.ptt.efastquery.files.FileUtils.EXTERNAL;
 
 /**
  * Created by root on 2/13/17.
  */
 
-public class ExportFragment extends BaseFragment implements AdapterView.OnItemSelectedListener, View.OnClickListener{
+public class ExportFragment extends FileManagerFragment implements AdapterView.OnItemSelectedListener, BuildListener{
 
     private static final String TAG = "ExportFragment";
 
-    private AppCompatSpinner mFileSpinner;
-    private AppCompatSpinner mGroupSpinner;
-    private TextView mDirectorypathTv;
-    private Button mSaveButton;
-    private TextInputEditText mExportInput;
-
-    private Activity mActivity;
-
-    private FavoriteManager mFm;
-
-    String dir_name;
     String group_name;
     String file_name;
     String file_extension;
@@ -56,95 +52,91 @@ public class ExportFragment extends BaseFragment implements AdapterView.OnItemSe
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFm = new FavoriteManager(getContext());
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_file_manager, null);
-        mFileSpinner = (AppCompatSpinner) view.findViewById(R.id.export_input_li_spinner);
-        mGroupSpinner = (AppCompatSpinner) view.findViewById(R.id.export_group_spinner);
-        mDirectorypathTv = (TextView) view.findViewById(R.id.export_text_directory_path);
-
-        mSaveButton = (Button) view.findViewById(R.id.export_save_button);
-        mSaveButton.setOnClickListener(this);
-
-        mExportInput = (TextInputEditText) view.findViewById(R.id.export_input_li_editor);
-        return view;
+        mData.addAll(FileUtils.getPathContent(EXTERNAL, FileUtils.MODE_NORMAL_EXPORT));
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mActivity = getActivity();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        String[] groups = FavoriteManager.getGroup(getContext());
-
         ArrayAdapter<String> fileAdapter = new ArrayAdapter<String>(mActivity,
                 android.R.layout.simple_spinner_item,
                 mActivity.getResources().getStringArray(R.array.export_spinner_entries));
-        ArrayAdapter<String> groupAdapter = new ArrayAdapter<String>(mActivity,
-                android.R.layout.simple_spinner_item,
-                groups);
 
         fileAdapter.setDropDownViewResource(R.layout.drop_down_item);
-        groupAdapter.setDropDownViewResource(R.layout.drop_down_item);
+        mExtensionSpinner.setAdapter(fileAdapter);
+        mExtensionSpinner.setOnItemSelectedListener(this);
 
-        mFileSpinner.setAdapter(fileAdapter);
-        mGroupSpinner.setAdapter(groupAdapter);
+        //xml default
+        mDescTextView.setText(R.string.file_manager_desc_xml);
+        mDescTextView.setTextColor(getResources().getColor(R.color.export_orange_500_4_toolbar));
 
-        mFileSpinner.setOnItemSelectedListener(this);
-        mGroupSpinner.setOnItemSelectedListener(this);
+        //xml default
+        file_extension = mActivity.getResources().getStringArray(R.array.export_spinner_entries)[0];
+
+        group_name = mActivity.getSelectGroup();
+    }
+
+    @Override
+    protected void onDataRefresh() {
+    }
+
+    @Override
+    protected void refreshData() {
+        ArrayList<File> ret = FileUtils.getPathContent(mCurrentFile.getAbsolutePath(), FileUtils.MODE_NORMAL_EXPORT);
+        if (ret != null) {
+            super.refreshData();
+            mData.clear();
+            mData.addAll(ret);
+            notifyDataSetChanged();
+        }
     }
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         switch (adapterView.getId()) {
-            case R.id.export_input_li_spinner:
+            case R.id.file_manager_spinner:
                 file_extension = (String)adapterView.getSelectedItem();
-                dir_name = file_extension.substring(1);
-                String text = mActivity.getString(R.string.export_directory_path, dir_name);
-                mDirectorypathTv.setText(text);
+                PLog.log("file_extension = " + file_extension);
+                if (file_extension.equals(getString(R.string.export_xml))) {
+                    mDescTextView.setText(R.string.file_manager_desc_xml);
+                } else if(file_extension.equals(getString(R.string.export_doc))){
+                    mDescTextView.setText(R.string.file_manager_desc_doc);
+                } else if(file_extension.equals(getString(R.string.export_txt))) {
+                    mDescTextView.setText(R.string.file_manager_desc_txt);
+                }
                 break;
-            case R.id.export_group_spinner:
-                group_name = (String)adapterView.getSelectedItem();
-                Log.d(TAG, "onItemSelected: group_name = " + group_name);
-//                if (TextUtils.equals(group_name, getString(R.string.export_group_default))) {
-//                    group_name = null;
-//                }
+            default:
                 break;
         }
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
+    public void onItemClicked(View view, int position) {
+        super.onItemClicked(view, position);
+        if (mCurrentFile.isFile()) {
+            FileUtils.openFile(mActivity, mCurrentFile);
+        }
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {}
+
+    @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.export_save_button) {
-            file_name = mExportInput.getText().toString();
+        super.onClick(view);
+        if (view.getId() == R.id.file_manager_save_button) {
+            file_name = mInputView.getText().toString();
             if (TextUtils.isEmpty(file_name)){
                 Toast.makeText(mActivity,getString(R.string.export_file_name_need), Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            String finalDirPath = XmlBuilder.EXTERNAL_DIR + dir_name;
-            String finalFilePath = finalDirPath + "/" + file_name + file_extension;
-
-            //dir exist?
-            File dirFile = new File(finalDirPath);
-            if (dirFile.exists() && !dirFile.isDirectory()) {
-                dirFile.delete();
-            } else if (!dirFile.exists()){
-                dirFile.mkdirs();
-            }
+            String finalFilePath = getParentFolderName() + "/" + file_name + file_extension;
 
             File file = new File(finalFilePath);
             if (file.exists()) {
@@ -152,36 +144,53 @@ public class ExportFragment extends BaseFragment implements AdapterView.OnItemSe
                 return;
             }else {
                 try {
-                    Log.d(TAG, "onClick: finalPath = " + finalFilePath);
                     file.createNewFile();
                 } catch (IOException e) {
-                    Log.d(TAG, "onClick: "  + e);
                     Toast.makeText(mActivity, getString(R.string.file_manager_file_name_invalid), Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
                     return;
                 }
             }
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-            View hello = mActivity.getLayoutInflater().inflate(R.layout.dialog_gif, null);
-            GifImageView hellogif = (GifImageView) hello.findViewById(R.id.dialog_gif_iv);
-            try {
-                hellogif.setImageDrawable(new GifDrawable(mActivity.getAssets(), "hello1.gif"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            builder.setView(hello).setNegativeButton("Check", null).setPositiveButton("Share", null).setNeutralButton("Cancel", null).show();
             //Below should load async
             FavoriteManager fm = new FavoriteManager(getContext());
             ArrayList<WordBook> data = fm.getGroupFavorite(group_name);
 
-            if (TextUtils.equals(dir_name, getString(R.string.export_doc_dir))) {
-                DocBuilder.getInstance(mActivity).createDoc(file, data);
-            } else if (TextUtils.equals(dir_name, getString(R.string.export_txt_dir))) {
+            if (TextUtils.equals(file_extension, getString(R.string.export_doc))) {
+                DocBuilder.getInstance(mActivity).setBuildListener(this).createDoc(file, data);
+            } else if (TextUtils.equals(file_extension, getString(R.string.export_txt))) {
 
-            } else if (TextUtils.equals(dir_name, getString(R.string.export_xml_dir))) {
-
+            } else if (TextUtils.equals(file_extension, getString(R.string.export_xml))) {
+                XmlBuilder.getInstance().setBuildListener(this).createXML(file, data);
             }
+        }
+    }
+
+    @Override
+    public void onBuildingResult(final File file, boolean success) {
+        if (success) {
+            refreshData();
+            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+            View hello = mActivity.getLayoutInflater().inflate(R.layout.dialog_gif, null);
+            GifImageView happyGif = (GifImageView) hello.findViewById(R.id.dialog_gif_iv);
+            TextView pathView = (TextView) hello.findViewById(R.id.dialog_gif_path_tv);
+            try {
+                happyGif.setImageDrawable(new GifDrawable(mActivity.getAssets(), FileUtils.ASSETS_GIF_HAPPY));
+                pathView.setText(file.getAbsolutePath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            builder.setView(hello).setNegativeButton(R.string.export_success_check, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    FileUtils.openFile(mActivity, file);
+                }
+            }).setPositiveButton(R.string.export_success_share, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    FileUtils.shareFile(mActivity, file);
+                }
+            }).setNeutralButton(getString(R.string.file_manager_cancel), null).show();
+            Utils.hideSoftInput(mActivity, mInputView);
         }
     }
 }

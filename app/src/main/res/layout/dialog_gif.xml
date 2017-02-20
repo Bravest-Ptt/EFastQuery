@@ -8,10 +8,20 @@
         android:id="@+id/dialog_gif_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-    <TextView
+    <LinearLayout
         android:layout_gravity="center_vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="21sp"
-        android:text="@string/export_file_success"/>
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="21sp"
+            android:text="@string/export_file_success"/>
+        <TextView
+            android:id="@+id/dialog_gif_path_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
 </LinearLayout>

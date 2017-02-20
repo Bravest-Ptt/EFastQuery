@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.text.TextUtils;
 import android.util.ArraySet;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,6 +18,7 @@ import java.util.Set;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.data.Result;
 import bravest.ptt.efastquery.data.wordbook.WordBook;
+import bravest.ptt.efastquery.utils.RegularUtils;
 
 /**
  * Created by root on 2/13/17.
@@ -43,7 +45,7 @@ public class FavoriteManager {
         }
         ArrayList<WordBook> FavoriteList = new ArrayList<>();
 
-        String selectionArgs = EFastQueryDbUtils.Favorite.GROUPS+"=?";
+        String selectionArgs = EFastQueryDbUtils.Favorite.GROUPS + "=?";
         Cursor cursor = mResolver.query(EFastQueryDbUtils.Favorite.CONTENT_URI,
                 null,
                 selectionArgs,
@@ -164,24 +166,32 @@ public class FavoriteManager {
         mResolver.delete(EFastQueryDbUtils.Favorite.CONTENT_URI, "_id!=-1", null);
     }
 
-    public static void createGroup(Context context, String groupName) {
+    public static boolean createGroup(Context context, String groupName) {
         SharedPreferences sp = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         Set<String> set = new HashSet<String>();
         set.add(context.getString(R.string.export_group_default));
         Set<String> groupSet = sp.getStringSet(FM_GROUP, set);
-        if (!TextUtils.isEmpty(groupName)) {
-            groupSet.add(groupName);
+
+        if (!TextUtils.isEmpty(groupName) && RegularUtils.isUsername(groupName)) {
+            if (!groupName.equals(EFastQueryDbUtils.Favorite.GROUPS_DEFAULT_VALUE)) {
+                groupSet.add(groupName);
+                Toast.makeText(context, R.string.file_manager_create_group_success, Toast.LENGTH_SHORT).show();
+            }
+            editor.putStringSet(FM_GROUP, groupSet);
+            editor.commit();
+            return true;
+        } else {
+            Toast.makeText(context, R.string.file_manager_create_group_failed, Toast.LENGTH_SHORT).show();
         }
-        editor.putStringSet(FM_GROUP, groupSet);
-        editor.commit();
+        return false;
     }
 
     public static String[] getGroup(Context context) {
         SharedPreferences sp = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
         Set<String> groupSet = sp.getStringSet(FM_GROUP, new HashSet<String>());
         if (groupSet.size() == 0) {
-            createGroup(context, null);
+            createGroup(context, EFastQueryDbUtils.Favorite.GROUPS_DEFAULT_VALUE);
             groupSet = sp.getStringSet(FM_GROUP, new HashSet<String>());
         }
         String[] groups = groupSet.toArray(new String[groupSet.size()]);

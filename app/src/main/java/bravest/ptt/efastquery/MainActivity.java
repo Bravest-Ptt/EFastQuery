@@ -3,6 +3,8 @@ package bravest.ptt.efastquery;
 import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
@@ -22,6 +24,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -35,6 +38,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -55,6 +61,9 @@ import bravest.ptt.efastquery.fragment.FavoriteFragment;
 import bravest.ptt.efastquery.fragment.FileManagerFragment;
 import bravest.ptt.efastquery.fragment.ImportFragment;
 import bravest.ptt.efastquery.fragment.MainFragment;
+import bravest.ptt.efastquery.provider.EFastQueryDbUtils;
+import bravest.ptt.efastquery.provider.FavoriteManager;
+import bravest.ptt.efastquery.utils.PLog;
 import bravest.ptt.efastquery.utils.Utils;
 
 public class MainActivity extends AppCompatActivity
@@ -79,6 +88,9 @@ public class MainActivity extends AppCompatActivity
 
     private BaseFragment mCurrentFragment;
 
+    private Context mContext;
+
+    private String mGroup;
 
     private ServiceConnection mMainConnection = new ServiceConnection() {
         @Override
@@ -98,6 +110,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mContext = this;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -122,12 +135,12 @@ public class MainActivity extends AppCompatActivity
         mFragmentManager = getSupportFragmentManager();
         mFragmentMap = new HashMap<>();
         mMainFragment = new MainFragment();
-        mFileManagerFragment = new FileManagerFragment();
+        //mFileManagerFragment = new FileManagerFragment();
         mExportFragment = new ExportFragment();
         mImportFragment = new ImportFragment();
         mFavoriteFragment = new FavoriteFragment();
         mFragmentMap.put(R.id.nav_home, mMainFragment);
-        mFragmentMap.put(R.id.nav_export, mFileManagerFragment);
+        mFragmentMap.put(R.id.nav_export, mExportFragment);
         mFragmentMap.put(R.id.nav_import, mImportFragment);
         mFragmentMap.put(R.id.nav_favorite_book, mFavoriteFragment);
 
@@ -135,18 +148,7 @@ public class MainActivity extends AppCompatActivity
         initFragments(R.id.nav_home);
 
         //CheckPermission
-        if (Build.VERSION.SDK_INT >= 23) {
-            boolean allGranted = Utils.requestPermissions(this, REQUEST_CODE, new String[]{
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-            });
-
-            if (allGranted) {
-//                XmlBuilder xmlBuilder = XmlBuilder.getInstance();
-//                ArrayList<WordBook> data = new ArrayList<>();
-//                xmlBuilder.domCreateXML(data,null);
-            }
-        }
+        checkPermissions();
 
         /*
         //Creates a ColorStateList from an XML document using given a set of Resources
@@ -170,6 +172,25 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }*/
         mNavigationView.setItemIconTintList(null);
+
+        mGroup = getSelectGroup();
+    }
+
+    private boolean checkPermissions() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            boolean allGranted = Utils.requestPermissions(this, REQUEST_CODE, new String[]{
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+            });
+
+            if (allGranted) {
+//                XmlBuilder xmlBuilder = XmlBuilder.getInstance();
+//                ArrayList<WordBook> data = new ArrayList<>();
+//                xmlBuilder.domCreateXML(data,null);
+            }
+            return allGranted;
+        }
+        return true;
     }
 
     private void initFragments(int id) {
@@ -223,12 +244,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+
     }
 
     @Override
@@ -240,19 +256,22 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem item = menu.findItem(R.id.action_search);
         if (mCurrentFragment instanceof MainFragment) {
             menu.findItem(R.id.action_settings).setVisible(false);
             menu.findItem(R.id.action_search).setVisible(true);
+            menu.findItem(R.id.action_group).setVisible(false);
         } else if (mCurrentFragment instanceof ExportFragment) {
             menu.findItem(R.id.action_settings).setVisible(false);
             menu.findItem(R.id.action_search).setVisible(false);
+            menu.findItem(R.id.action_group).setVisible(true);
         } else if (mCurrentFragment instanceof ImportFragment) {
             menu.findItem(R.id.action_settings).setVisible(false);
             menu.findItem(R.id.action_search).setVisible(false);
+            menu.findItem(R.id.action_group).setVisible(true);
         } else if (mCurrentFragment instanceof FavoriteFragment) {
             menu.findItem(R.id.action_settings).setVisible(true);
             menu.findItem(R.id.action_search).setVisible(true);
+            menu.findItem(R.id.action_group).setVisible(false);
         }
 //        SearchView view = (SearchView) MenuItemCompat.getActionView(item);
 //        MenuItemCompat.setOnActionExpandListener(item, new MenuItemCompat.OnActionExpandListener(){
@@ -278,11 +297,96 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_search) {
-            return true;
+        switch (id) {
+            case R.id.action_group:
+                createGroupSelectDialog();
+                break;
+            case R.id.action_search:
+                break;
+            case R.id.action_settings:
+                break;
+            default:
+                break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public String getSelectGroup() {
+        if (mGroup == null) {
+            mGroup = this.getString(R.string.export_group_default);
+        }
+        return mGroup;
+    }
+
+    //Show groups
+    private void createGroupSelectDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        if (mCurrentFragment instanceof ExportFragment) {
+            builder.setTitle(R.string.export_select_group);
+        } else if (mCurrentFragment instanceof ImportFragment) {
+            builder.setTitle(R.string.import_select_group)
+                    .setNegativeButton(R.string.file_manager_create_group, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //Create new group
+                            addGroupDialog();
+                        }
+                    });
+        }
+
+        final String[] groups = FavoriteManager.getGroup(this);
+        final String[] chooseString = new String[1];
+
+        int i;
+        for (i = 0; i < groups.length; i++) {
+            String group = groups[i];
+            if (TextUtils.equals(mGroup, group)) {
+                break;
+            }
+        }
+
+        builder.setSingleChoiceItems(groups, i, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                chooseString[0] = groups[i];
+            }
+        }).setPositiveButton(R.string.file_manager_select_group, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                mGroup = chooseString[0];
+                PLog.log(mGroup);
+                //bug
+            }
+        }).setNeutralButton(R.string.file_manager_cancel, null)
+                .show();
+    }
+
+    public void addGroupDialog() {
+        final int DP_MARGIN = 16;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final LinearLayout layout = new LinearLayout(this);
+        final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        layout.setOrientation(LinearLayout.VERTICAL);
+        params.setMargins(Utils.dp2px(this, DP_MARGIN), 0, Utils.dp2px(this, DP_MARGIN), 0);
+        final EditText editText = new EditText(this);
+        layout.addView(editText, params);
+
+        builder
+                .setTitle(R.string.file_manager_create_group)
+                .setView(layout)
+                .setPositiveButton(R.string.file_manager_create_group, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        FavoriteManager.createGroup(mContext, editText.getText().toString());
+                    }
+                })
+                .setNegativeButton(R.string.file_manager_cancel, null)
+                .show();
+        Utils.popSoftInput(mContext, editText);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -308,6 +412,10 @@ public class MainActivity extends AppCompatActivity
                         R.color.nav_home_selector);
                 break;
             case R.id.nav_export:
+                if (!checkPermissions()) {
+                    mNavigationView.setCheckedItem(R.id.nav_home);
+                    break;
+                }
                 setStatusBarToolBarHeader(
                         R.string.export_file,
                         R.color.export_orange_500_4_toolbar,
@@ -315,6 +423,10 @@ public class MainActivity extends AppCompatActivity
                         R.color.nav_export_selector);
                 break;
             case R.id.nav_import:
+                if (!checkPermissions()) {
+                    mNavigationView.setCheckedItem(R.id.nav_home);
+                    break;
+                }
                 setStatusBarToolBarHeader(
                         R.string.import_file,
                         R.color.import_blue_500_4_toolbar,
@@ -335,6 +447,17 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void back2Home() {
+        mNavigationView.setCheckedItem(R.id.nav_home);
+        initFragments(R.id.nav_home);
+        invalidateOptionsMenu();
+        setStatusBarToolBarHeader(
+                R.string.home,
+                R.color.home_red_500_4_toolbar,
+                R.color.home_red_600_4_status_bar,
+                R.color.nav_home_selector);
     }
 
     private void setStatusBarToolBarHeader(int titleString, int mainColor, int statusBarColor, int itemColor) {
@@ -368,44 +491,59 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void showFileChooser() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("text/plain");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
+//    private void showFileChooser() {
+//        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+//        intent.setType("text/plain");
+//        intent.addCategory(Intent.CATEGORY_OPENABLE);
+//
+//        try {
+//            startActivityForResult(Intent.createChooser(intent, getString(R.string.select_file_import)), REQUEST_CODE);
+//        } catch (ActivityNotFoundException e) {
+//            Toast.makeText(this, getString(R.string.please_install_file_manager), Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
-        try {
-            startActivityForResult(Intent.createChooser(intent, getString(R.string.select_file_import)), REQUEST_CODE);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(this, getString(R.string.please_install_file_manager), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode != REQUEST_CODE) {
-            return;
-        }
-        if (resultCode == RESULT_OK) {
-            Uri uri = data.getData();
-            String filePath = "/storage/emulated/0/efastquery/xml/default_1487050240222.xml";
-            if (filePath == null || !filePath.endsWith("xml")) {
-                Toast.makeText(this, getString(R.string.just_support_xml), Toast.LENGTH_SHORT).show();
-                return;
-            }
-            Log.d(TAG, "onActivityResult: filepath = " + filePath);
-
-            ArrayList<WordBook> words = XmlParser.getInstance().parseXml(filePath);
-            Log.d(TAG, "onActivityResult: words size = " + words.size());
-            for (WordBook w : words) {
-                Log.d(TAG, "onActivityResult: word = " + w.getWord() + ", phonetic = " + w.getPhonetic());
-            }
-        }
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (requestCode != REQUEST_CODE) {
+//            return;
+//        }
+//        if (resultCode == RESULT_OK) {
+//            Uri uri = data.getData();
+//            String filePath = "/storage/emulated/0/efastquery/xml/default_1487050240222.xml";
+//            if (filePath == null || !filePath.endsWith("xml")) {
+//                Toast.makeText(this, getString(R.string.just_support_xml), Toast.LENGTH_SHORT).show();
+//                return;
+//            }
+//            Log.d(TAG, "onActivityResult: filepath = " + filePath);
+//
+//            ArrayList<WordBook> words = XmlParser.getInstance().parseXml(filePath);
+//            Log.d(TAG, "onActivityResult: words size = " + words.size());
+//            for (WordBook w : words) {
+//                Log.d(TAG, "onActivityResult: word = " + w.getWord() + ", phonetic = " + w.getPhonetic());
+//            }
+//        }
+//    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (mCurrentFragment != null) {
-            return mCurrentFragment.onKeyDown(keyCode, event);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            if (mCurrentFragment == null) {
+                return super.onKeyDown(keyCode, event);
+            }
+            if (mCurrentFragment.isRootPanel()) {
+                if (!(mCurrentFragment instanceof MainFragment)) {
+                    back2Home();
+                    return true;
+                } else {
+                    finish();
+                }
+            } else {
+                return mCurrentFragment.onKeyDown(keyCode, event);
+            }
         }
         return super.onKeyDown(keyCode, event);
     }

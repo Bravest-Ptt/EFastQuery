@@ -23,7 +23,7 @@
                 android:layout_height="40dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"
-                android:background="?android:attr/selectableItemBackground"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:drawableRight="@mipmap/file_folder_arrow"
                 android:gravity="center"
                 android:text="@string/file_manager_phone_folder"
@@ -50,7 +50,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center|right"
-                android:background="?android:attr/selectableItemBackground"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:padding="15dp"
                 android:src="@mipmap/add_folder" />
@@ -123,12 +123,32 @@
                     android:gravity="center" />
             </LinearLayout>
 
-            <Button
-                android:id="@+id/file_manager_save_button"
-                android:layout_width="100dp"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|right"
-                android:text="@string/export_save" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/file_manager_extension_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:gravity="center_vertical"
+                    android:textSize="13sp"
+                    android:layout_toLeftOf="@+id/file_manager_save_button"
+                    android:text="@string/file_manager_desc_xml" />
+
+                <Button
+                    android:id="@+id/file_manager_save_button"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/export_save" />
+
+
+            </RelativeLayout>
+
         </LinearLayout>
 
         <ScrollView

@@ -1,6 +1,5 @@
 package bravest.ptt.efastquery.fragment;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -20,6 +19,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -38,13 +38,12 @@ import bravest.ptt.efastquery.files.FileUtils;
 import bravest.ptt.efastquery.utils.PLog;
 import bravest.ptt.efastquery.utils.Utils;
 import bravest.ptt.efastquery.view.FileManagerAdapter;
-
+import static bravest.ptt.efastquery.files.FileUtils.*;
 /**
  * Created by root on 2/17/17.
  */
 
 public class FileManagerFragment extends BaseFragment implements ItemClickListener, View.OnClickListener {
-    protected Activity mActivity;
 
     protected LinearLayout mMainView;
     protected HorizontalScrollView mIndicatorScroller;
@@ -58,20 +57,19 @@ public class FileManagerFragment extends BaseFragment implements ItemClickListen
     protected AppCompatSpinner mExtensionSpinner;
     protected TextView mFolderEmptyTip;
     protected TextView mFolderExternal;
+    protected Button mSaveButton;
+    protected TextView mDescTextView;
 
     protected FileManagerAdapter mAdapter;
     protected ArrayList<File> mData;
 
     protected File mCurrentFile = Environment.getExternalStorageDirectory();
 
-    private static final String EXTERNAL = Environment.getExternalStorageDirectory().getAbsolutePath();
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        checkAppFolderExist();
         mData = new ArrayList<>();
-        mData.addAll(FileUtils.getPathContent(EXTERNAL, FileUtils.MODE_NORMAL));
-
         mAdapter = new FileManagerAdapter(getContext(), mData);
         mAdapter.setOnItemClickListener(this);
     }
@@ -93,10 +91,15 @@ public class FileManagerFragment extends BaseFragment implements ItemClickListen
         mExtensionSpinner = (AppCompatSpinner) view.findViewById(R.id.file_manager_spinner);
         mIndicatorScroller = (HorizontalScrollView) view.findViewById(R.id.file_manager_indicator_scroller);
         mFolderExternal = (TextView) view.findViewById(R.id.file_manager_external_folder);
+        mSaveButton = (Button) view.findViewById(R.id.file_manager_save_button);
+        mDescTextView = (TextView) view.findViewById(R.id.file_manager_extension_desc);
 
         //Add new folder
         mNewFolder.setOnClickListener(this);
         mFolderExternal.setOnClickListener(this);
+
+        mSaveButton.setOnClickListener(this);
+
         initRecyclerView();
         initRefresher();
 
@@ -144,12 +147,6 @@ public class FileManagerFragment extends BaseFragment implements ItemClickListen
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mActivity = getActivity();
-    }
-
-    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
     }
@@ -166,16 +163,24 @@ public class FileManagerFragment extends BaseFragment implements ItemClickListen
 
     }
 
-    private void refreshData() {
-        ArrayList<File> ret = FileUtils.getPathContent(mCurrentFile.getAbsolutePath(), FileUtils.MODE_NORMAL);
-        if (ret != null) {
-            mData.clear();
-            mData.addAll(ret);
-            notifyDataSetChanged();
+    protected String getParentFolderName() {
+        if (mCurrentFile == null) {
+            return null;
         }
+        if (mCurrentFile.isFile()) {
+            return mCurrentFile.getParentFile().getAbsolutePath();
+        }
+        return mCurrentFile.getAbsolutePath();
     }
 
-    private void notifyDataSetChanged() {
+    protected void refreshData() {
+        onDataRefresh();
+    }
+
+    protected void onDataRefresh() {
+    }
+
+    protected void notifyDataSetChanged() {
         if (mData.size() == 0) {
             PLog.log(mData.size());
             mFolderEmptyTip.setVisibility(View.VISIBLE);
@@ -200,7 +205,6 @@ public class FileManagerFragment extends BaseFragment implements ItemClickListen
         }
 
         addViewToIndicator();
-
         refreshData();
     }
 
@@ -229,6 +233,14 @@ public class FileManagerFragment extends BaseFragment implements ItemClickListen
                 refreshData();
                 return true;
             }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isRootPanel() {
+        if (mCurrentFile.getAbsolutePath().equals(EXTERNAL)) {
+            return true;
         }
         return false;
     }
@@ -332,15 +344,13 @@ public class FileManagerFragment extends BaseFragment implements ItemClickListen
         int i = 0;
         String parentPath = mCurrentFile.getAbsolutePath();
         String folderName = getString(R.string.file_manager_new_folder, "");
+        if (mCurrentFile.isFile()) {
+            parentPath = mCurrentFile.getParentFile().getAbsolutePath();
+        }
         while (true) {
-            if (mCurrentFile.isFile()) {
-                parentPath = mCurrentFile.getParentFile().getAbsolutePath();
-            }
-
             if (i != 0) {
                 folderName = getString(R.string.file_manager_new_folder, i+"");
             }
-
             File file = new File(parentPath + "/" + folderName);
             if (!file.exists()) {
                 break;
@@ -375,20 +385,24 @@ public class FileManagerFragment extends BaseFragment implements ItemClickListen
     private void createFolder(DialogInterface dialog, final TextView textView, final String finalParentPath, final String folderName) {
         File folder = new File(finalParentPath + "/" + folderName);
         if(folder.exists()) {
+            PLog.log(folder);
+            enableDialog(dialog, false);
             textView.setVisibility(View.VISIBLE);
             textView.setText(getString(R.string.file_manager_file_already_exist));
-            enableDialog(dialog, false);
         } else {
             try {
                 folder.createNewFile();
             } catch (IOException e) {
+                PLog.log(e);
                 textView.setVisibility(View.VISIBLE);
                 textView.setText(getString(R.string.file_manager_file_name_invalid));
                 enableDialog(dialog, false);
                 e.printStackTrace();
+                return;
             }
             folder.delete();
-            folder.mkdirs();
+            if (folder.mkdirs()) {
+            }
             enableDialog(dialog, true);
         }
     }
@@ -402,6 +416,13 @@ public class FileManagerFragment extends BaseFragment implements ItemClickListen
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void checkAppFolderExist() {
+        File appFolder = new File(EXTERNAL + "/" + getString(R.string.app_name));
+        if (!appFolder.exists()) {
+            appFolder.mkdirs();
         }
     }
 
