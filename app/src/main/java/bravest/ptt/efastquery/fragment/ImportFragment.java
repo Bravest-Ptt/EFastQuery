@@ -56,12 +56,12 @@ public class ImportFragment extends FileManagerFragment {
                         //Import
                     }
                 })
-                .setNegativeButton(R.string.file_manager_create_group, new DialogInterface.OnClickListener() {
+                .setNeutralButton(R.string.file_manager_create_group, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         mActivity.addGroupDialog();
                     }
-                }).setNeutralButton(R.string.file_manager_cancel, null)
+                }).setNegativeButton(R.string.file_manager_cancel, null)
                 .show();
     }
 

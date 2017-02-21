@@ -326,7 +326,7 @@ public class MainActivity extends AppCompatActivity
             builder.setTitle(R.string.export_select_group);
         } else if (mCurrentFragment instanceof ImportFragment) {
             builder.setTitle(R.string.import_select_group)
-                    .setNegativeButton(R.string.file_manager_create_group, new DialogInterface.OnClickListener() {
+                    .setNeutralButton(R.string.file_manager_create_group, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             //Create new group
@@ -355,10 +355,14 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 mGroup = chooseString[0];
+                //[FIX BUG] when user don't click item and directly click select,
+                // it will cause NULL POINTER EXCEPTION
+                if (mGroup == null) {
+                    mGroup = mContext.getString(R.string.export_group_default);
+                }
                 PLog.log(mGroup);
-                //bug
             }
-        }).setNeutralButton(R.string.file_manager_cancel, null)
+        }).setNegativeButton(R.string.file_manager_cancel, null)
                 .show();
     }
 
