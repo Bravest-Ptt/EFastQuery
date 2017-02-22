@@ -6,6 +6,7 @@
     app:cardBackgroundColor="@color/favorite_purple_100_4_item_card">
 
     <LinearLayout
+        android:id="@+id/item_fav_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -26,7 +27,7 @@
                 android:textStyle="bold" />
 
             <ImageView
-                android:id="@+id/item_fav_button"
+                android:id="@+id/item_fav_favorite"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_alignParentRight="true"
