@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import bravest.ptt.efastquery.R;
+import bravest.ptt.efastquery.callback.FloatPanelVisibleListener;
 import bravest.ptt.efastquery.utils.Utils;
 
 public class ESearchFloatButton implements View.OnLongClickListener, View.OnTouchListener, FloatPanelVisibleListener {

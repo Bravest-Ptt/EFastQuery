@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import bravest.ptt.efastquery.R;
+import bravest.ptt.efastquery.callback.FloatPanelVisibleListener;
 import bravest.ptt.efastquery.callback.ItemClickListener;
 import bravest.ptt.efastquery.data.Result;
 import bravest.ptt.efastquery.data.TranslateListener;
@@ -45,6 +46,7 @@ import bravest.ptt.efastquery.provider.FavoriteManager;
 import bravest.ptt.efastquery.provider.HistoryManager;
 import bravest.ptt.efastquery.utils.Utils;
 import bravest.ptt.efastquery.view.ESearchFloatButton.*;
+import bravest.ptt.efastquery.view.adapter.HistoryAdapter;
 
 /**
  * Created by root on 1/4/17.
@@ -140,8 +142,10 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         //Loader.init(mHm, mHistoryArray).progress(mProgressBar).execute();
         mHistoryArray = mHm.getAllHistory();
 
-        mHistoryAdapter = new HistoryAdapter(mContext, mHistoryArray);
-        mHistoryAdapter.setOnItemClickListener(this);
+        mHistoryAdapter = new HistoryAdapter();
+        mHistoryAdapter.setData(mHistoryArray)
+                .setContext(mContext)
+                .setOnItemClickListener(this);
 
         mMainShowHistory.setLayoutManager(new LinearLayoutManager(mContext));
         mMainShowHistory.setAdapter(mHistoryAdapter);
@@ -223,7 +227,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         //long click show checkbox && show fab in top (favorite, delete, select all, deselect all)
 //        mMainShowHistory
 
-        mMainHistoryRefresh.setOnRefreshListener(new RefreshListenerAdapter(){
+        mMainHistoryRefresh.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
             public void onRefresh(final TwinklingRefreshLayout refreshLayout) {
                 new Handler().postDelayed(new Runnable() {
@@ -231,7 +235,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
                     public void run() {
                         refreshLayout.finishRefreshing();
                     }
-                },500);
+                }, 500);
             }
 
             @Override
@@ -241,7 +245,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
                     public void run() {
                         refreshLayout.finishLoadmore();
                     }
-                },500);
+                }, 500);
             }
         });
     }

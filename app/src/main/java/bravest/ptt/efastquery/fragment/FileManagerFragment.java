@@ -34,14 +34,11 @@ import java.util.ArrayList;
 
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.callback.ItemClickListener;
-import bravest.ptt.efastquery.files.FileUtils;
 import bravest.ptt.efastquery.utils.PLog;
 import bravest.ptt.efastquery.utils.Utils;
-import bravest.ptt.efastquery.view.FileManagerAdapter;
+import bravest.ptt.efastquery.view.adapter.FileManagerAdapter;
+
 import static bravest.ptt.efastquery.files.FileUtils.*;
-/**
- * Created by root on 2/17/17.
- */
 
 public class FileManagerFragment extends BaseFragment implements ItemClickListener, View.OnClickListener {
 
@@ -70,8 +67,10 @@ public class FileManagerFragment extends BaseFragment implements ItemClickListen
         super.onCreate(savedInstanceState);
         checkAppFolderExist();
         mData = new ArrayList<>();
-        mAdapter = new FileManagerAdapter(getContext(), mData);
-        mAdapter.setOnItemClickListener(this);
+        mAdapter = new FileManagerAdapter();
+        mAdapter.setData(mData)
+                .setContext(getContext())
+                .setOnItemClickListener(this);
     }
 
     @Nullable
@@ -332,7 +331,7 @@ public class FileManagerFragment extends BaseFragment implements ItemClickListen
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
         layout.setOrientation(LinearLayout.VERTICAL);
-        params.setMargins(Utils.dp2px(mActivity,DP_MARGIN), 0 , Utils.dp2px(mActivity,DP_MARGIN), 0);
+        params.setMargins(Utils.dp2px(mActivity, DP_MARGIN), 0, Utils.dp2px(mActivity, DP_MARGIN), 0);
         final EditText editText = new EditText(mActivity);
         final TextView textView = new TextView(mActivity);
         textView.setTextColor(mActivity.getResources().getColor(R.color.red));
@@ -349,7 +348,7 @@ public class FileManagerFragment extends BaseFragment implements ItemClickListen
         }
         while (true) {
             if (i != 0) {
-                folderName = getString(R.string.file_manager_new_folder, i+"");
+                folderName = getString(R.string.file_manager_new_folder, i + "");
             }
             File file = new File(parentPath + "/" + folderName);
             if (!file.exists()) {
@@ -384,7 +383,7 @@ public class FileManagerFragment extends BaseFragment implements ItemClickListen
 
     private void createFolder(DialogInterface dialog, final TextView textView, final String finalParentPath, final String folderName) {
         File folder = new File(finalParentPath + "/" + folderName);
-        if(folder.exists()) {
+        if (folder.exists()) {
             PLog.log(folder);
             enableDialog(dialog, false);
             textView.setVisibility(View.VISIBLE);
