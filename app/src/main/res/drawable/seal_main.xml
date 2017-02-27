@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="326.5dp"
+    android:height="326.5dp"
+    android:viewportHeight="326.5"
+    android:viewportWidth="326.5">
+    <group
+
+        android:scaleX="1"
+        android:scaleY="1">
+        <!--
+          _____
+         -     -
+        |       |
+        |       |
+         -     -
+        六芒星六个顶点 + x100 + y50
+        顶150 0
+        肩左 0 86.6
+        肩右 300 86.6
+        胯左 0 259.8
+        胯右 300 259.8
+        底 150 346.4
+        中心 150 173.2
+        中心圆 半径30
+        外小圆 半径 174.2
+        外大圆半径 184.2
+        -->
+        <path
+            android:name="start"
+            android:pathData=
+                "M 250 50 L 400 136.6 L 400 309.8 L 250 396.4 L 100 309.8 L 100 136.6 L 250 50
+                    L 100 309.8 L 400 309.8 L 250 50
+                    L 100 136.6 L 250 396.4 L 400 136.6 L 100 136.6
+                    L 100 136.6 L 400 309.8
+                    L 250 50 L 250 396.4
+                    L 400 136.6 L 100 309.8 Z"
+            android:strokeColor="#FF4081"
+            android:strokeWidth="1" />
+        <!--   -->
+        <path
+            android:name="start_circle"
+            android:pathData=" M 220 223.2
+                    A 30 30 0 0 0 280 223.2
+                    A 30 30 0 0 0 220 223.2"
+            android:strokeColor="#FF4081"
+            android:strokeWidth="1" />
+        <!--&lt;!&ndash; 比本体半径大5 &ndash;&gt;-->
+        <!--<path android:name="start_out_circle_1"-->
+            <!--android:pathData="M 250 45-->
+                    <!--A 178.2 178.2 0 1 0 250 403.4-->
+                    <!--A 178.2 178.2 0 1 0 250 45"-->
+            <!--android:strokeColor="#FF4081"-->
+            <!--android:strokeWidth="1" />-->
+
+        <!--&lt;!&ndash;比本体半径大40&ndash;&gt;-->
+        <!--<path android:name="start_out_circle_2"-->
+            <!--android:pathData="M 250 4-->
+                    <!--A 213.2 213.2 0 1 0 250 436.4-->
+                    <!--A 213.2 213.2 0 1 0 250 4"-->
+            <!--android:strokeColor="#FF4081"-->
+            <!--android:strokeWidth="1" />-->
+    </group>
+
+
+</vector>

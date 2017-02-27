@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/seal_main">
+    <target
+        android:name="start"
+        android:animation="@animator/seal_anim" />
+    <target
+        android:name="start_circle"
+        android:animation="@animator/seal_anim" />
+
+    <target
+        android:name="start_out_circle_1"
+        android:animation="@animator/seal_anim" />
+
+    <target
+        android:name="start_out_circle_2"
+        android:animation="@animator/seal_anim" />
+</animated-vector>
