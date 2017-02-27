@@ -135,4 +135,14 @@ public class Utils {
     public static int dp2px(Context context, int px) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,px,context.getResources().getDisplayMetrics());
     }
+
+    public static void getHexagonPoints(float x, float y, float length){
+        final float gen3 = 1.732f;
+        PLog.log("左肩: x =  " + (x - (length / 2f) * gen3) + ", y = " + (y + length / 2f));
+        PLog.log("右肩：x = " + (x + (length / 2f) * gen3) + ", y = " + (y + length / 2f));
+        PLog.log("左跨：x = " + (x - (length / 2f) * gen3) + ", y = " + (y + (3f / 2f) * length));
+        PLog.log("右跨：x = " + (x + (length / 2f) * gen3) + ", y = " + (y + (3f / 2f) * length));
+        PLog.log("底点：x = " + (x) + ", y = " + (y + 2f * length));
+        PLog.log("边长：= " + length);
+    }
 }

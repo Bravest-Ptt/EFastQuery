@@ -5,7 +5,6 @@
     android:viewportHeight="326.5"
     android:viewportWidth="326.5">
     <group
-
         android:scaleX="1"
         android:scaleY="1">
         <!--
@@ -25,18 +24,28 @@
         中心圆 半径30
         外小圆 半径 174.2
         外大圆半径 184.2
+                                                           左肩: x =  80.55, y = 91.618195
+02-27 23:42:05.121 2937-2937/bravest.ptt.efastquery D/ptt: 右肩：x = 245.95, y = 91.618195
+02-27 23:42:05.121 2937-2937/bravest.ptt.efastquery D/ptt: 左跨：x = 80.55, y = 234.8546
+02-27 23:42:05.121 2937-2937/bravest.ptt.efastquery D/ptt: 右跨：x = 245.95, y = 234.8546
+02-27 23:42:05.121 2937-2937/bravest.ptt.efastquery D/ptt: 底点：x = 163.25, y = 306.47278
+02-27 23:42:05.121 2937-2937/bravest.ptt.efastquery D/ptt: 边长：= 143.23639
+
         -->
         <path
             android:name="start"
             android:pathData=
-                "M 250 50 L 400 136.6 L 400 309.8 L 250 396.4 L 100 309.8 L 100 136.6 L 250 50
-                    L 100 309.8 L 400 309.8 L 250 50
-                    L 100 136.6 L 250 396.4 L 400 136.6 L 100 136.6
-                    L 100 136.6 L 400 309.8
-                    L 250 50 L 250 396.4
-                    L 400 136.6 L 100 309.8 Z"
+                "M 163.25 20 L 287.3 91.62 L 287.3 234.875 L 163.25 306.47 L 39.19 234.875 L 39.19 91.6L 163.25 20"
+
             android:strokeColor="#FF4081"
             android:strokeWidth="1" />
+
+
+        <!--L 100 309.8 L 400 309.8 L 250 50-->
+        <!--L 100 136.6 L 250 396.4 L 400 136.6 L 100 136.6-->
+        <!--L 100 136.6 L 400 309.8-->
+        <!--L 250 50 L 250 396.4-->
+        <!--L 400 136.6 L 100 309.8 Z"-->
         <!--   -->
         <path
             android:name="start_circle"

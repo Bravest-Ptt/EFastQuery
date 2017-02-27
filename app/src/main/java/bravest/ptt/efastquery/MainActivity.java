@@ -207,6 +207,12 @@ public class MainActivity extends AppCompatActivity
         transaction.commit();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Utils.getHexagonPoints(163.25f, 20f, 143.25f);
+    }
+
     private void bindService() {
         Intent intent = new Intent(this, MainService.class);
         bindService(intent, mMainConnection, BIND_AUTO_CREATE);
