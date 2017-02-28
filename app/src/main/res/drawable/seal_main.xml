@@ -5,6 +5,7 @@
     android:viewportHeight="326.5"
     android:viewportWidth="326.5">
     <group
+        android:name="center"
         android:scaleX="1"
         android:scaleY="1">
         <!--
@@ -13,62 +14,97 @@
         |       |
         |       |
          -     -
-        六芒星六个顶点 + x100 + y50
-        顶150 0
-        肩左 0 86.6
-        肩右 300 86.6
-        胯左 0 259.8
-        胯右 300 259.8
-        底 150 346.4
-        中心 150 173.2
-        中心圆 半径30
-        外小圆 半径 174.2
-        外大圆半径 184.2
-                                                           左肩: x =  80.55, y = 91.618195
-02-27 23:42:05.121 2937-2937/bravest.ptt.efastquery D/ptt: 右肩：x = 245.95, y = 91.618195
-02-27 23:42:05.121 2937-2937/bravest.ptt.efastquery D/ptt: 左跨：x = 80.55, y = 234.8546
-02-27 23:42:05.121 2937-2937/bravest.ptt.efastquery D/ptt: 右跨：x = 245.95, y = 234.8546
-02-27 23:42:05.121 2937-2937/bravest.ptt.efastquery D/ptt: 底点：x = 163.25, y = 306.47278
-02-27 23:42:05.121 2937-2937/bravest.ptt.efastquery D/ptt: 边长：= 143.23639
-
+        六芒星六个顶点
+        顶
+        肩左
+        肩右
+        胯左
+        胯右
+        底
+        中心
+        中心圆 半径20
         -->
+
+        <!--逆时针主体六芒星-->
         <path
             android:name="start"
             android:pathData=
-                "M 163.25 20 L 287.3 91.62 L 287.3 234.875 L 163.25 306.47 L 39.19 234.875 L 39.19 91.6L 163.25 20"
+                "M 163.25 37
+                L 272.58 100.12
+                L 272.58 226.3
+                L 163.25 289.5
+                L 53.91  226.37
+                L 53.91 100.12
+                L 163.25 37 Z"
+            android:strokeColor="#eeeeee"
+            android:strokeWidth="1.5" />
 
-            android:strokeColor="#FF4081"
-            android:strokeWidth="1" />
+        <!--逆时针正三角
+        顶点预留线宽距离
+        顶点y-3
+        底部两点x内缩2
+        -->
+        <path
+            android:name="positive_triangle"
+            android:pathData="M 163.25 40
+            L 55.91  226.37
+            L 270.58 226.3 Z"
+            android:strokeColor="#eeeeee"
+            android:strokeWidth="4" />
 
+        <!--顺时针反三角-->
+        <path
+            android:name="negative_triangle"
+            android:pathData=" M 163.25 286.5
+            L 55.91 100.12
+            L 270.58 100.12 Z"
+            android:strokeColor="#eeeeee"
+            android:strokeWidth="4"
+            />
 
-        <!--L 100 309.8 L 400 309.8 L 250 50-->
-        <!--L 100 136.6 L 250 396.4 L 400 136.6 L 100 136.6-->
-        <!--L 100 136.6 L 400 309.8-->
-        <!--L 250 50 L 250 396.4-->
-        <!--L 400 136.6 L 100 309.8 Z"-->
-        <!--   -->
+        <group
+            android:name="lines">
+            <!--连接中心点的线组合-->
+            <path android:name="line_1"
+                android:pathData="M 163.25 37 L 163.25 163.25"
+                android:strokeColor="#eeeeee"
+                android:strokeWidth="1"
+                />
+            <path android:name="line_2"
+                android:pathData="M 272.58 100.12 L 163.25 163.25"
+                android:strokeColor="#eeeeee"
+                android:strokeWidth="1"
+                />
+            <path android:name="line_3"
+                android:pathData="M 272.58 226.3 L 163.25 163.25"
+                android:strokeColor="#eeeeee"
+                android:strokeWidth="1"
+                />
+            <path android:name="line_4"
+                android:pathData="M 163.25 289.5 L 163.25 163.25"
+                android:strokeColor="#eeeeee"
+                android:strokeWidth="1"
+                />
+            <path android:name="line_5"
+                android:pathData="M 53.91  226.37 L 163.25 163.25"
+                android:strokeColor="#eeeeee"
+                android:strokeWidth="1"
+                />
+            <path android:name="line_6"
+                android:pathData="M 53.91 100.12 L 163.25 163.25"
+                android:strokeColor="#eeeeee"
+                android:strokeWidth="1"
+                />
+        </group>
+
+        <!--inner little circle-->
         <path
             android:name="start_circle"
-            android:pathData=" M 220 223.2
-                    A 30 30 0 0 0 280 223.2
-                    A 30 30 0 0 0 220 223.2"
-            android:strokeColor="#FF4081"
+            android:pathData=" M 143.25 163.25
+                    A 20 20 0 0 0 183.25 163.25
+                    A 20 20 0 0 0 143.25 163.25"
+            android:strokeColor="#eeeeee"
             android:strokeWidth="1" />
-        <!--&lt;!&ndash; 比本体半径大5 &ndash;&gt;-->
-        <!--<path android:name="start_out_circle_1"-->
-            <!--android:pathData="M 250 45-->
-                    <!--A 178.2 178.2 0 1 0 250 403.4-->
-                    <!--A 178.2 178.2 0 1 0 250 45"-->
-            <!--android:strokeColor="#FF4081"-->
-            <!--android:strokeWidth="1" />-->
-
-        <!--&lt;!&ndash;比本体半径大40&ndash;&gt;-->
-        <!--<path android:name="start_out_circle_2"-->
-            <!--android:pathData="M 250 4-->
-                    <!--A 213.2 213.2 0 1 0 250 436.4-->
-                    <!--A 213.2 213.2 0 1 0 250 4"-->
-            <!--android:strokeColor="#FF4081"-->
-            <!--android:strokeWidth="1" />-->
     </group>
 
 

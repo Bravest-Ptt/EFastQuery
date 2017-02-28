@@ -51,6 +51,11 @@
     <color name="favorite_purple_500_4_toolbar">#9c27b0</color>
     <color name="favorite_purple_600_4_status_bar">#8e24aa</color>
     <color name="favorite_purple_100_4_item_card">#e1bee7</color>
+
+    //splash
+    <color name="splash_900">#212121</color>
+    <color name="splash_1000">#000000</color>
+    <color name="splash_800">#424242</color>
 </resources>
 
 

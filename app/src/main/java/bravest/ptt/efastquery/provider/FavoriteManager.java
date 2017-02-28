@@ -147,6 +147,9 @@ public class FavoriteManager {
     }
 
     public boolean isFavoriteExist(String request) {
+        if (TextUtils.isEmpty(request)){
+            return false;
+        }
         boolean exist = false;
         Cursor cursor = mResolver.query(EFastQueryDbUtils.Favorite.CONTENT_URI, new String[]{EFastQueryDbUtils.Favorite.REQUEST}, EFastQueryDbUtils.Favorite.REQUEST + "=?", new String[]{request}, null);
         if (cursor != null) {

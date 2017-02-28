@@ -3,179 +3,220 @@
     android:drawable="@drawable/seal">
 
     <target
-        android:name="out_circle"
-        android:animation="@animator/seal_anim" />
-    <target
-        android:name="inner_circle"
-        android:animation="@animator/seal_out_anim" />
-    <target
-        android:name="0"
-        android:animation="@animator/seal_out_anim" />
-    <target
-        android:name="1"
-        android:animation="@animator/seal_out_anim" />
-    <target
-        android:name="2"
-        android:animation="@animator/seal_out_anim" />
-    <target
-        android:name="3"
-        android:animation="@animator/seal_out_anim" />
-    <target
-        android:name="4"
-        android:animation="@animator/seal_out_anim" />
-    <target
-        android:name="5"
-        android:animation="@animator/seal_out_anim" />
+        android:name="hexagon"
+        android:animation="@animator/seal_hexagon_anim" />
 
     <target
+        android:name="positive_triangle"
+        android:animation="@animator/seal_triangle_anim" />
+
+    <target
+        android:name="negative_triangle"
+        android:animation="@animator/seal_triangle_anim" />
+
+    <target
+        android:name="line_1"
+        android:animation="@animator/seal_center_lines_anim" />
+
+    <target
+        android:name="line_2"
+        android:animation="@animator/seal_center_lines_anim" />
+
+    <target
+        android:name="line_3"
+        android:animation="@animator/seal_center_lines_anim" />
+
+    <target
+        android:name="line_4"
+        android:animation="@animator/seal_center_lines_anim" />
+
+    <target
+        android:name="line_5"
+        android:animation="@animator/seal_center_lines_anim" />
+
+    <target
+        android:name="line_6"
+        android:animation="@animator/seal_center_lines_anim" />
+
+
+    <target
+        android:name="center_circle"
+        android:animation="@animator/seal_center_circle_anim" />
+
+
+    <target
+        android:name="out_circle"
+        android:animation="@animator/seal_circle_anim" />
+    <target
+        android:name="inner_circle"
+        android:animation="@animator/seal_circle_anim" />
+    <target
+        android:name="0"
+        android:animation="@animator/t0" />
+    <target
+        android:name="1"
+        android:animation="@animator/t1" />
+    <target
+        android:name="2"
+        android:animation="@animator/t2" />
+    <target
+        android:name="3"
+        android:animation="@animator/t3" />
+    <target
+        android:name="4"
+        android:animation="@animator/t4" />
+    <target
+        android:name="5"
+        android:animation="@animator/t5" />
+    <target
         android:name="6"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t6" />
     <target
         android:name="7"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t7" />
     <target
         android:name="8"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t8" />
     <target
         android:name="9"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t9" />
     <target
         android:name="10"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t10" />
     <target
         android:name="11"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t11" />
     <target
         android:name="12"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t12" />
     <target
         android:name="13"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t13" />
     <target
         android:name="14"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t14" />
     <target
         android:name="15"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t15" />
     <target
         android:name="16"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t16" />
     <target
         android:name="17"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t17" />
     <target
         android:name="18"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t18" />
     <target
         android:name="19"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t19" />
     <target
         android:name="20"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t20" />
     <target
         android:name="21"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t21" />
     <target
         android:name="22"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t22" />
     <target
         android:name="23"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t23" />
 
     <target
         android:name="24"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t24" />
     <target
         android:name="25"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t25" />
     <target
         android:name="26"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t26" />
     <target
         android:name="27"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t27" />
     <target
         android:name="28"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t28" />
     <target
         android:name="29"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t29" />
     <target
         android:name="30"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t30" />
     <target
         android:name="31"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t31" />
 
     <!--+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <target
         android:name="_1"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_1" />
     <target
         android:name="_2"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_2" />
     <target
         android:name="_3"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_3" />
     <target
         android:name="_4"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_4" />
     <target
         android:name="_5"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_5" />
     <target
         android:name="_6"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_6" />
     <target
         android:name="_7"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_7" />
     <target
         android:name="_8"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_8" />
     <target
         android:name="_9"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_9" />
     <target
         android:name="_10"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_10" />
     <target
         android:name="_11"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_11" />
     <target
         android:name="_12"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_12" />
     <target
         android:name="_13"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_13" />
     <target
         android:name="_14"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_14" />
     <target
         android:name="_15"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_15" />
     <target
         android:name="_16"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_16" />
     <target
         android:name="_17"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_17" />
     <target
         android:name="_18"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_18" />
     <target
         android:name="_19"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_19" />
     <target
         android:name="_20"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_20" />
     <target
         android:name="_21"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_21" />
     <target
         android:name="_22"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_22" />
     <target
         android:name="_23"
-        android:animation="@animator/seal_out_anim" />
+        android:animation="@animator/t_23" />
 </animated-vector>

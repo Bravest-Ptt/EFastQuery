@@ -23,4 +23,14 @@
         <item name="colorPrimaryDark">@color/export_orange_600_4_status_bar</item>
         <item name="colorAccent">@color/export_orange_600_4_status_bar</item>
     </style>
+
+    <style name="AppTheme.Splash" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/splash_900</item>
+        <item name="colorPrimaryDark">@color/splash_1000</item>
+        <item name="colorAccent">@color/splash_800</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    </style>
+
 </resources>

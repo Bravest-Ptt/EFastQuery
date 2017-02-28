@@ -3,16 +3,16 @@
     android:drawable="@drawable/seal_main">
     <target
         android:name="start"
-        android:animation="@animator/seal_anim" />
+        android:animation="@animator/seal_circle_anim" />
     <target
         android:name="start_circle"
-        android:animation="@animator/seal_anim" />
+        android:animation="@animator/seal_circle_anim" />
 
     <target
         android:name="start_out_circle_1"
-        android:animation="@animator/seal_anim" />
+        android:animation="@animator/seal_circle_anim" />
 
     <target
         android:name="start_out_circle_2"
-        android:animation="@animator/seal_anim" />
+        android:animation="@animator/seal_circle_anim" />
 </animated-vector>
