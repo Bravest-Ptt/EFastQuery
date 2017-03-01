@@ -24,7 +24,7 @@ import bravest.ptt.efastquery.utils.PLog;
 public class FileUtils {
     private static final String TAG = "FileUtils";
 
-    public static final String ASSETS_GIF_HAPPY = "happy.gif";
+    //public static final String ASSETS_GIF_HAPPY = "happy.gif";
 
     public static final int MODE_JUST_DIR = 1;
     public static final int MODE_NORMAL_EXPORT = 2;

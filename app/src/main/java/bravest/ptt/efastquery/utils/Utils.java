@@ -7,10 +7,14 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -144,5 +148,50 @@ public class Utils {
         PLog.log("右跨：x = " + (x + (length / 2f) * gen3) + ", y = " + (y + (3f / 2f) * length));
         PLog.log("底点：x = " + (x) + ", y = " + (y + 2f * length));
         PLog.log("边长：= " + length);
+    }
+
+    public static Bitmap getScreenBitmap(Activity activity) {
+        View view = activity.getWindow().getDecorView();
+        view.buildDrawingCache();
+
+        int width = getScreenWidth(activity);
+        int height = getScreenHeight(activity);
+        int statusBarHeight = getStatusBarHeight(activity);
+
+        view.setDrawingCacheEnabled(true);
+        Bitmap bmp = Bitmap.createBitmap(view.getDrawingCache(), 0, statusBarHeight, width, height - statusBarHeight);
+        view.destroyDrawingCache();
+        return bmp;
+    }
+
+    public static Bitmap getScreenBitmapWithoutToolbar(Activity activity) {
+        View view = activity.getWindow().getDecorView();
+        view.buildDrawingCache();
+
+        int width = getScreenWidth(activity);
+        int height = getScreenHeight(activity);
+        int statusBarHeight = getStatusBarHeight(activity);
+        int actionBarHeight;
+        if (activity.getActionBar() != null) {
+            actionBarHeight = activity.getActionBar().getHeight();
+        } else if (activity instanceof AppCompatActivity){
+            if(((AppCompatActivity) activity).getSupportActionBar()!= null) {
+                actionBarHeight = ((AppCompatActivity) activity).getSupportActionBar().getHeight();
+            } else {
+                actionBarHeight = 0;
+            }
+        } else {
+            actionBarHeight = 0;
+        }
+
+        PLog.log(actionBarHeight);
+
+        view.setDrawingCacheEnabled(true);
+        Bitmap bmp = Bitmap.createBitmap(view.getDrawingCache(), 0, statusBarHeight + actionBarHeight, width, height - statusBarHeight - actionBarHeight);
+        view.destroyDrawingCache();
+        if (Build.VERSION.SDK_INT >= 19) {
+            bmp.reconfigure(width, height - statusBarHeight - actionBarHeight, Bitmap.Config.ARGB_4444);
+        }
+        return bmp;
     }
 }

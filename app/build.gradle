@@ -65,4 +65,9 @@ dependencies {
 //    compile files('libs/xmlbeans-2.6.0.jar')
     //Add for android-gif-drawable
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.5'
+
+    //Add for SwipeCards
+    compile 'com.lorentzos.swipecards:library:1.0.9@aar'
+
+    compile 'jp.wasabeef:blurry:2.1.0'
 }

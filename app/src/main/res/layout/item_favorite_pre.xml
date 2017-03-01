@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_fav_pre"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/item_fav_pre_date"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="8dp"
+        android:textSize="16sp"
+        android:background="@color/favorite_purple_100_4_item_card"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/item_fav_word"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:drawableLeft="@drawable/favorite_circle"
+        android:drawablePadding="8dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="24dp"
+        android:singleLine="true"
+        android:text="word"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/item_fav_explains"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginLeft="32dp"
+        android:layout_weight="1"
+        android:singleLine="true"
+        android:text="n. nihao" />
+
+</LinearLayout>

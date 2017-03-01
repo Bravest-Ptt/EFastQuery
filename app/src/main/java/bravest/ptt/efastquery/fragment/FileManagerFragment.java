@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -36,7 +35,7 @@ import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.callback.ItemClickListener;
 import bravest.ptt.efastquery.utils.PLog;
 import bravest.ptt.efastquery.utils.Utils;
-import bravest.ptt.efastquery.view.adapter.FileManagerAdapter;
+import bravest.ptt.efastquery.view.adapter.recycler.FileManagerAdapter;
 
 import static bravest.ptt.efastquery.files.FileUtils.*;
 
@@ -46,7 +45,6 @@ public class FileManagerFragment extends BaseFragment implements ItemClickListen
     protected HorizontalScrollView mIndicatorScroller;
     protected LinearLayout mIndicator;
     protected ImageView mNewFolder;
-    protected SwipeRefreshLayout mRefresher;
     protected RecyclerView mRecyclerView;
     protected LinearLayout mFooterView;
     protected LinearLayout mHeaderView;
@@ -77,11 +75,11 @@ public class FileManagerFragment extends BaseFragment implements ItemClickListen
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_file_manager, null);
+        mRefresher = (SwipeRefreshLayout) view.findViewById(R.id.file_manager_refresh);
 
         mMainView = (LinearLayout) view.findViewById(R.id.file_manager_main);
         mIndicator = (LinearLayout) view.findViewById(R.id.file_manager_folder_indicator);
         mNewFolder = (ImageView) view.findViewById(R.id.file_manager_folder_add);
-        mRefresher = (SwipeRefreshLayout) view.findViewById(R.id.file_manager_refresh);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.file_manager_content);
         mFolderEmptyTip = (TextView) view.findViewById(R.id.file_manager_content_empty);
         mFooterView = (LinearLayout) view.findViewById(R.id.file_manager_footer);
@@ -100,26 +98,7 @@ public class FileManagerFragment extends BaseFragment implements ItemClickListen
         mSaveButton.setOnClickListener(this);
 
         initRecyclerView();
-        initRefresher();
-
         return view;
-    }
-
-    private void initRefresher() {
-        mRefresher.setColorSchemeResources(R.color.home_red_500_4_toolbar, R.color.export_orange_500_4_toolbar, R.color.import_blue_500_4_toolbar);
-        mRefresher.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                PLog.log("on refresh");
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        refreshData();
-                        mRefresher.setRefreshing(false);
-                    }
-                }, 500);
-            }
-        });
     }
 
     private void initRecyclerView() {
@@ -131,6 +110,7 @@ public class FileManagerFragment extends BaseFragment implements ItemClickListen
         mRecyclerView.setAdapter(mAdapter);
 
 
+        //调整recyclerView的大小
         mRecyclerView.post(new Runnable() {
             @Override
             public void run() {
@@ -170,13 +150,6 @@ public class FileManagerFragment extends BaseFragment implements ItemClickListen
             return mCurrentFile.getParentFile().getAbsolutePath();
         }
         return mCurrentFile.getAbsolutePath();
-    }
-
-    protected void refreshData() {
-        onDataRefresh();
-    }
-
-    protected void onDataRefresh() {
     }
 
     protected void notifyDataSetChanged() {

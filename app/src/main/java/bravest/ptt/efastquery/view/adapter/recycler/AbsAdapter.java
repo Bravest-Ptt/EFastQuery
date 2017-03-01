@@ -1,4 +1,4 @@
-package bravest.ptt.efastquery.view.adapter;
+package bravest.ptt.efastquery.view.adapter.recycler;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

@@ -1,13 +1,11 @@
 package bravest.ptt.efastquery.provider;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.text.TextUtils;
-import android.util.ArraySet;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,6 +15,7 @@ import java.util.Set;
 
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.data.Result;
+import bravest.ptt.efastquery.data.wordbook.Word;
 import bravest.ptt.efastquery.data.wordbook.WordBook;
 import bravest.ptt.efastquery.utils.RegularUtils;
 
@@ -38,9 +37,51 @@ public class FavoriteManager {
         mResolver = mContext.getContentResolver();
     }
 
-    public ArrayList<WordBook> getGroupFavorite(String group) {
+    public ArrayList<Word> getFavoritePreByGroup(String group) {
+        Log.d(TAG, "getFavoritePre: group = " + group);
+        if (TextUtils.equals(group, mContext.getString(R.string.group_default))) {
+            group = EFastQueryDbUtils.Favorite.GROUPS_DEFAULT_VALUE;
+        }
+        ArrayList<Word> FavoriteList = new ArrayList<>();
+
+        String selectionArgs = EFastQueryDbUtils.Favorite.GROUPS + "=?";
+        Cursor cursor = mResolver.query(EFastQueryDbUtils.Favorite.CONTENT_URI,
+                null,
+                selectionArgs,
+                new String[]{group},
+                EFastQueryDbUtils.Favorite.DATE + " DESC");
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                Result result = new Result();
+
+                result.query = cursor.getString(cursor.getColumnIndex(EFastQueryDbUtils.Favorite.REQUEST));
+
+                result.setTranslateString(cursor.getString(cursor.getColumnIndex(EFastQueryDbUtils.Favorite.TRANSLATIONS)));
+
+                result.setExplainString(cursor.getString(cursor.getColumnIndex(EFastQueryDbUtils.Favorite.EXPLAINS)));
+
+                result.setWebString(cursor.getString(cursor.getColumnIndex(EFastQueryDbUtils.Favorite.WEBS)));
+
+                result.phonetic = cursor.getString(cursor.getColumnIndex(EFastQueryDbUtils.Favorite.PHONETIC));
+
+                result.uk_phonetic = cursor.getString(cursor.getColumnIndex(EFastQueryDbUtils.Favorite.UK_PHONETIC));
+
+                result.us_phonetic = cursor.getString(cursor.getColumnIndex(EFastQueryDbUtils.Favorite.US_PHONETIC));
+
+                result.setDate(cursor.getLong(cursor.getColumnIndex(EFastQueryDbUtils.Favorite.DATE)));
+
+                Word word = result.getWord();
+
+                FavoriteList.add(word);
+            }
+            cursor.close();
+        }
+        return FavoriteList;
+    }
+
+    public ArrayList<WordBook> getFavoriteByGroup(String group) {
         Log.d(TAG, "getGroupFavorite: group = " + group);
-        if (TextUtils.equals(group, mContext.getString(R.string.export_group_default))) {
+        if (TextUtils.equals(group, mContext.getString(R.string.group_default))) {
             group = EFastQueryDbUtils.Favorite.GROUPS_DEFAULT_VALUE;
         }
         ArrayList<WordBook> FavoriteList = new ArrayList<>();
@@ -68,6 +109,8 @@ public class FavoriteManager {
                 result.uk_phonetic = cursor.getString(cursor.getColumnIndex(EFastQueryDbUtils.Favorite.UK_PHONETIC));
 
                 result.us_phonetic = cursor.getString(cursor.getColumnIndex(EFastQueryDbUtils.Favorite.US_PHONETIC));
+
+                result.setDate(cursor.getLong(cursor.getColumnIndex(EFastQueryDbUtils.Favorite.DATE)));
 
                 WordBook book = result.getWordBook();
 
@@ -173,7 +216,7 @@ public class FavoriteManager {
         SharedPreferences sp = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         Set<String> set = new HashSet<String>();
-        set.add(context.getString(R.string.export_group_default));
+        set.add(context.getString(R.string.group_default));
         Set<String> groupSet = sp.getStringSet(FM_GROUP, set);
 
         if (!TextUtils.isEmpty(groupName) && RegularUtils.isUsername(groupName)) {

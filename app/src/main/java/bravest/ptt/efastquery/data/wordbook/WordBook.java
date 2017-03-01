@@ -1,12 +1,12 @@
 package bravest.ptt.efastquery.data.wordbook;
 
+import java.util.Date;
+
 /**
  * Created by pengtian on 2017/2/13.
  */
 
-public class WordBook {
-    private String word;
-    private String trans;
+public class WordBook extends Word{
     private String phonetic;
     private String tags;
     private String progress = "1";
@@ -19,31 +19,16 @@ public class WordBook {
     }
 
     public WordBook() {
+        super();
     }
 
     public WordBook(String w, String t, String p, String tagss) {
+        super(w,t);
         word = w;
         trans = t;
         phonetic = p;
         tags = tagss;
     }
-
-    public void setWord(String w) {
-        this.word = w;
-    }
-
-    public String getWord() {
-        return this.word;
-    }
-
-    public void setTrans(String t) {
-        this.trans = t;
-    }
-
-    public String getTrans() {
-        return trans;
-    }
-
 
     public void setProgress(String progress) {
         this.progress = progress;

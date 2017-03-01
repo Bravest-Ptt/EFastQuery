@@ -49,7 +49,7 @@
     <string name="export_save">保存</string>
     <string name="export_select_group">导出单词组</string>
     <string name="export_input_file_name"><font color="#000000"><b>输入文件名</b></font></string>
-    <string name="export_group_default">所有单词</string>
+    <string name="group_default">所有单词</string>
     <string name="export_file_name_need">请输入文件名</string>
     <string name="export_file_success">
         <font color="#f44336">导</font>

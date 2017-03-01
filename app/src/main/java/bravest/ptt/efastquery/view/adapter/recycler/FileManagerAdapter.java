@@ -1,4 +1,4 @@
-package bravest.ptt.efastquery.view.adapter;
+package bravest.ptt.efastquery.view.adapter.recycler;
 
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -13,7 +13,7 @@ public class FileManagerAdapter extends AbsAdapter {
 
     @Override
     public AbsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        FileItemHolder holder = new FileItemHolder(getInflater().inflate(R.layout.item_file_manager, null));
+        FileItemHolder holder = new FileItemHolder(getInflater().inflate(R.layout.item_file_manager, parent, false));
         holder.setItemClickListener(getItemClickListener());
         return holder;
     }

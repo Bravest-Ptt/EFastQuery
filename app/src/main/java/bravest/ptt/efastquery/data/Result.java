@@ -8,7 +8,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.Date;
 
+import bravest.ptt.efastquery.data.wordbook.Word;
 import bravest.ptt.efastquery.data.wordbook.WordBook;
 
 /**
@@ -37,6 +39,20 @@ public class Result implements Serializable {
     private JSONObject mResult;
 
 
+    private Date date;
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void setDate(long time) {
+        this.date = new Date(time);
+    }
+
     //Parsed
     public String error_code;
     public String query;
@@ -63,7 +79,14 @@ public class Result implements Serializable {
     }
 
     public WordBook getWordBook() {
-        return new WordBook(query, explains_str, "[" + phonetic + "]", null);
+        WordBook wordBook = new WordBook(query, explains_str, "[" + phonetic + "]", null);
+        wordBook.setDate(getDate());
+        return wordBook;
+    }
+
+    public Word getWord() {
+        Word word = new Word(query, explains_str, getDate());
+        return word;
     }
 
     private void parseJsonResult() {
@@ -207,14 +230,14 @@ public class Result implements Serializable {
         }
         try {
             int length = jsonArray.length();
-            Log.d(TAG, "jsonArray2String: length = "  + length);
+            Log.d(TAG, "jsonArray2String: length = " + length);
             for (int i = 0; i < length; i++) {
                 if (i != length - 1 || length == 1)
                     result += jsonArray.getString(i) + split;
             }
         } catch (JSONException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             return result;
         }
     }
@@ -223,7 +246,7 @@ public class Result implements Serializable {
         if (TextUtils.isEmpty(original)) return null;
         JSONArray jsonArray = new JSONArray();
         String[] array = original.split(split);
-        for (String str:array) {
+        for (String str : array) {
             jsonArray.put(str);
         }
         return jsonArray;

@@ -19,13 +19,13 @@ public class FavoriteHolder extends AbsHolder {
 
     public FavoriteHolder(View itemView) {
         super(itemView);
-
-        mWordTextView = (TextView) itemView.findViewById(R.id.item_fav_word);
-        mUsPhonetic = (TextView) itemView.findViewById(R.id.item_fav_speak_us);
-        mUkPhonetic = (TextView) itemView.findViewById(R.id.item_fav_speak_uk);
-        mExplainsTv = (TextView) itemView.findViewById(R.id.item_fav_explains);
-        mFavoriteIm = (ImageView) itemView.findViewById(R.id.item_fav_favorite);
-        mContentView = itemView.findViewById(R.id.item_fav_content);
+//
+//        mWordTextView = (TextView) itemView.findViewById(R.id.item_fav_word);
+//        mUsPhonetic = (TextView) itemView.findViewById(R.id.item_fav_speak_us);
+//        mUkPhonetic = (TextView) itemView.findViewById(R.id.item_fav_speak_uk);
+//        mExplainsTv = (TextView) itemView.findViewById(R.id.item_fav_explains);
+//        mFavoriteIm = (ImageView) itemView.findViewById(R.id.item_fav_favorite);
+//        mContentView = itemView.findViewById(R.id.item_fav_content);
     }
 
     public TextView getmExplainsTv() {

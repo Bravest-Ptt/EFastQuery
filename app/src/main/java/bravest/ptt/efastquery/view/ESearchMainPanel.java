@@ -46,7 +46,7 @@ import bravest.ptt.efastquery.provider.FavoriteManager;
 import bravest.ptt.efastquery.provider.HistoryManager;
 import bravest.ptt.efastquery.utils.Utils;
 import bravest.ptt.efastquery.view.ESearchFloatButton.*;
-import bravest.ptt.efastquery.view.adapter.HistoryAdapter;
+import bravest.ptt.efastquery.view.adapter.recycler.HistoryAdapter;
 
 /**
  * Created by root on 1/4/17.

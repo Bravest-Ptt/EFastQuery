@@ -320,7 +320,7 @@ public class MainActivity extends AppCompatActivity
 
     public String getSelectGroup() {
         if (mGroup == null) {
-            mGroup = this.getString(R.string.export_group_default);
+            mGroup = this.getString(R.string.group_default);
         }
         return mGroup;
     }
@@ -364,7 +364,7 @@ public class MainActivity extends AppCompatActivity
                 //[FIX BUG] when user don't click item and directly click select,
                 // it will cause NULL POINTER EXCEPTION
                 if (mGroup == null) {
-                    mGroup = mContext.getString(R.string.export_group_default);
+                    mGroup = mContext.getString(R.string.group_default);
                 }
                 PLog.log(mGroup);
             }

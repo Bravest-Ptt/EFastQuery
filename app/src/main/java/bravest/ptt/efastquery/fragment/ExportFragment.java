@@ -1,22 +1,11 @@
 package bravest.ptt.efastquery.fragment;
 
-import android.app.Activity;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -32,8 +21,6 @@ import bravest.ptt.efastquery.files.FileUtils;
 import bravest.ptt.efastquery.provider.FavoriteManager;
 import bravest.ptt.efastquery.utils.PLog;
 import bravest.ptt.efastquery.utils.Utils;
-import pl.droidsonroids.gif.GifDrawable;
-import pl.droidsonroids.gif.GifImageView;
 
 import static bravest.ptt.efastquery.files.FileUtils.EXTERNAL;
 
@@ -153,7 +140,7 @@ public class ExportFragment extends FileManagerFragment implements AdapterView.O
 
             //Below should load async
             FavoriteManager fm = new FavoriteManager(getContext());
-            ArrayList<WordBook> data = fm.getGroupFavorite(group_name);
+            ArrayList<WordBook> data = fm.getFavoriteByGroup(group_name);
 
             if (TextUtils.equals(file_extension, getString(R.string.export_doc))) {
                 DocBuilder.getInstance(mActivity).setBuildListener(this).createDoc(file, data);
@@ -169,27 +156,27 @@ public class ExportFragment extends FileManagerFragment implements AdapterView.O
     public void onBuildingResult(final File file, boolean success) {
         if (success) {
             refreshData();
-            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-            View hello = mActivity.getLayoutInflater().inflate(R.layout.dialog_gif, null);
-            GifImageView happyGif = (GifImageView) hello.findViewById(R.id.dialog_gif_iv);
-            TextView pathView = (TextView) hello.findViewById(R.id.dialog_gif_path_tv);
-            try {
-                happyGif.setImageDrawable(new GifDrawable(mActivity.getAssets(), FileUtils.ASSETS_GIF_HAPPY));
-                pathView.setText(file.getAbsolutePath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            builder.setView(hello).setNegativeButton(R.string.export_success_check, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    FileUtils.openFile(mActivity, file);
-                }
-            }).setPositiveButton(R.string.export_success_share, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    FileUtils.shareFile(mActivity, file);
-                }
-            }).setNeutralButton(getString(R.string.file_manager_cancel), null).show();
+//            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+//            View hello = mActivity.getLayoutInflater().inflate(R.layout.dialog_gif, null);
+//            GifImageView happyGif = (GifImageView) hello.findViewById(R.id.dialog_gif_iv);
+//            TextView pathView = (TextView) hello.findViewById(R.id.dialog_gif_path_tv);
+//            try {
+//                happyGif.setImageDrawable(new GifDrawable(mActivity.getAssets(), FileUtils.ASSETS_GIF_HAPPY));
+//                pathView.setText(file.getAbsolutePath());
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            builder.setView(hello).setNegativeButton(R.string.export_success_check, new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialogInterface, int i) {
+//                    FileUtils.openFile(mActivity, file);
+//                }
+//            }).setPositiveButton(R.string.export_success_share, new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialogInterface, int i) {
+//                    FileUtils.shareFile(mActivity, file);
+//                }
+//            }).setNeutralButton(getString(R.string.file_manager_cancel), null).show();
             Utils.hideSoftInput(mActivity, mInputView);
         }
     }

@@ -1,4 +1,4 @@
-package bravest.ptt.efastquery.view.adapter;
+package bravest.ptt.efastquery.view.adapter.recycler;
 
 import android.view.ViewGroup;
 
@@ -12,7 +12,7 @@ public class HistoryAdapter extends AbsAdapter {
 
     @Override
     public AbsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        HistoryHolder holder = new HistoryHolder(getInflater().inflate(R.layout.item_holder, null));
+        HistoryHolder holder = new HistoryHolder(getInflater().inflate(R.layout.item_holder, parent, false));
         holder.setItemClickListener(getItemClickListener());
         return holder;
     }

@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -87,12 +88,18 @@ public class HistoryManager {
     }
 
     public void updateHistoryTime(String request) {
+        if (TextUtils.isEmpty(request)) {
+            return;
+        }
         ContentValues values = new ContentValues();
         values.put(History.DATE, System.currentTimeMillis());
         mResolver.update(History.CONTENT_URI, values, History.REQUEST + "=?", new String[]{request});
     }
 
     public boolean isRequestExist(String request) {
+        if (TextUtils.isEmpty(request)) {
+            return false;
+        }
         boolean exist = false;
         Cursor cursor = mResolver.query(History.CONTENT_URI, new String[]{History.REQUEST}, History.REQUEST + "=?", new String[]{request}, null);
         if (cursor != null) {
