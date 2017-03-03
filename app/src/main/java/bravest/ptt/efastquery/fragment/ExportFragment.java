@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.callback.BuildListener;
 import bravest.ptt.efastquery.data.wordbook.DocBuilder;
+import bravest.ptt.efastquery.data.wordbook.W;
 import bravest.ptt.efastquery.data.wordbook.WordBook;
 import bravest.ptt.efastquery.data.wordbook.XmlBuilder;
 import bravest.ptt.efastquery.files.FileUtils;
@@ -140,7 +141,7 @@ public class ExportFragment extends FileManagerFragment implements AdapterView.O
 
             //Below should load async
             FavoriteManager fm = new FavoriteManager(getContext());
-            ArrayList<WordBook> data = fm.getFavoriteByGroup(group_name);
+            ArrayList<W> data = fm.getFavoriteByGroup(null, group_name, FavoriteManager.MODE_WORDBOOK);
 
             if (TextUtils.equals(file_extension, getString(R.string.export_doc))) {
                 DocBuilder.getInstance(mActivity).setBuildListener(this).createDoc(file, data);

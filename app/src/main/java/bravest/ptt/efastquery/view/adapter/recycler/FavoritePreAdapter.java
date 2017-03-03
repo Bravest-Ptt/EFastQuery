@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.Locale;
 
 import bravest.ptt.efastquery.R;
+import bravest.ptt.efastquery.data.Result;
+import bravest.ptt.efastquery.data.wordbook.W;
 import bravest.ptt.efastquery.data.wordbook.Word;
 import bravest.ptt.efastquery.view.holder.AbsHolder;
 import bravest.ptt.efastquery.view.holder.FavoritePreHolder;
@@ -36,7 +38,7 @@ public class FavoritePreAdapter extends AbsAdapter {
 
     @Override
     public void onBindViewHolder(AbsHolder absHolder, int position) {
-        Word word = (Word) getData().get(position);
+        Result word = (Result) getData().get(position);
         if (word == null) {
             return;
         }
@@ -48,15 +50,17 @@ public class FavoritePreAdapter extends AbsAdapter {
         }
     }
 
-    private void bindDateItem(Word word, FavoritePreHolder holder) {
+    private void bindDateItem(W result, FavoritePreHolder holder) {
+        Word word = ((Result) result).getWord();
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         String time = df.format(word.getDate());
         holder.getTimeView().setText(time);
-        bindNormalItem(word, holder);
+        bindNormalItem(result, holder);
     }
 
 
-    private void bindNormalItem(Word word, FavoritePreHolder holder) {
+    private void bindNormalItem(W result, FavoritePreHolder holder) {
+        Word word = ((Result) result).getWord();
         holder.getWordView().setText(word.getWord());
         holder.getExplainsView().setText(word.getTrans());
     }
@@ -66,11 +70,11 @@ public class FavoritePreAdapter extends AbsAdapter {
         if (position == 0) {
             return DATE;
         }
-        Date currentDate = ((Word) getData().get(position)).getDate();
+        Date currentDate = ((Result) getData().get(position)).getDate();
         if (currentDate == null) {
             return NORMAL;
         }
-        Date preDate = ((Word) getData().get(position - 1)).getDate();
+        Date preDate = ((Result) getData().get(position - 1)).getDate();
         if (sameDate(currentDate, preDate)) {
             return NORMAL;
         } else {

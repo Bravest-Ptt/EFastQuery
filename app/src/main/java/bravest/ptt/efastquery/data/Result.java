@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.Date;
 
+import bravest.ptt.efastquery.data.wordbook.W;
 import bravest.ptt.efastquery.data.wordbook.Word;
 import bravest.ptt.efastquery.data.wordbook.WordBook;
 
@@ -17,23 +18,23 @@ import bravest.ptt.efastquery.data.wordbook.WordBook;
  * Created by root on 12/27/16.
  */
 
-public class Result implements Serializable {
+public class Result implements Serializable, W {
 
     private static final String TAG = "Result";
     //RESULT-NORMAL
-    public static final int RESULT_SUCCESS = 0;
+    static final int RESULT_SUCCESS = 0;
     //RESULT-ERROR
-    public static final int RESULT_LONG = 20;
-    public static final int RESULT_INVALID = 30;
-    public static final int RESULT_UNSUPPORTED = 40;
-    public static final int RESULT_KEY_ERROR = 50;
-    public static final int RESULT_NO_RESULT = 60;
+    static final int RESULT_LONG = 20;
+    static final int RESULT_INVALID = 30;
+    static final int RESULT_UNSUPPORTED = 40;
+    static final int RESULT_KEY_ERROR = 50;
+    static final int RESULT_NO_RESULT = 60;
 
     //RESULT-LOCALE-ERROR
-    public static final int LOCALE_UNSUPPORTED_ENCODER = 70;
-    public static final int LOCALE_MALFORMED_URL = 80;
-    public static final int LOCALE_IO_EXCEPTION = 90;
-    public static final int LOCALE_JSON_EXCEPTION = 100;
+    static final int LOCALE_UNSUPPORTED_ENCODER = 70;
+    static final int LOCALE_MALFORMED_URL = 80;
+    static final int LOCALE_IO_EXCEPTION = 90;
+    static final int LOCALE_JSON_EXCEPTION = 100;
 
 
     private JSONObject mResult;
@@ -54,17 +55,17 @@ public class Result implements Serializable {
     }
 
     //Parsed
-    public String error_code;
+    String error_code;
     public String query;
 
-    public JSONArray translation;
+    JSONArray translation;
 
     public String phonetic;
     public String us_phonetic;
     public String uk_phonetic;
     public JSONArray explains;
 
-    public JSONArray web;
+    JSONArray web;
 
     private String translation_str;
     private String explains_str;

@@ -8,7 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light">
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.DayNight">
         <item name="colorPrimary">@color/home_red_500_4_toolbar</item>
         <item name="colorPrimaryDark">@color/home_red_600_4_status_bar</item>
         <item name="colorAccent">@color/colorAccent</item>

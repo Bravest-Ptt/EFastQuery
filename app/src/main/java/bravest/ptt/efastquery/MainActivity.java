@@ -25,6 +25,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -413,6 +414,10 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_close:
                 hideFloatingWindow();
+                break;
+            case R.id.nav_night_mode:
+                getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                recreate();
                 break;
             case R.id.nav_home:
                 setStatusBarToolBarHeader(

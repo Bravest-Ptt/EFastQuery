@@ -54,7 +54,7 @@ public class XmlBuilder extends Builder{
         return new XmlBuilder();
     }
 
-    public String createXML(File file, ArrayList<WordBook> datas) {
+    public String createXML(File file, ArrayList<W> datas) {
         String xmlWriter = null;
 
         try {
@@ -68,7 +68,7 @@ public class XmlBuilder extends Builder{
 
             int datasLength = datas.size();
             for (int i = 0; i < datasLength; i++) {
-                WordBook data = datas.get(i);
+                WordBook data = (WordBook) datas.get(i);
                 Element item = document.createElement(ELEMENT_ITEM);
 
                 //word

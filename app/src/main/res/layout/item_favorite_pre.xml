@@ -16,7 +16,6 @@
         android:gravity="center_vertical"
         android:paddingLeft="8dp"
         android:textSize="16sp"
-        android:background="@color/favorite_purple_100_4_item_card"
         android:textStyle="bold"
         android:visibility="gone" />
 

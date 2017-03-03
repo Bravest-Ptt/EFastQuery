@@ -9,15 +9,19 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.data.Result;
+import bravest.ptt.efastquery.data.wordbook.W;
 import bravest.ptt.efastquery.data.wordbook.Word;
 import bravest.ptt.efastquery.data.wordbook.WordBook;
 import bravest.ptt.efastquery.utils.RegularUtils;
+import bravest.ptt.efastquery.utils.Utils;
 
 /**
  * Created by root on 2/13/17.
@@ -123,10 +127,31 @@ public class FavoriteManager {
         return FavoriteList;
     }
 
-    public ArrayList<Result> getAllFavorite() {
-        ArrayList<Result> FavoriteList = new ArrayList<>();
+    public static final int MODE_RESULT = 1;
+    public static final int MODE_WORD = 2;
+    public static final int MODE_WORDBOOK = 3;
 
-        Cursor cursor = mResolver.query(EFastQueryDbUtils.Favorite.CONTENT_URI, null, null, null, EFastQueryDbUtils.Favorite.DATE + " DESC");
+    public ArrayList<W> getFavoriteByGroup(ArrayList<W> list, String group, int mode) {
+        if (TextUtils.isEmpty(group)) {
+            return null;
+        }
+        if (list == null) {
+            list = new ArrayList<>();
+        }
+
+        Log.d(TAG, "getGroupFavorite: group = " + group);
+        if (TextUtils.equals(group, mContext.getString(R.string.group_default))) {
+            group = EFastQueryDbUtils.Favorite.GROUPS_DEFAULT_VALUE;
+        }
+
+
+        String selectionArgs = EFastQueryDbUtils.Favorite.GROUPS + "=?";
+        Cursor cursor = mResolver.query(EFastQueryDbUtils.Favorite.CONTENT_URI,
+                null,
+                selectionArgs,
+                new String[]{group},
+                EFastQueryDbUtils.Favorite.DATE + " DESC");
+
         if (cursor != null) {
             while (cursor.moveToNext()) {
                 Result result = new Result();
@@ -145,11 +170,30 @@ public class FavoriteManager {
 
                 result.us_phonetic = cursor.getString(cursor.getColumnIndex(EFastQueryDbUtils.Favorite.US_PHONETIC));
 
-                FavoriteList.add(result);
+                result.setDate(cursor.getLong(cursor.getColumnIndex(EFastQueryDbUtils.Favorite.DATE)));
+
+                switch (mode) {
+                    case MODE_RESULT:
+                        list.add(result);
+                        break;
+                    case MODE_WORD:
+                        Word word = result.getWord();
+                        word.setTags(group);
+                        list.add(word);
+                        break;
+                    case MODE_WORDBOOK:
+                        WordBook book = result.getWordBook();
+                        book.setTags(group);
+                        list.add(book);
+                        break;
+                    default:
+                        throw new RuntimeException("Favorite Manager mode error");
+                }
+
             }
             cursor.close();
         }
-        return FavoriteList;
+        return list;
     }
 
     public long insertFavorite(Result result, String group) {
@@ -190,7 +234,7 @@ public class FavoriteManager {
     }
 
     public boolean isFavoriteExist(String request) {
-        if (TextUtils.isEmpty(request)){
+        if (TextUtils.isEmpty(request)) {
             return false;
         }
         boolean exist = false;

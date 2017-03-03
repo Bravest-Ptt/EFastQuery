@@ -6,9 +6,9 @@ import java.util.Date;
  * Created by pengtian on 2017/2/13.
  */
 
-public class WordBook extends Word{
+public class WordBook extends Word {
     private String phonetic;
-    private String tags;
+
     private String progress = "1";
 
     public WordBook(WordBook wordBook) {
@@ -23,7 +23,7 @@ public class WordBook extends Word{
     }
 
     public WordBook(String w, String t, String p, String tagss) {
-        super(w,t);
+        super(w, t);
         word = w;
         trans = t;
         phonetic = p;
@@ -36,14 +36,6 @@ public class WordBook extends Word{
 
     public String getProgress() {
         return progress;
-    }
-
-    public void setTags(String tags) {
-        this.tags = tags;
-    }
-
-    public String getTags() {
-        return tags;
     }
 
     public String getPhonetic() {

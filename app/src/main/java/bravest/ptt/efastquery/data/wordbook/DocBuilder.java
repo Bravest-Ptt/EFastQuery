@@ -57,7 +57,7 @@ public class DocBuilder extends Builder{
     private static final String TRANS_SPACE = "    ";
     private static final String ENTER_CHAR = "\n";
 
-    public void createDoc(File file, ArrayList<WordBook> data) {
+    public void createDoc(File file, ArrayList<W> data) {
         try {
             AssetManager assetManager = mContext.getAssets();
 
@@ -72,7 +72,7 @@ public class DocBuilder extends Builder{
             }
             int size = data.size();
             for(int i = 0;i < size; i++) {
-                WordBook book = data.get(i);
+                WordBook book = (WordBook) data.get(i);
                 range.insertAfter((i + 1)
                         + DOT
                         + book.getWord()

@@ -20,6 +20,8 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -189,9 +191,14 @@ public class Utils {
         view.setDrawingCacheEnabled(true);
         Bitmap bmp = Bitmap.createBitmap(view.getDrawingCache(), 0, statusBarHeight + actionBarHeight, width, height - statusBarHeight - actionBarHeight);
         view.destroyDrawingCache();
-        if (Build.VERSION.SDK_INT >= 19) {
-            bmp.reconfigure(width, height - statusBarHeight - actionBarHeight, Bitmap.Config.ARGB_4444);
-        }
         return bmp;
+    }
+
+    public static final Type getType(Class<?> subclass) {
+        Type superClass = subclass.getGenericSuperclass();
+        if (superClass instanceof  Class) {
+            throw new RuntimeException("Missing type parameter");
+        }
+        return ((ParameterizedType)superClass).getActualTypeArguments()[0];
     }
 }

@@ -68,6 +68,4 @@ dependencies {
 
     //Add for SwipeCards
     compile 'com.lorentzos.swipecards:library:1.0.9@aar'
-
-    compile 'jp.wasabeef:blurry:2.1.0'
 }
