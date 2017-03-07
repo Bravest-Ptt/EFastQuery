@@ -13,6 +13,8 @@ public class EFastQueryDbUtils {
 
     private static final String TAG = "EFastQueryDbUtils";
 
+    public static final String DATABASE_NAME = "efastquery.db";
+
     public interface History extends BaseColumns {
         String TABLE_NAME = "history";
         Uri CONTENT_URI = Uri.parse("content://bravest.ptt.efastquery/history");

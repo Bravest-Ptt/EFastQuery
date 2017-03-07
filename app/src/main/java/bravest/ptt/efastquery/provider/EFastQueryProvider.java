@@ -11,6 +11,8 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import static bravest.ptt.efastquery.provider.EFastQueryDbUtils.DATABASE_NAME;
+
 /**
  * Created by root on 1/4/17.
  */
@@ -19,7 +21,6 @@ public class EFastQueryProvider extends ContentProvider {
 
     private static final String TAG = "EFastQueryProvider";
     private static final String PACKAGE_NAME = "bravest.ptt.efastquery";
-    private static final String DATABASE_NAME = "efastquery.db";
 
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     private EFastQueryDBHelper mOpenHelper;

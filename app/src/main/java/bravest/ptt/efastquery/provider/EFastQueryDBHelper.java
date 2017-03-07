@@ -4,12 +4,13 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import static bravest.ptt.efastquery.provider.EFastQueryDbUtils.DATABASE_NAME;
+
 
 public class EFastQueryDBHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "EFastQueryDBHelper";
 
-    private static final String DATABASE_NAME = "efastquery.db";
     private static final int DATABASE_VERSION = 1;
 
     public EFastQueryDBHelper(Context context) {
