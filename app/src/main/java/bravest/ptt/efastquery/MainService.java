@@ -1,5 +1,7 @@
 package bravest.ptt.efastquery;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -7,6 +9,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import bravest.ptt.efastquery.view.ESearchFloatButton;
@@ -17,6 +20,7 @@ import bravest.ptt.efastquery.view.ESearchFloatButton;
 
 public class MainService extends Service {
 
+    private static final int FOREGROUND_SERVICE_NOTIFICATION_ID = 528;
     public static final String TAG = "MainService";
     private MainBinder mMainBinder = new MainBinder();
     private ESearchFloatButton mView;
@@ -42,7 +46,23 @@ public class MainService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+                new Intent(this, MainActivity.class), 0);
+        builder.setContentIntent(contentIntent);
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setTicker("Foreground Service Start");
+        builder.setContentTitle("Foreground Service");
+        builder.setContentText("Make this service run in the foreground.");
+        builder.setPriority(1000);
+        builder.setAutoCancel(false);
+
+        Notification notification = builder.build();
+        notification.flags |= Notification.FLAG_NO_CLEAR;
+
+        startForeground(FOREGROUND_SERVICE_NOTIFICATION_ID, notification);
+        return START_STICKY;
+//        return super.onStartCommand(intent, flags, startId);
     }
 
     public void showFloatingWindow() {
@@ -76,6 +96,7 @@ public class MainService extends Service {
 
     @Override
     public void onDestroy() {
+        stopForeground(true);
         if (mView != null) {
             mView.forceCloseFloatButton();
         }

@@ -24,6 +24,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 }
 
 android {
@@ -61,11 +66,11 @@ dependencies {
     compile files('libs/common/commons-codec-1.10.jar')
     compile files('libs/common/commons-collections4-4.1.jar')
     compile files('libs/common/commons-logging-1.2.jar')
-//    compile files('libs/poi-ooxml-schemas-3.16-beta2.jar')
-//    compile files('libs/xmlbeans-2.6.0.jar')
+    //    compile files('libs/poi-ooxml-schemas-3.16-beta2.jar')
+    //    compile files('libs/xmlbeans-2.6.0.jar')
     //Add for android-gif-drawable
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.5'
-
     //Add for SwipeCards
     compile 'com.lorentzos.swipecards:library:1.0.9@aar'
+    compile files('libs/Msc.jar')
 }

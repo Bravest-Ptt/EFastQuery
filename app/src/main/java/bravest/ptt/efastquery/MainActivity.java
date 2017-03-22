@@ -181,7 +181,8 @@ public class MainActivity extends AppCompatActivity
         if (Build.VERSION.SDK_INT >= 23) {
             boolean allGranted = Utils.requestPermissions(this, REQUEST_CODE, new String[]{
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.RECORD_AUDIO
             });
 
             if (allGranted) {
@@ -540,24 +541,33 @@ public class MainActivity extends AppCompatActivity
 //        }
 //    }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(mMainConnection);
+    }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            if (mCurrentFragment == null) {
-                return super.onKeyDown(keyCode, event);
-            }
-            if (mCurrentFragment.isRootPanel()) {
-                if (!(mCurrentFragment instanceof MainFragment)) {
-                    back2Home();
-                    return true;
-                } else {
-                    finish();
-                }
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
             } else {
-                return mCurrentFragment.onKeyDown(keyCode, event);
+                if (mCurrentFragment == null) {
+                    return super.onKeyDown(keyCode, event);
+                }
+                if (mCurrentFragment.isRootPanel()) {
+                    if (!(mCurrentFragment instanceof MainFragment)) {
+                        back2Home();
+                        return true;
+                    } else {
+                        finish();
+                    }
+                } else {
+                    return mCurrentFragment.onKeyDown(keyCode, event);
+                }
             }
         }
         return super.onKeyDown(keyCode, event);

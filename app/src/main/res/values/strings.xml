@@ -92,4 +92,6 @@
     <string name="import_confirm">确认</string>
     <string name="import_confirm_info">将导入文件%1$s至『%2$s』单词组</string>
     <string name="import_choose_group">选择分组</string>
+
+    <string name="favorite_empty">空空如也，收藏一些吧！</string>
 </resources>
