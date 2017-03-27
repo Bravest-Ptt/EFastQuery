@@ -346,10 +346,10 @@ public class MainFragment extends BaseFragment implements View.OnClickListener{
         switch (state) {
             case STOPPED:
                 mState = STATE.STARTED;
-                mSpeechButton.setText("结束 听写");
+                mSpeechButton.setText("停");
                 break;
             case STARTED:
-                mSpeechButton.setText("开始 听写");
+                mSpeechButton.setText("听");
                 mState = STATE.STOPPED;
                 break;
             default:

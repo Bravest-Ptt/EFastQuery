@@ -64,6 +64,18 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
     private static final int STATE_TRANS_FAILED = 0x055;
     private static final int STATE_TRANSLATING = 0x066;
 
+
+    //weight for main panel
+    private static final float WEIGHT_SUM = 12;
+    private static final float MAIN_WIDTH_WEIGHT = 11 / WEIGHT_SUM;
+    private static final float MAIN_HEIGHT_WEIGHT = 6 / WEIGHT_SUM;
+
+    //line space for explains
+    private static final float LINE_SPACE_4_TEXT = 1.1f;
+
+    //refresh delay
+    private static final int REFRESH_DELAY = 500;
+
     private Context mContext;
     private WindowManager mWm;
     private ESearchFloatButton mButton;
@@ -171,8 +183,8 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
 
         //Panel
         RelativeLayout.LayoutParams mainParams = (RelativeLayout.LayoutParams) mMainPanel.getLayoutParams();
-        mainParams.width = Utils.getScreenWidth(mContext) * 8 / 12;
-        mainParams.height = Utils.getScreenHeight(mContext) * 6 / 12;
+        mainParams.width = (int)(Utils.getScreenWidth(mContext) * MAIN_WIDTH_WEIGHT);
+        mainParams.height = (int)(Utils.getScreenHeight(mContext) * MAIN_HEIGHT_WEIGHT);
         mMainPanel.setLayoutParams(mainParams);
 
         //Search button
@@ -217,7 +229,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         mProgressBar = (ProgressBar) mMain.findViewById(R.id.google_progressbar);
 
         //init
-        mMainShowResultText.setLineSpacing(0, 1.1f);
+        mMainShowResultText.setLineSpacing(0, LINE_SPACE_4_TEXT);
 
         //Init history
         mMainShowHistory.addOnScrollListener(new ROnScrollListener());
@@ -235,7 +247,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
                     public void run() {
                         refreshLayout.finishRefreshing();
                     }
-                }, 500);
+                }, REFRESH_DELAY);
             }
 
             @Override
@@ -245,7 +257,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
                     public void run() {
                         refreshLayout.finishLoadmore();
                     }
-                }, 500);
+                }, REFRESH_DELAY);
             }
         });
     }
@@ -360,7 +372,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         mLastResult = result;
         mProgressBar.setVisibility(View.GONE);
 
-        mFABm.popUpFAB(FABManager.ACTION_TRANS_SUCCESS);
+        mFABm.showFAB(FABManager.ACTION_TRANS_SUCCESS);
         mMainShowResultText.setText(result.getResultWithQuery());
     }
 
@@ -532,7 +544,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
     @Override
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         if (mState == STATE_TRANS_SUCCESS || mState == STATE_TRANS_FAILED) {
-            mFABm.pullDownFAB(FABManager.ACTION_INPUT_NULL);
+            mFABm.hideFAB(FABManager.ACTION_INPUT_NULL);
         }
         mState = STATE_INPUT;
     }

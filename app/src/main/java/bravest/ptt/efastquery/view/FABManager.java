@@ -24,10 +24,10 @@ public class FABManager {
     private static final String TAG = "FABManager";
     private static final int ANIMATION_DELAY = 250;
 
-    public static final int ACTION_INPUT_NULL = 0;
-    public static final int ACTION_TRANS_SUCCESS = 1;
-    public static final int ACTION_ITEM_SELECTED = 2;
-    public static final int ACTION_ITEM_DESELECTED = 3;
+    static final int ACTION_INPUT_NULL = 0;
+    static final int ACTION_TRANS_SUCCESS = 1;
+    static final int ACTION_ITEM_SELECTED = 2;
+    static final int ACTION_ITEM_DESELECTED = 3;
 
     private HashMap<Integer, View> mFabsMap;
     private Context mContext;
@@ -47,14 +47,14 @@ public class FABManager {
         mFabsMap.put(view.getId(), view);
     }
 
-    public void popUpFAB(int action) {
+    public void showFAB(int action) {
         Log.d(TAG, "popUpFAB: action = " + action);
         switch (action) {
             case ACTION_INPUT_NULL:
                 break;
             case ACTION_TRANS_SUCCESS:
-                popUpAnimation(mFabsMap.get(R.id.main_panel_speak));
-                popUpAnimation(mFabsMap.get(R.id.main_panel_favorite));
+                showAnimation(mFabsMap.get(R.id.main_panel_speak));
+                showAnimation(mFabsMap.get(R.id.main_panel_favorite));
                 break;
             case ACTION_ITEM_SELECTED:
                 break;
@@ -65,12 +65,12 @@ public class FABManager {
         }
     }
 
-    public void pullDownFAB(int action) {
+    public void hideFAB(int action) {
         switch (action) {
             case ACTION_INPUT_NULL:
                 //goneAllFABs();
-                pullDownAnimation(mFabsMap.get(R.id.main_panel_speak));
-                pullDownAnimation(mFabsMap.get(R.id.main_panel_favorite));
+                hideAnimation(mFabsMap.get(R.id.main_panel_speak));
+                hideAnimation(mFabsMap.get(R.id.main_panel_favorite));
                 break;
             case ACTION_TRANS_SUCCESS:
                 break;
@@ -89,7 +89,7 @@ public class FABManager {
         }
     }
 
-    private void popUpAnimation(final View view) {
+    private void showAnimation(final View view) {
         if (view.getVisibility() == View.VISIBLE) {
 
         }
@@ -97,9 +97,9 @@ public class FABManager {
 
         int height = view.getMeasuredHeight();
         Log.d(TAG, "popUpAnimation: height = " + height);
-        float targetY = Utils.getScreenHeight(mContext) * 1 / 4  - Utils.getStatusBarHeight(mContext)- height ;
-        float srcY = Utils.getScreenHeight(mContext) * 1 / 4 + height;
-        float targetX = Utils.getScreenWidth(mContext) * 1 / 6;
+        float targetY = Utils.getScreenHeight(mContext) / 2 - height - Utils.dp2px(6);
+        float srcY = Utils.getScreenHeight(mContext) / 4;
+        float targetX = Utils.getScreenWidth(mContext) / 6;
         float visibleCount = 0;
         view.setAlpha(0);
         view.setVisibility(View.VISIBLE);
@@ -142,13 +142,12 @@ public class FABManager {
         set.start();
     }
 
-    private void pullDownAnimation(final View view) {
-//        if (view.getVisibility() == View.GONE) {
-//            return;
-//        }
+    private void hideAnimation(final View view) {
         int height = view.getMeasuredHeight();
-        float srcY = Utils.getScreenHeight(mContext) * 1 / 4  - Utils.getStatusBarHeight(mContext)- height ;
-        float targetY = Utils.getScreenHeight(mContext) * 1 / 4 + height;
+        float srcY = view.getY() == 0 ?
+                (Utils.getScreenHeight(mContext) / 2 - height - Utils.dp2px(6))
+                : view.getY();
+        float targetY = Utils.getScreenHeight(mContext) / 4;
         AnimatorSet set = new AnimatorSet();
 
         ObjectAnimator transAnimator = ObjectAnimator.ofFloat(view, "translationY", srcY, targetY);

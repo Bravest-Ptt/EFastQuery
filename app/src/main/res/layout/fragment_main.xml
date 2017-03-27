@@ -50,6 +50,7 @@
                 android:layout_height="1dp"/>
 
             <EditText
+
                 android:lineSpacingExtra="2dp"
                 android:padding="6dp"
                 android:textSize="16sp"
@@ -66,25 +67,27 @@
                 android:layout_width="match_parent"
                 android:layout_alignParentBottom="true"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical">
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/iat_clear"
+                    android:src="@mipmap/delete_item"
+                    android:layout_marginBottom="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
                 <Button
                     android:id="@+id/iat_recognize"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="开始 听写" />
+                    android:layout_marginBottom="4dp"
+                    android:background="@drawable/msciat_listen_selector"
+                    android:textColor="#eeeeee"
+                    android:textSize="30sp"
+                    android:text="听" />
             </LinearLayout>
 
-            <android.support.design.widget.FloatingActionButton
-                android:layout_above="@+id/iat_bottom"
-                android:id="@+id/iat_clear"
-                android:src="@mipmap/delete_item"
-                android:layout_marginRight="4dp"
-                android:layout_marginBottom="4dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"/>
+
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 </RelativeLayout>

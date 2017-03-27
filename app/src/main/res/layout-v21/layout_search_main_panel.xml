@@ -9,7 +9,8 @@
         android:id="@+id/main_panel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:background="@drawable/search_main_panel"
         android:orientation="vertical">
 
@@ -43,11 +44,11 @@
                 android:id="@+id/main_panel_history_refresh"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
+
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/main_panel_show_history"
                     style="@style/main_panel_show_history" />
             </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
-
 
 
             <ScrollView

@@ -12,7 +12,7 @@ public class HistoryAdapter extends AbsAdapter {
 
     @Override
     public AbsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        HistoryHolder holder = new HistoryHolder(getInflater().inflate(R.layout.item_holder, parent, false));
+        HistoryHolder holder = new HistoryHolder(getInflater().inflate(R.layout.item_history, parent, false));
         holder.setItemClickListener(getItemClickListener());
         return holder;
     }
