@@ -4,8 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.speech.tts.TextToSpeech;
@@ -30,10 +32,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.iflytek.cloud.ErrorCode;
+import com.iflytek.cloud.InitListener;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechError;
+import com.iflytek.cloud.SpeechSynthesizer;
+import com.iflytek.cloud.SynthesizerListener;
 import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 import bravest.ptt.efastquery.R;
@@ -44,16 +53,19 @@ import bravest.ptt.efastquery.data.TranslateListener;
 import bravest.ptt.efastquery.data.TranslateManager;
 import bravest.ptt.efastquery.provider.FavoriteManager;
 import bravest.ptt.efastquery.provider.HistoryManager;
+import bravest.ptt.efastquery.utils.NetworkUtils;
+import bravest.ptt.efastquery.utils.PLog;
 import bravest.ptt.efastquery.utils.Utils;
 import bravest.ptt.efastquery.view.ESearchFloatButton.*;
 import bravest.ptt.efastquery.view.adapter.recycler.HistoryAdapter;
+import static bravest.ptt.efastquery.data.Result.YouDaoItem.*;
 
 /**
  * Created by root on 1/4/17.
  */
 
 class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result>, FloatPanelVisibleListener,
-        TextToSpeech.OnInitListener, TextWatcher, View.OnKeyListener, View.OnFocusChangeListener, ItemClickListener {
+        TextToSpeech.OnInitListener, TextWatcher, View.OnKeyListener, View.OnFocusChangeListener, ItemClickListener, View.OnLongClickListener {
 
     private static final String TAG = "ptt";
 
@@ -94,7 +106,12 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
     private ImageButton mMainClean;
     private EditText mMainInput;
     private View mMainShowResultPanel;
-    private EditText mMainShowResultText;
+
+    private TextView mShowQuery;
+    private TextView mShowUKPhonetic;
+    private TextView mShowUSPhonetic;
+    private TextView mShowExplains;
+
     private RecyclerView mMainShowHistory;
     private TwinklingRefreshLayout mMainHistoryRefresh;
     private ProgressBar mProgressBar;
@@ -127,6 +144,85 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
 
     private HomeRecentReceiver mHomeRecentReceiver;
 
+    //For msc voice tts
+    private static final String MSC_VOICE_NAME = "xiaoyan";
+    private static final String MSC_SPEED = "50";
+    private static final String MSC_PITCH = "50";
+    private static final String MSC_VOLUME = "50";
+    private static final String MSC_STREAM = "3";
+    private static final String MSC_REQUEST_FOCUS = "true";
+
+    private SpeechSynthesizer mTts;
+
+    private void initMscSpeechSynthesizer() {
+        mTts = SpeechSynthesizer.createSynthesizer(mContext, null);
+    }
+
+    private void setMscParams() {
+        // 清空参数
+        mTts.setParameter(SpeechConstant.PARAMS, null);
+        //直接使用云语音服务
+
+        // 根据合成引擎设置相应参数
+        mTts.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_CLOUD);
+        // 设置在线合成发音人
+        mTts.setParameter(SpeechConstant.VOICE_NAME, MSC_VOICE_NAME);
+        //设置合成语速
+        mTts.setParameter(SpeechConstant.SPEED, MSC_SPEED);
+        //设置合成音调
+        mTts.setParameter(SpeechConstant.PITCH, MSC_PITCH);
+        //设置合成音量
+        mTts.setParameter(SpeechConstant.VOLUME, MSC_VOLUME);
+        //设置播放器音频流类型
+        mTts.setParameter(SpeechConstant.STREAM_TYPE, MSC_STREAM);
+        // 设置播放合成音频打断音乐播放，默认为true
+        mTts.setParameter(SpeechConstant.KEY_REQUEST_FOCUS, MSC_REQUEST_FOCUS);
+    }
+
+    /**
+     * 合成回调监听。
+     */
+    private SynthesizerListener mTtsListener = new SynthesizerListener() {
+        @Override
+        public void onSpeakBegin() {
+        }
+
+        @Override
+        public void onSpeakPaused() {
+        }
+
+        @Override
+        public void onSpeakResumed() {
+        }
+
+        @Override
+        public void onBufferProgress(int percent, int beginPos, int endPos,
+                                     String info) {
+        }
+
+        @Override
+        public void onSpeakProgress(int percent, int beginPos, int endPos) {
+            // 播放进度
+        }
+
+        @Override
+        public void onCompleted(SpeechError error) {
+            if (error == null) {
+            } else if (error != null) {
+            }
+        }
+
+        @Override
+        public void onEvent(int eventType, int arg1, int arg2, Bundle obj) {
+            // 以下代码用于获取与云端的会话id，当业务出错时将会话id提供给技术支持人员，可用于查询会话日志，定位出错原因
+            // 若使用本地能力，会话id为null
+            //	if (SpeechEvent.EVENT_SESSION_ID == eventType) {
+            //		String sid = obj.getString(SpeechEvent.KEY_EVENT_SESSION_ID);
+            //		Log.d(TAG, "session id =" + sid);
+            //	}
+        }
+    };
+
     public ESearchMainPanel(Context context, WindowManager wm, ESearchFloatButton button) throws InflaterNotReadyException {
         mContext = context;
         mWm = wm;
@@ -147,6 +243,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         initViews();
         initLayoutParams();
         initHistoryData();
+        initMscSpeechSynthesizer();
     }
 
     //Database operation, need be optimized
@@ -223,13 +320,15 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
     //History or explains
     private void initShowPanel() {
         mMainShowResultPanel = mMain.findViewById(R.id.main_panel_show_result);
-        mMainShowResultText = (EditText) mMain.findViewById(R.id.main_panel_show_result_text);
         mMainShowHistory = (RecyclerView) mMain.findViewById(R.id.main_panel_show_history);
         mMainHistoryRefresh = (TwinklingRefreshLayout) mMain.findViewById(R.id.main_panel_history_refresh);
         mProgressBar = (ProgressBar) mMain.findViewById(R.id.google_progressbar);
 
-        //init
-        mMainShowResultText.setLineSpacing(0, LINE_SPACE_4_TEXT);
+        mShowQuery = (TextView) mMain.findViewById(R.id.main_panel_show_query);
+        mShowUKPhonetic = (TextView) mMain.findViewById(R.id.main_panel_uk_phonetic);
+        mShowUSPhonetic = (TextView) mMain.findViewById(R.id.main_panel_us_phonetic);
+        mShowExplains = (TextView) mMain.findViewById(R.id.main_panel_explains);
+        mShowExplains.setLineSpacing(0, LINE_SPACE_4_TEXT);
 
         //Init history
         mMainShowHistory.addOnScrollListener(new ROnScrollListener());
@@ -323,7 +422,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
     private void doSearch() {
         String input = mMainInput.getText().toString();
         if (mTm != null && !TextUtils.isEmpty(input)) {
-            if (TextUtils.equals(mRequest, input)) {
+            if (TextUtils.equals(mRequest, input) && mState != STATE_INPUT) {
                 return;
             }
             mRequest = mMainInput.getText().toString();
@@ -335,7 +434,10 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
             Utils.hideSoftInput(mContext, mMainInput);
 
             //Clear show text view
-            mMainShowResultText.setText("");
+            mShowExplains.setText("");
+            mShowQuery.setText("");
+            mShowUKPhonetic.setText("");
+            mShowUSPhonetic.setText("");
 
             //Dismiss history, show result & progressbar
             toggleVisible(true);
@@ -373,7 +475,24 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         mProgressBar.setVisibility(View.GONE);
 
         mFABm.showFAB(FABManager.ACTION_TRANS_SUCCESS);
-        mMainShowResultText.setText(result.getResultWithQuery());
+        HashMap<String,String> map = result.getResultMap();
+        mShowQuery.setText(map.get(YOUDAO_QUERY));
+        String string = map.get(YOUDAO_UK_PHONETIC);
+        if (TextUtils.isEmpty(string)) {
+            mShowUKPhonetic.setVisibility(View.GONE);
+        } else {
+            mShowUKPhonetic.setVisibility(View.VISIBLE);
+            mShowUKPhonetic.setText(string);
+        }
+
+        string = map.get(YOUDAO_US_PHONETIC);
+        if (TextUtils.isEmpty(string)) {
+            mShowUSPhonetic.setVisibility(View.GONE);
+        } else {
+            mShowUSPhonetic.setVisibility(View.VISIBLE);
+            mShowUSPhonetic.setText(map.get(YOUDAO_US_PHONETIC));
+        }
+        mShowExplains.setText(map.get(YOUDAO_EXPLAINS));
     }
 
     private static final int TRANSACTION_INSERT = 0x01;
@@ -435,9 +554,9 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         //If database contains this request, the array in memory must contains it.
         if (mHm.isRequestExist(mRequest)) {
             Result result = getResultFromArray(mRequest);
-            mMainShowResultText.setText(result.getResult());
+            handleSuccess4View(result);
         } else {
-            mMainShowResultText.setText(error);
+            mShowQuery.setText(error);
         }
     }
 
@@ -527,14 +646,18 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
 
     //Voice speak
     private void startTTS(String result) {
-        if (mTTS != null && !mTTS.isSpeaking()) {
-            mTTS.setPitch(0.5f);
-            if (TextUtils.isEmpty(result)) {
-                result = "No result";
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mTTS.speak(result, TextToSpeech.QUEUE_FLUSH, null, null);
-            } else {
+        PLog.log("result = " + result);
+        if (/*NetworkUtils.isConnectedByState(mContext)*/false) {
+            //When the net work connected, we usw msc voice engine
+            setMscParams();
+            result += "\n";
+            mTts.startSpeaking(result, mTtsListener);
+        } else {
+            if (mTTS != null && !mTTS.isSpeaking()) {
+                mTTS.setPitch(1.4f);
+                if (TextUtils.isEmpty(result)) {
+                    result = "No result";
+                }
                 mTTS.speak(result, TextToSpeech.QUEUE_FLUSH, null);
             }
         }
@@ -595,13 +718,18 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         mMain = null;
         mMainSearch = null;
         mMainShowResultPanel = null;
-        mMainShowResultText = null;
         mMainShowHistory = null;
         mMainPanel = null;
         mButton = null;
         mLayoutParams = null;
         mHandler = null;
         mHistoryArray = null;
+
+        //show panel
+        mShowQuery = null;
+        mShowUKPhonetic = null;
+        mShowUSPhonetic = null;
+        mShowExplains = null;
 
         //unregister broadcast
         if (mHomeRecentReceiver != null) {
@@ -645,6 +773,14 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
             default:
                 break;
         }
+    }
+
+    @Override
+    public boolean onLongClick(View view) {
+        if (view.getId() == R.id.main_panel_search_edit) {
+            //When
+        }
+        return true;
     }
 
     //---------------------------------------Class && Interface---------------------------------------//

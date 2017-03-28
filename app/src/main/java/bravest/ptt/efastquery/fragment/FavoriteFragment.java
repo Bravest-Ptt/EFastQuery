@@ -109,6 +109,7 @@ public class FavoriteFragment extends BaseFragment implements ItemClickListener{
             }
         }
         mAdapter.notifyDataSetChanged();
+        mPagerAdapter.notifyDataSetChanged();
     }
 
     @Override

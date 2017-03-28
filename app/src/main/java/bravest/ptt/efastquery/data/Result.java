@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 
 import bravest.ptt.efastquery.data.wordbook.W;
 import bravest.ptt.efastquery.data.wordbook.Word;
@@ -44,10 +45,6 @@ public class Result implements Serializable, W {
 
     public Date getDate() {
         return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
     }
 
     public void setDate(long time) {
@@ -138,45 +135,84 @@ public class Result implements Serializable, W {
         web_str = jsonArray2String(web, JSON_SPLIT);
     }
 
-    public String getResultWithQuery() {
-        String result = "query : " + query + "\n";
+
+    /**
+     * n =名词
+     v=动词,包括vt=及物动词,vi=不及物动词
+     adj=形容词
+     adv=副词
+     pron=代词
+     mum=数词
+     art=冠词
+     prep=介词
+     interj=叹词
+     conj=连词
+     aux=助词
+     */
+    private static final String[] ENGLIST_TAGS = {
+            "n.",
+            "v.",
+            "vi.",
+            "vt.",
+            "adj.",
+            "adv.",
+            "pron.",
+            "num.",
+            "art.",
+            "prep.",
+            "interj.",
+            "conj.",
+            "aux."
+    };
+
+    private boolean containTags(String string) {
+        for (int j = 0; j < ENGLIST_TAGS.length; j++) {
+            if (string.contains(ENGLIST_TAGS[j])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public HashMap<String,String> getResultMap() {
+        HashMap<String,String> map = new HashMap<>();
+        map.put(YouDaoItem.YOUDAO_QUERY, query);
+
+        if (TextUtils.isEmpty(uk_phonetic)) {
+            map.put(YouDaoItem.YOUDAO_UK_PHONETIC, "");
+        } else {
+            map.put(YouDaoItem.YOUDAO_UK_PHONETIC, "英 [" + uk_phonetic + "]");
+        }
+
+        if (TextUtils.isEmpty(us_phonetic)) {
+            map.put(YouDaoItem.YOUDAO_US_PHONETIC, "");
+        } else {
+            map.put(YouDaoItem.YOUDAO_US_PHONETIC, "美 [" + us_phonetic + "]");
+        }
 
         try {
-            if (translation != null) {
-                result += "translations : ";
-                int transLength = translation.length();
-                for (int i = 0; i < transLength; i++) {
-                    result += translation.getString(i) + ";";
-                }
-                result += "\n";
-            }
-
             if (explains != null) {
-                result += "explains : ";
-                int explainsLength = explains.length();
-                for (int i = 0; i < explainsLength; i++) {
+                String result = "";
+                int length = explains.length();
+                for (int i = 0; i < length; i++) {
                     result += explains.getString(i) + ";";
+                    if (i != length - 1 && containTags(explains.getString(i + 1))) {
+                        result += "\n";
+                    }
                 }
-                result += "\n";
-
+                map.put(YouDaoItem.YOUDAO_EXPLAINS, result);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-
-        return result + "phonetic : " + phonetic + "\n"
-                + "us_phonetic : " + us_phonetic + "\n"
-                + "uk_phonetic : " + uk_phonetic + ";";
+        return map;
     }
 
     public String getResult() {
-        String result = getResultWithQuery();
-        int index = result.indexOf("translations");
-        return index == -1 ? result : result.substring(index);
+        return null;
     }
 
-    public class YouDaoItem {
+    public static class YouDaoItem {
         public static final String YOUDAO_ERRORCODE = "errorCode";
         public static final String YOUDAO_QUERY = "query";
         public static final String YOUDAO_TRANSLATION = "translation";
@@ -252,11 +288,4 @@ public class Result implements Serializable, W {
         }
         return jsonArray;
     }
-
-//    public Result copy(Result src) {
-//        Result copy = new Result();
-//        copy.query = src.query;
-//        copy.translation = src.translation;
-//
-//    }
 }
