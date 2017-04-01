@@ -22,4 +22,7 @@
     <dimen name="item_height">45dp</dimen>
     <dimen name="item_width">45dp</dimen>
     <dimen name="item_image_padding">8dp</dimen>
+
+
+    <dimen name="iat_recognize_button_size">70dp</dimen>
 </resources>

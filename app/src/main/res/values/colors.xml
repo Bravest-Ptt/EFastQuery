@@ -35,6 +35,7 @@
     //home
     <color name="home_red_500_4_toolbar">#f44336</color>
     <color name="home_red_600_4_status_bar">#e53935</color>
+    <color name="iat_recognize_button_pressed_color">#b71c1c</color>
 
     <!--<color name="home_red_500_4_toolbar">#212121</color>-->
     <!--<color name="home_red_600_4_status_bar">#000000</color>-->

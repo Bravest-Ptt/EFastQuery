@@ -11,6 +11,7 @@
         android:layout_margin="6dp">
 
         <RelativeLayout
+            android:id="@+id/iat_main"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <LinearLayout
@@ -22,21 +23,20 @@
                 <TextView
                     android:gravity="center_vertical"
                     android:id="@+id/iat_mode_show"
+                    android:layout_weight="1"
                     android:layout_width="0dp"
-                    android:layout_weight="4"
                     android:textSize="18sp"
                     android:paddingLeft="6dp"
                     android:layout_height="match_parent"
                     android:text="识别模式：英语"
                     />
                 <TextView
-                    android:id="@+id/iat_set"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:id="@+id/iat_from"
+                    android:layout_width="wrap_content"
                     android:paddingRight="6dp"
                     android:gravity="center|right"
-                    android:text="设置"
-                    android:textStyle="bold"
+                    android:textSize="11sp"
+                    android:text="@string/write_listen_tech_from"
                     android:layout_height="match_parent" />
             </LinearLayout>
 
@@ -49,44 +49,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"/>
 
-            <EditText
-
-                android:lineSpacingExtra="2dp"
-                android:padding="6dp"
-                android:textSize="16sp"
-                android:layout_margin="6dp"
+            <ScrollView
                 android:layout_below="@+id/iat_line"
-                android:id="@+id/iat_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@null"/>
-
-            <LinearLayout
-                android:id="@+id/iat_bottom"
-                android:gravity="center"
-                android:layout_width="match_parent"
-                android:layout_alignParentBottom="true"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/iat_clear"
-                    android:src="@mipmap/delete_item"
-                    android:layout_marginBottom="4dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <Button
-                    android:id="@+id/iat_recognize"
-                    android:layout_width="wrap_content"
+                android:scrollbars="none">
+                <EditText
+                    android:lineSpacingExtra="2dp"
+                    android:padding="6dp"
+                    android:textSize="16sp"
+                    android:layout_margin="6dp"
+                    android:id="@+id/iat_text"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="4dp"
-                    android:background="@drawable/msciat_listen_selector"
-                    android:textColor="#eeeeee"
-                    android:textSize="30sp"
-                    android:text="听" />
-            </LinearLayout>
+                    android:background="@null"/>
+            </ScrollView>
 
+            <Button
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:id="@+id/iat_recognize"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@drawable/msciat_listen_selector"
+                android:textColor="#eeeeee"
+                android:textSize="20sp"
+                android:text="听" />
 
         </RelativeLayout>
     </android.support.v7.widget.CardView>

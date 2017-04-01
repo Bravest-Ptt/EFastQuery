@@ -1,5 +1,8 @@
 package bravest.ptt.efastquery.fragment;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
@@ -11,12 +14,17 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.BounceInterpolator;
 import android.view.animation.LinearInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,13 +44,15 @@ import java.util.ArrayList;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.msciat.settings.IatSettings;
 import bravest.ptt.efastquery.msciat.utils.JsonParser;
+import bravest.ptt.efastquery.utils.PLog;
+import bravest.ptt.efastquery.utils.Utils;
 
 
 /**
  * Created by root on 2/13/17.
  */
 
-public class MainFragment extends BaseFragment implements View.OnClickListener{
+public class MainFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener, View.OnTouchListener{
     // 语音听写对象
     private SpeechRecognizer mIat;
     // 语音听写UI
@@ -57,12 +67,167 @@ public class MainFragment extends BaseFragment implements View.OnClickListener{
     private TextView mModeView;
     private EditText mResultText;
     private Button mSpeechButton;
-    private View mClearEditTextButton;
+
+    private View mMain;
 
     private Toast mToast;
     private SharedPreferences mSharedPreferences;
     // 引擎类型
     private String mEngineType = SpeechConstant.TYPE_CLOUD;
+
+    @Override
+    public boolean onLongClick(View view) {
+        switch (view.getId()) {
+            case R.id.iat_recognize:
+                mResultText.setText("");
+                mIatResultsArray.clear();
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
+
+    float rbx;
+    float rby;
+
+    float lastX;
+    float lastY;
+
+    private boolean mHasInitialized = false;
+    private float mDownX;
+    private float mDownY;
+    private long mDownTimeMillis;
+    private static final float DISTANCE = 15f;
+    private static final int ANIMATION_DURATION = 1000;
+    private ObjectAnimator mTouchXAnimator = null;
+    private ObjectAnimator mTouchYAnimator = null;
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        int[] loc = new int[2];
+        mSpeechButton.getLocationOnScreen(loc);
+        if (!mHasInitialized) {
+            rbx = loc[0];
+            rby = loc[1];
+            mHasInitialized = true;
+        }
+        PLog.log("loc0 = " + loc[0] + ",loc1 = " + loc[1]);
+        PLog.log("rbx = " + rbx + ",rby = " + rby);
+
+        if (view.getId() != R.id.iat_recognize) {
+            return false;
+        }
+        if ((mTouchXAnimator != null && mTouchXAnimator.isRunning())
+                || (mTouchYAnimator != null && mTouchYAnimator.isRunning())) {
+            return true;
+        }
+        float x = motionEvent.getRawX();
+        float y = motionEvent.getRawY();
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                lastX = mDownX = x;
+                lastY = mDownY = y;
+                mDownTimeMillis = System.currentTimeMillis();
+                break;
+            case MotionEvent.ACTION_UP:
+                if (x > mDownX - DISTANCE && x <= mDownX + DISTANCE
+                        && y > mDownY - DISTANCE && y <= mDownY + DISTANCE) {
+                    if (System.currentTimeMillis() - mDownTimeMillis > 1200) {
+                        //long click
+                        PLog.log("touch long click");
+                    } else {
+                        //click
+                        PLog.log("touch click");
+                    }
+                } else {
+                    PLog.log(" x = "  + x + ", y = " + y);
+                    mTouchXAnimator = ObjectAnimator.ofFloat(mSpeechButton, "translationX", rbx - loc[0]);
+                    mTouchXAnimator.setDuration(ANIMATION_DURATION);
+                    mTouchXAnimator.setInterpolator(new OvershootInterpolator());
+
+                    mTouchYAnimator = ObjectAnimator.ofFloat(mSpeechButton, "translationY", rby - loc[1]);
+                    mTouchYAnimator.setDuration(ANIMATION_DURATION);
+                    mTouchYAnimator.setInterpolator(new OvershootInterpolator());
+
+                    AnimatorSet set = new AnimatorSet();
+                    set.playTogether(mTouchXAnimator, mTouchYAnimator);
+//                    set.addListener(new AnimatorListenerAdapter() {
+//                        @Override
+//                        public void onAnimationEnd(Animator animation) {
+//                            super.onAnimationEnd(animation);
+//                            mSpeechButton.layout((int)rbx, (int)rby, (int)rbx + mSpeechButton.getMeasuredWidth(), (int)rby + mSpeechButton.getMeasuredHeight());
+//                        }
+//                    });
+                    set.start();
+                    PLog.log("set started");
+                }
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (!(x >= mDownX - DISTANCE && x <= mDownX + DISTANCE
+                        && y >= mDownY - DISTANCE && y <= mDownY + DISTANCE)) {
+//                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+//                            ViewGroup.LayoutParams.WRAP_CONTENT,
+//                            ViewGroup.LayoutParams.WRAP_CONTENT
+//                    );
+//                    params.leftMargin = (int) (x - mSpeechButton.getMeasuredWidth() / 2 );
+//                    params.topMargin = (int) (y - Utils.getStatusBarHeight(getContext()) - (mSpeechButton.getMeasuredHeight() / 2));
+//                    mSpeechButton.setLayoutParams(params);
+                    View v = mSpeechButton;
+                    float dx = x - lastX;
+                    float dy = y - lastY;
+//
+                    int left = (int) (v.getLeft() + dx);
+                    int top = (int) (v.getTop() + dy);
+                    int right = (int) (v.getRight() + dx);
+                    int bottom = (int) (v.getBottom() + dy);
+
+                    PLog.log("dx = " + dx
+                            + " dy = " + dy
+                            + "left = " + left
+                            + "top = " + top
+                            + " right = " + right
+                            + " bottom = " + bottom);
+
+                    // 设置不能出界
+                    if (left < 0) {
+                        left = 0;
+                        right = left + v.getWidth();
+                    }
+
+                    int screenWidth = Utils.getScreenWidth(getContext());
+                    int screenHeight = Utils.getScreenHeight(getContext());
+                    if (right > screenWidth) {
+                        right = screenWidth;
+                        left = right - v.getWidth();
+                    }
+
+                    if (top < 0) {
+                        top = 0;
+                        bottom = top + v.getHeight();
+                    }
+
+                    if (bottom > screenHeight) {
+                        bottom = screenHeight;
+                        top = bottom - v.getHeight();
+                    }
+
+                    PLog.log("left = " + left
+                     + "top = " + top
+                     + " right = " + right
+                     + " bottom = " + bottom);
+                    v.layout(left, top, right, bottom);
+
+//                    mSpeechButton.setX(x - mSpeechButton.getMeasuredWidth() / 2);
+//                    mSpeechButton.setY(y - Utils.getStatusBarHeight(getContext()) - (mSpeechButton.getMeasuredHeight() / 2));
+                    lastX = x;
+                    lastY = y;
+                    return true;
+                }
+                break;
+        }
+        return false;
+    }
 
     private enum STATE {
       STARTED,STOPPED
@@ -100,24 +265,29 @@ public class MainFragment extends BaseFragment implements View.OnClickListener{
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         updateModeText(mSharedPreferences.getString("iat_language_preference", "en_us"));
     }
 
     private void initLayout(View parent) {
+        mMain = parent.findViewById(R.id.iat_main);
         mResultText = ((EditText) parent.findViewById(R.id.iat_text));
 
         mSpeechButton = (Button) parent.findViewById(R.id.iat_recognize);
         mSpeechButton.setOnClickListener(this);
-
-        mClearEditTextButton = parent.findViewById(R.id.iat_clear);
-        mClearEditTextButton.setOnClickListener(this);
+        mSpeechButton.setOnLongClickListener(this);
+        mSpeechButton.setOnTouchListener(this);
 
         mModeView = (TextView) parent.findViewById(R.id.iat_mode_show);
+        mModeView.setOnClickListener(this);
         updateModeText(mSharedPreferences.getString("iat_language_preference", "en_us"));
 
-        parent.findViewById(R.id.iat_set).setOnClickListener(this);
     }
 
     @Override
@@ -136,12 +306,11 @@ public class MainFragment extends BaseFragment implements View.OnClickListener{
     public void onClick(View view) {
         if( null == mIat ){
             // 创建单例失败，与 21001 错误为同样原因，参考 http://bbs.xfyun.cn/forum.php?mod=viewthread&tid=9688
-            this.showTip( "创建对象失败，请确认 libmsc.so 放置正确，且有调用 createUtility 进行初始化" );
             return;
         }
         switch (view.getId()) {
             // 进入参数设置页面
-            case R.id.iat_set:
+            case R.id.iat_mode_show:
                 Intent intents = new Intent(getActivity(), IatSettings.class);
                 startActivity(intents);
                 break;
@@ -167,14 +336,6 @@ public class MainFragment extends BaseFragment implements View.OnClickListener{
                     updateRecognizeStateAndUI(STATE.STARTED);
                     mIat.stopListening();
                     showTip("停止听写");
-                }
-                break;
-            case R.id.iat_clear:
-                if (mState == STATE.STOPPED) {
-                    mResultText.setText(null);// 清空显示内容
-                    mIatResultsArray.clear();
-                } else {
-                    showTip("请先停止录音");
                 }
                 break;
         }
@@ -235,6 +396,8 @@ public class MainFragment extends BaseFragment implements View.OnClickListener{
         @Override
         public void onVolumeChanged(int volume, byte[] data) {
             showTip("当前正在说话，音量大小：" + volume);
+            mSpeechButton.setScaleX(1f + ((float) volume / 150f));
+            mSpeechButton.setScaleY(1f + ((float) volume / 150f));
             Log.d(TAG, "返回音频数据："+data.length);
         }
 
@@ -356,11 +519,9 @@ public class MainFragment extends BaseFragment implements View.OnClickListener{
                 break;
         }
         animateRecognizeButton();
-        animateCleanButton();
     }
 
     private ObjectAnimator mSpeechButtonAnimator = null;
-    private ObjectAnimator mClearButtonAnimator = null;
 
     private void animateRecognizeButton() {
         if (mSpeechButton == null) {
@@ -372,35 +533,18 @@ public class MainFragment extends BaseFragment implements View.OnClickListener{
                 mSpeechButtonAnimator.cancel();
             }
             mSpeechButtonAnimator = null;
-            mSpeechButton.setAlpha(1f);
         }
         if (mState == STATE.STARTED) {
-            mSpeechButtonAnimator = ObjectAnimator.ofFloat(mSpeechButton, "alpha", 1.2f, 0.1f, 1.3f);
-            mSpeechButtonAnimator.setDuration(3000);
-            mSpeechButtonAnimator.setInterpolator(new LinearInterpolator());
+            mSpeechButton.setAlpha(0.3f);
+            mSpeechButtonAnimator = ObjectAnimator.ofFloat(mSpeechButton, "alpha", 0.3f, 0.1f, 0.3f);
+            mSpeechButtonAnimator.setDuration(1000);
+            mSpeechButtonAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
             mSpeechButtonAnimator.setRepeatCount(ValueAnimator.INFINITE);
             mSpeechButtonAnimator.start();
-        }
-    }
-
-    private void animateCleanButton() {
-        if (mClearEditTextButton == null) {
-            Log.d(TAG, "changeCleanButtonStatus: mClearEditTextButton not initialized");
-            return;
-        }
-        if (mClearButtonAnimator != null) {
-            if (mClearButtonAnimator.isRunning()) {
-                mClearButtonAnimator.cancel();
-            }
-            mClearButtonAnimator = null;
-            mClearEditTextButton.setScaleX(1f);
-            mClearEditTextButton.setScaleY(1f);
-        }
-        if (mState == STATE.STARTED) {
-            mClearButtonAnimator = ObjectAnimator.ofFloat(mClearEditTextButton, "scaleX", 1f, 0f);
-            mClearButtonAnimator.setDuration(500);
-            mClearButtonAnimator.setInterpolator(new AccelerateInterpolator());
-            mClearButtonAnimator.start();
+        } else {
+            mSpeechButton.setAlpha(1f);
+            mSpeechButton.setScaleX(1f);
+            mSpeechButton.setScaleY(1f);
         }
     }
 }
