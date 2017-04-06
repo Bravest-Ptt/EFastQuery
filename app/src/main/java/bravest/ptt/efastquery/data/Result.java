@@ -193,6 +193,7 @@ public class Result implements Serializable, W {
         try {
             if (explains != null) {
                 String result = "";
+                Log.d(TAG, "getResultMap: explains = " + explains);
                 int length = explains.length();
                 for (int i = 0; i < length; i++) {
                     result += explains.getString(i) + ";";

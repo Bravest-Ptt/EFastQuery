@@ -96,4 +96,9 @@
     <string name="favorite_empty">空空如也，收藏一些吧！</string>
 
     <string name="write_listen_tech_from">语音技术由<font color="#f44336"><b>科大讯飞</b></font>提供</string>
+
+    <string name="overlay_confirm_title">开启快查功能</string>
+    <string name="overlay_confirm_content">请在手机设置中开启悬浮窗权限，以体验快查功能</string>
+    <string name="overlay_confirm_negative">暂不开启</string>
+    <string name="overlay_confirm_positive"><font color="#f44336"><b>去开启</b></font></string>
 </resources>

@@ -4,23 +4,25 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -31,9 +33,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import com.iflytek.cloud.ErrorCode;
-import com.iflytek.cloud.InitListener;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechSynthesizer;
@@ -46,6 +45,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import bravest.ptt.efastquery.R;
+import bravest.ptt.efastquery.callback.DoubleClickDetector;
 import bravest.ptt.efastquery.callback.FloatPanelVisibleListener;
 import bravest.ptt.efastquery.callback.ItemClickListener;
 import bravest.ptt.efastquery.data.Result;
@@ -56,18 +56,23 @@ import bravest.ptt.efastquery.provider.HistoryManager;
 import bravest.ptt.efastquery.utils.NetworkUtils;
 import bravest.ptt.efastquery.utils.PLog;
 import bravest.ptt.efastquery.utils.Utils;
-import bravest.ptt.efastquery.view.ESearchFloatButton.*;
+import bravest.ptt.efastquery.view.ESearchFloatButton.InflaterNotReadyException;
 import bravest.ptt.efastquery.view.adapter.recycler.HistoryAdapter;
-import static bravest.ptt.efastquery.data.Result.YouDaoItem.*;
+
+import static bravest.ptt.efastquery.data.Result.YouDaoItem.YOUDAO_EXPLAINS;
+import static bravest.ptt.efastquery.data.Result.YouDaoItem.YOUDAO_QUERY;
+import static bravest.ptt.efastquery.data.Result.YouDaoItem.YOUDAO_UK_PHONETIC;
+import static bravest.ptt.efastquery.data.Result.YouDaoItem.YOUDAO_US_PHONETIC;
 
 /**
  * Created by root on 1/4/17.
  */
 
 class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result>, FloatPanelVisibleListener,
-        TextToSpeech.OnInitListener, TextWatcher, View.OnKeyListener, View.OnFocusChangeListener, ItemClickListener, View.OnLongClickListener {
+        TextToSpeech.OnInitListener, TextWatcher, View.OnKeyListener, View.OnFocusChangeListener,
+        ItemClickListener, View.OnLongClickListener, DoubleClickDetector.Callback, View.OnTouchListener {
 
-    private static final String TAG = "ptt";
+    private static final String TAG = "ESearchMainPanel";
 
     private static final int WHAT_SEARCHING = 0x011;
     private static final int WHAT_DONE = 0x012;
@@ -94,7 +99,6 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
     private TranslateManager mTm;
     private TextToSpeech mTTS;
     private HistoryManager mHm;
-    private FABManager mFABm;
     private FavoriteManager mFm;
     private FloatPanelVisibleListener mButtonVisibleListener;
 
@@ -116,9 +120,6 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
     private TwinklingRefreshLayout mMainHistoryRefresh;
     private ProgressBar mProgressBar;
 
-    private FloatingActionButton mFabSpeak;
-    private FloatingActionButton mFabFavorite;
-
     private WindowManager.LayoutParams mLayoutParams;
 
     private Result mLastResult;
@@ -128,100 +129,11 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
     private String mRequest;
     private boolean mIsShowing = false;
 
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case WHAT_DONE:
-                    break;
-                case WHAT_SEARCHING:
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
-
+    //For hide the main panel when user press home || recent keys;
     private HomeRecentReceiver mHomeRecentReceiver;
 
-    //For msc voice tts
-    private static final String MSC_VOICE_NAME = "xiaoyan";
-    private static final String MSC_SPEED = "50";
-    private static final String MSC_PITCH = "50";
-    private static final String MSC_VOLUME = "50";
-    private static final String MSC_STREAM = "3";
-    private static final String MSC_REQUEST_FOCUS = "true";
-
-    private SpeechSynthesizer mTts;
-
-    private void initMscSpeechSynthesizer() {
-        mTts = SpeechSynthesizer.createSynthesizer(mContext, null);
-    }
-
-    private void setMscParams() {
-        // 清空参数
-        mTts.setParameter(SpeechConstant.PARAMS, null);
-        //直接使用云语音服务
-
-        // 根据合成引擎设置相应参数
-        mTts.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_CLOUD);
-        // 设置在线合成发音人
-        mTts.setParameter(SpeechConstant.VOICE_NAME, MSC_VOICE_NAME);
-        //设置合成语速
-        mTts.setParameter(SpeechConstant.SPEED, MSC_SPEED);
-        //设置合成音调
-        mTts.setParameter(SpeechConstant.PITCH, MSC_PITCH);
-        //设置合成音量
-        mTts.setParameter(SpeechConstant.VOLUME, MSC_VOLUME);
-        //设置播放器音频流类型
-        mTts.setParameter(SpeechConstant.STREAM_TYPE, MSC_STREAM);
-        // 设置播放合成音频打断音乐播放，默认为true
-        mTts.setParameter(SpeechConstant.KEY_REQUEST_FOCUS, MSC_REQUEST_FOCUS);
-    }
-
-    /**
-     * 合成回调监听。
-     */
-    private SynthesizerListener mTtsListener = new SynthesizerListener() {
-        @Override
-        public void onSpeakBegin() {
-        }
-
-        @Override
-        public void onSpeakPaused() {
-        }
-
-        @Override
-        public void onSpeakResumed() {
-        }
-
-        @Override
-        public void onBufferProgress(int percent, int beginPos, int endPos,
-                                     String info) {
-        }
-
-        @Override
-        public void onSpeakProgress(int percent, int beginPos, int endPos) {
-            // 播放进度
-        }
-
-        @Override
-        public void onCompleted(SpeechError error) {
-            if (error == null) {
-            } else if (error != null) {
-            }
-        }
-
-        @Override
-        public void onEvent(int eventType, int arg1, int arg2, Bundle obj) {
-            // 以下代码用于获取与云端的会话id，当业务出错时将会话id提供给技术支持人员，可用于查询会话日志，定位出错原因
-            // 若使用本地能力，会话id为null
-            //	if (SpeechEvent.EVENT_SESSION_ID == eventType) {
-            //		String sid = obj.getString(SpeechEvent.KEY_EVENT_SESSION_ID);
-            //		Log.d(TAG, "session id =" + sid);
-            //	}
-        }
-    };
+    //For double click to favorite the word;
+    private GestureDetector mDetector;
 
     public ESearchMainPanel(Context context, WindowManager wm, ESearchFloatButton button) throws InflaterNotReadyException {
         mContext = context;
@@ -233,12 +145,13 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         mTm.setTranslateListener(this);
         mTTS = new TextToSpeech(mContext, this);
         mHm = new HistoryManager(mContext);
-        mFABm = new FABManager(mContext);
         mFm = new FavoriteManager(mContext);
         mHistoryArray = new ArrayList<>();
 
         mHomeRecentReceiver = new HomeRecentReceiver();
         mContext.registerReceiver(mHomeRecentReceiver, new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+
+        mDetector = new GestureDetector(mContext, new DoubleClickDetector(this));
 
         initViews();
         initLayoutParams();
@@ -305,15 +218,6 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         mMainInput.addTextChangedListener(this);
         mMainInput.setOnKeyListener(this);
 
-        //init functions
-        mFabSpeak = (FloatingActionButton) mMain.findViewById(R.id.main_panel_speak);
-        mFabFavorite = (FloatingActionButton) mMain.findViewById(R.id.main_panel_favorite);
-        mFabSpeak.setOnClickListener(this);
-        mFabFavorite.setOnClickListener(this);
-
-        mFABm.addFAB(mFabSpeak);
-        mFABm.addFAB(mFabFavorite);
-
         initShowPanel();
     }
 
@@ -359,6 +263,37 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
                 }, REFRESH_DELAY);
             }
         });
+
+        if (mMainShowResultPanel instanceof TwinklingRefreshLayout) {
+            TwinklingRefreshLayout refresher = (TwinklingRefreshLayout)mMainShowResultPanel;
+            refresher.setEnableLoadmore(false);
+            refresher.setOnRefreshListener(new RefreshListenerAdapter() {
+                public void onRefresh(final TwinklingRefreshLayout refreshLayout) {
+                    speak();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            refreshLayout.finishRefreshing();
+                        }
+                    },100);
+                }
+            });
+        }
+
+        mMainShowResultPanel.setOnTouchListener(this);
+    }
+
+    private void speak() {
+        if (mLastResult != null) {
+            if (TextUtils.equals(mMainInput.getText(), mLastResult.query)) {
+                startTTS(mLastResult.query);
+            }
+        }
+    }
+
+    private void setQueryWordFavorited(boolean favorited) {
+        int colorId = favorited ? R.color.MaterialBlue_500 : R.color.black;
+        mShowQuery.setTextColor(mContext.getResources().getColor(colorId));
     }
 
     private void initLayoutParams() {
@@ -374,39 +309,38 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.main_panel_background:
+                Log.d(TAG, "onClick: main background");
                 hideSearchPanel();
                 break;
             case R.id.main_panel_search_button:
-                Log.d("ptt", "onClick: search_");
+                Log.d(TAG, "onClick: search_");
                 doSearch();
-                break;
-            case R.id.main_panel_speak:
-                if (mLastResult != null) {
-                    if (TextUtils.equals(mMainInput.getText(), mLastResult.query)) {
-                        startTTS(mLastResult.query);
-                    }
-                }
-                Log.d(TAG, "onClick: speak");
                 break;
             case R.id.main_panel_favorite:
                 Log.d(TAG, "onClick: favorite");
-                if (mFm.isFavoriteExist(mRequest)) {
-                    mFm.deleteFavorite(mRequest);
-                    mFabFavorite.setImageResource(R.mipmap.favorite_item);
-                    Toast.makeText(mContext, mContext.getString(R.string.have_remove_favorite), Toast.LENGTH_SHORT).show();
-                } else {
-                    mFm.insertFavorite(getResultFromArray(mRequest), null);
-                    mFabFavorite.setImageResource(R.mipmap.favorited);
-                    //get group
-                    String group = "";
-                    Toast.makeText(mContext, mContext.getString(R.string.have_favorite, group), Toast.LENGTH_SHORT).show();
-                }
+
                 break;
             case R.id.main_panel_search_clean:
                 mMainInput.setText("");
                 Utils.popSoftInput(mContext, mMainInput);
                 break;
         }
+    }
+
+    private void favoriteWord() {
+        boolean exist = mFm.isFavoriteExist(mRequest);
+        //have been favorite, now need to delete the word 
+        setQueryWordFavorited(!exist);
+        if (exist) {
+            mFm.deleteFavorite(mRequest);
+        } else {
+            mFm.insertFavorite(getResultFromArray(mRequest), null);
+        }
+        String group = "";
+        Toast.makeText(mContext,
+                exist ? mContext.getString(R.string.have_remove_favorite)
+                        : mContext.getString(R.string.have_favorite, group),
+                Toast.LENGTH_SHORT).show();
     }
 
     //Animation
@@ -447,7 +381,6 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
     @Override
     public void onTranslateStart() {
         mState = STATE_TRANSLATING;
-        mHandler.sendEmptyMessage(WHAT_SEARCHING);
     }
 
     private void handleSuccess4View(Result result) {
@@ -458,25 +391,21 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         mLastResult = result;
         mMainInput.setText(mRequest);
 
-        Log.d("ptt", "onTranslateSuccess: ");
+        Log.d(TAG, "onTranslateSuccess: ");
         mState = STATE_TRANS_SUCCESS;
-        if (result == null) {
-            return;
-        }
 
-        //Update favorite icon
-        if (mFm.isFavoriteExist(result.query)) {
-            mFabFavorite.setImageResource(R.mipmap.favorited);
-        } else {
-            mFabFavorite.setImageResource(R.mipmap.favorite_item);
-        }
+        //Update favorite panel
+        setQueryWordFavorited(mFm.isFavoriteExist(mRequest));
 
         mLastResult = result;
         mProgressBar.setVisibility(View.GONE);
 
-        mFABm.showFAB(FABManager.ACTION_TRANS_SUCCESS);
         HashMap<String,String> map = result.getResultMap();
+
+        //show query text
         mShowQuery.setText(map.get(YOUDAO_QUERY));
+
+        //show or gone phonetic view UK
         String string = map.get(YOUDAO_UK_PHONETIC);
         if (TextUtils.isEmpty(string)) {
             mShowUKPhonetic.setVisibility(View.GONE);
@@ -485,6 +414,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
             mShowUKPhonetic.setText(string);
         }
 
+        //show or gone phonetic view US
         string = map.get(YOUDAO_US_PHONETIC);
         if (TextUtils.isEmpty(string)) {
             mShowUSPhonetic.setVisibility(View.GONE);
@@ -492,6 +422,8 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
             mShowUSPhonetic.setVisibility(View.VISIBLE);
             mShowUSPhonetic.setText(map.get(YOUDAO_US_PHONETIC));
         }
+
+        //set explains
         mShowExplains.setText(map.get(YOUDAO_EXPLAINS));
     }
 
@@ -546,7 +478,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
 
     @Override
     public void onTranslateFailed(String error) {
-        Log.d("ptt", "onTranslateFailed: " + error);
+        Log.d(TAG, "onTranslateFailed: " + error);
         mState = STATE_TRANS_FAILED;
         mLastResult = null;
         mProgressBar.setVisibility(View.GONE);
@@ -647,7 +579,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
     //Voice speak
     private void startTTS(String result) {
         PLog.log("result = " + result);
-        if (/*NetworkUtils.isConnectedByState(mContext)*/false) {
+        if (NetworkUtils.isConnectedByState(mContext)) {
             //When the net work connected, we usw msc voice engine
             setMscParams();
             result += "\n";
@@ -666,9 +598,6 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
     //Input TextWatcher
     @Override
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        if (mState == STATE_TRANS_SUCCESS || mState == STATE_TRANS_FAILED) {
-            mFABm.hideFAB(FABManager.ACTION_INPUT_NULL);
-        }
         mState = STATE_INPUT;
     }
 
@@ -708,12 +637,9 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         }
         mHm = null;
         mTm = null;
-        mFABm = null;
         mWm = null;
         mTTS = null;
         mButtonVisibleListener = null;
-        mFabSpeak = null;
-        mFabFavorite = null;
         mMainInput = null;
         mMain = null;
         mMainSearch = null;
@@ -722,7 +648,6 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         mMainPanel = null;
         mButton = null;
         mLayoutParams = null;
-        mHandler = null;
         mHistoryArray = null;
 
         //show panel
@@ -743,7 +668,12 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         //Main panel will be hidden when user press back key or outside district.
         if (keyEvent.getAction() == KeyEvent.ACTION_DOWN
                 && (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_MENU)) {
-            hideSearchPanel();
+            if (mMainShowResultPanel.getVisibility() == View.VISIBLE) {
+                toggleVisible(false);
+            } else {
+                hideSearchPanel();
+            }
+
         }
         return false;
     }
@@ -782,6 +712,99 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
         }
         return true;
     }
+
+    //For favorite the word double click
+    @Override
+    public void onDoubleTap() {
+        favoriteWord();
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        Log.d(TAG, "onTouch: ");
+        return mDetector.onTouchEvent(motionEvent);
+    }
+
+    //--------------------------------MSC voice technology Config-----------------------------------
+
+    //For msc voice tts
+    private static final String MSC_VOICE_NAME = "xiaoyan";
+    private static final String MSC_SPEED = "50";
+    private static final String MSC_PITCH = "50";
+    private static final String MSC_VOLUME = "50";
+    private static final String MSC_STREAM = "3";
+    private static final String MSC_REQUEST_FOCUS = "true";
+
+    private SpeechSynthesizer mTts;
+
+    private void initMscSpeechSynthesizer() {
+        mTts = SpeechSynthesizer.createSynthesizer(mContext, null);
+    }
+
+    private void setMscParams() {
+        // 清空参数
+        mTts.setParameter(SpeechConstant.PARAMS, null);
+        //直接使用云语音服务
+
+        // 根据合成引擎设置相应参数
+        mTts.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_CLOUD);
+        // 设置在线合成发音人
+        mTts.setParameter(SpeechConstant.VOICE_NAME, MSC_VOICE_NAME);
+        //设置合成语速
+        mTts.setParameter(SpeechConstant.SPEED, MSC_SPEED);
+        //设置合成音调
+        mTts.setParameter(SpeechConstant.PITCH, MSC_PITCH);
+        //设置合成音量
+        mTts.setParameter(SpeechConstant.VOLUME, MSC_VOLUME);
+        //设置播放器音频流类型
+        mTts.setParameter(SpeechConstant.STREAM_TYPE, MSC_STREAM);
+        // 设置播放合成音频打断音乐播放，默认为true
+        mTts.setParameter(SpeechConstant.KEY_REQUEST_FOCUS, MSC_REQUEST_FOCUS);
+    }
+
+    /**
+     * 合成回调监听。
+     */
+    private SynthesizerListener mTtsListener = new SynthesizerListener() {
+        @Override
+        public void onSpeakBegin() {
+        }
+
+        @Override
+        public void onSpeakPaused() {
+        }
+
+        @Override
+        public void onSpeakResumed() {
+        }
+
+        @Override
+        public void onBufferProgress(int percent, int beginPos, int endPos,
+                                     String info) {
+        }
+
+        @Override
+        public void onSpeakProgress(int percent, int beginPos, int endPos) {
+            // 播放进度
+        }
+
+        @Override
+        public void onCompleted(SpeechError error) {
+            if (error == null) {
+            } else if (error != null) {
+            }
+        }
+
+        @Override
+        public void onEvent(int eventType, int arg1, int arg2, Bundle obj) {
+            // 以下代码用于获取与云端的会话id，当业务出错时将会话id提供给技术支持人员，可用于查询会话日志，定位出错原因
+            // 若使用本地能力，会话id为null
+            //	if (SpeechEvent.EVENT_SESSION_ID == eventType) {
+            //		String sid = obj.getString(SpeechEvent.KEY_EVENT_SESSION_ID);
+            //		Log.d(TAG, "session id =" + sid);
+            //	}
+        }
+    };
 
     //---------------------------------------Class && Interface---------------------------------------//
     class ROnScrollListener extends RecyclerView.OnScrollListener {

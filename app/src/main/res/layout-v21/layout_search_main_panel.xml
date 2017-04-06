@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_panel_background"
-    style="@style/main_panel_background">
+    style="@style/main_panel_background"
+    android:descendantFocusability="afterDescendants">
 
 
     <LinearLayout
@@ -51,54 +51,63 @@
             </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
 
 
-            <ScrollView
-                android:paddingLeft="10dp"
+            <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
                 android:id="@+id/main_panel_show_result"
-                style="@style/main_panel_show_result">
+                style="@style/main_panel_show_result"
+                android:paddingLeft="10dp">
 
-                <LinearLayout
+                <ScrollView
+                    android:scrollbars="none"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/main_panel_show_query"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="#000000"
-                        android:textSize="30sp" />
+                    android:overScrollMode="never"
+                    >
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/main_panel_uk_phonetic"
-                            android:layout_width="wrap_content"
+                            android:id="@+id/main_panel_show_query"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
-                            android:gravity="center_vertical"
-                            android:textSize="18sp"
-                            android:paddingRight="8dp" />
+                            android:textColor="#000000"
+                            android:textSize="30sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/main_panel_uk_phonetic"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif"
+                                android:gravity="center_vertical"
+                                android:paddingRight="8dp"
+                                android:textSize="18sp" />
+
+                            <TextView
+                                android:id="@+id/main_panel_us_phonetic"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif"
+                                android:gravity="center_vertical"
+                                android:paddingRight="8dp"
+                                android:textSize="18sp" />
+                        </LinearLayout>
 
                         <TextView
-                            android:id="@+id/main_panel_us_phonetic"
-                            android:layout_width="wrap_content"
+                            android:id="@+id/main_panel_explains"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
-                            android:gravity="center_vertical"
-                            android:textSize="18sp"
-                            android:paddingRight="8dp" />
+                            android:textSize="25sp" />
                     </LinearLayout>
-                    <TextView
-                        android:id="@+id/main_panel_explains"
-                        android:layout_width="match_parent"
-                        android:textSize="25sp"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-            </ScrollView>
+                </ScrollView>
+            </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
 
             <include
                 layout="@layout/google_progressbar"
@@ -106,19 +115,4 @@
                 android:layout_height="match_parent" />
         </RelativeLayout>
     </LinearLayout>
-
-    <!--<LinearLayout-->
-    <!--android:id="@+id/main_panel_functions"-->
-    <!--style="@style/main_panel_functions">-->
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/main_panel_speak"
-        style="@style/main_panel_speak" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/main_panel_favorite"
-        style="@style/main_panel_favorite"
-        app:backgroundTint="@android:color/holo_orange_dark" />
-    <!--</LinearLayout>-->
-
 </RelativeLayout>

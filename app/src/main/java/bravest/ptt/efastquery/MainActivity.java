@@ -497,7 +497,10 @@ public class MainActivity extends AppCompatActivity
 
     private void showFloatingWindow() {
         if (mMainService != null) {
-            mMainService.showFloatingWindow();
+            boolean ret = mMainService.showFloatingWindow();
+            if (!ret) {
+                Utils.showOverlayConfirmDialog(this);
+            }
         }
     }
 

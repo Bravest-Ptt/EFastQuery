@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
@@ -12,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import bravest.ptt.efastquery.utils.Utils;
 import bravest.ptt.efastquery.view.ESearchFloatButton;
 
 /**
@@ -65,7 +67,7 @@ public class MainService extends Service {
 //        return super.onStartCommand(intent, flags, startId);
     }
 
-    public void showFloatingWindow() {
+    public boolean showFloatingWindow() {
         if (mView == null) {
             try {
                 mView = new ESearchFloatButton(this);
@@ -77,13 +79,12 @@ public class MainService extends Service {
             if (Settings.canDrawOverlays(this)) {
                 mView.showFloatButton();
             } else {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                return false;
             }
         } else {
             mView.showFloatButton();
         }
+        return true;
     }
 
     public void hideFloatingWindow() {

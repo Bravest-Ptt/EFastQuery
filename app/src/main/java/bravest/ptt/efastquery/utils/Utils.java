@@ -5,11 +5,16 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -26,6 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import bravest.ptt.efastquery.R;
 
 /**
  * Created by root on 12/27/16.
@@ -121,28 +128,29 @@ public class Utils {
         }
         return denyPermissions;
     }
+
     private static boolean isOverMarshmallow() {
         return Build.VERSION.SDK_INT >= 23;
     }
 
     //StatusBar
     public static void setWindowStatusBarColor(Activity activity, int colorResId) {
-        try{
+        try {
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
                 Window window = activity.getWindow();
                 window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                 window.setStatusBarColor(activity.getResources().getColor(colorResId));
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public static int dp2px(Context context, int px) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,px,context.getResources().getDisplayMetrics());
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, px, context.getResources().getDisplayMetrics());
     }
 
-    public static void getHexagonPoints(float x, float y, float length){
+    public static void getHexagonPoints(float x, float y, float length) {
         final float gen3 = 1.732f;
         PLog.log("左肩: x =  " + (x - (length / 2f) * gen3) + ", y = " + (y + length / 2f));
         PLog.log("右肩：x = " + (x + (length / 2f) * gen3) + ", y = " + (y + length / 2f));
@@ -176,8 +184,8 @@ public class Utils {
         int actionBarHeight;
         if (activity.getActionBar() != null) {
             actionBarHeight = activity.getActionBar().getHeight();
-        } else if (activity instanceof AppCompatActivity){
-            if(((AppCompatActivity) activity).getSupportActionBar()!= null) {
+        } else if (activity instanceof AppCompatActivity) {
+            if (((AppCompatActivity) activity).getSupportActionBar() != null) {
                 actionBarHeight = ((AppCompatActivity) activity).getSupportActionBar().getHeight();
             } else {
                 actionBarHeight = 0;
@@ -196,9 +204,31 @@ public class Utils {
 
     public static final Type getType(Class<?> subclass) {
         Type superClass = subclass.getGenericSuperclass();
-        if (superClass instanceof  Class) {
+        if (superClass instanceof Class) {
             throw new RuntimeException("Missing type parameter");
         }
-        return ((ParameterizedType)superClass).getActualTypeArguments()[0];
+        return ((ParameterizedType) superClass).getActualTypeArguments()[0];
+    }
+
+    public static void showOverlayConfirmDialog(final Context context) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (!Settings.canDrawOverlays(context)) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle(context.getString(R.string.overlay_confirm_title))
+                        .setMessage(context.getString(R.string.overlay_confirm_content))
+                        .setNegativeButton(R.string.overlay_confirm_negative, null)
+                        .setPositiveButton(R.string.overlay_confirm_positive, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                                intent.setData(Uri.parse("package:bravest.ptt.efastquery"));
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                context.startActivity(intent);
+                            }
+                        });
+                builder.setCancelable(false);
+                builder.show();
+            }
+        }
     }
 }
