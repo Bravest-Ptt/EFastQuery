@@ -67,7 +67,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".msciat.settings.IatSettings"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

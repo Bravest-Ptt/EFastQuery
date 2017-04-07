@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/file_manager_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/file_manager_header"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/file_manager_external_folder"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:drawableRight="@mipmap/file_folder_arrow"
+                android:gravity="center"
+                android:text="@string/file_manager_phone_folder"
+                android:textSize="16sp" />
+
+            <HorizontalScrollView
+                android:id="@+id/file_manager_indicator_scroller"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:overScrollMode="never"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/file_manager_folder_indicator"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"/>
+            </HorizontalScrollView>
+
+            <ImageView
+                android:id="@+id/file_manager_folder_add"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center|right"
+                android:clickable="true"
+                android:padding="15dp"
+                android:src="@mipmap/add_folder" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#cccccc" />
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/file_manager_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/file_manager_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never" />
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <TextView
+            android:id="@+id/file_manager_content_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/file_manager_folder_is_empty"
+            android:textSize="16sp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/file_manager_footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="#eeeeee"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/file_manager_editor"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_weight="4"
+                    android:hint="@string/export_file_save_name"
+                    android:singleLine="true"
+                    android:textSize="14sp"
+                    app:theme="@style/AppTheme.export" />
+
+                <android.support.v7.widget.AppCompatSpinner
+                    android:id="@+id/file_manager_spinner"
+                    style="@style/file_manager_spinner"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:elevation="4dp"
+                    android:entries="@array/export_spinner_entries"
+                    android:gravity="center" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/file_manager_extension_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:gravity="center_vertical"
+                    android:textSize="13sp"
+                    android:layout_toLeftOf="@+id/file_manager_save_button"
+                    android:text="@string/file_manager_desc_xml" />
+
+                <Button
+                    android:id="@+id/file_manager_save_button"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/export_save" />
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_above="@+id/file_manager_footer"
+            android:background="#cccccc" />
+    </RelativeLayout>
+</FrameLayout>

@@ -53,8 +53,6 @@ public class FABManager {
             case ACTION_INPUT_NULL:
                 break;
             case ACTION_TRANS_SUCCESS:
-                showAnimation(mFabsMap.get(R.id.main_panel_speak));
-                showAnimation(mFabsMap.get(R.id.main_panel_favorite));
                 break;
             case ACTION_ITEM_SELECTED:
                 break;
@@ -69,8 +67,6 @@ public class FABManager {
         switch (action) {
             case ACTION_INPUT_NULL:
                 //goneAllFABs();
-                hideAnimation(mFabsMap.get(R.id.main_panel_speak));
-                hideAnimation(mFabsMap.get(R.id.main_panel_favorite));
                 break;
             case ACTION_TRANS_SUCCESS:
                 break;

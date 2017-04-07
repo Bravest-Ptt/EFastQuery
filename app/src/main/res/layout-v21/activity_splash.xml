@@ -28,6 +28,20 @@
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/app_name_drawable" />
+        app:srcCompat="@drawable/app_name_drawable"/>
+
+    <Button
+        android:layout_marginLeft="48dp"
+        android:layout_marginRight="48dp"
+        android:layout_marginBottom="48dp"
+        android:id="@+id/splash_app_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="微信登录"
+        android:textSize="18sp"
+        android:textColor="#dddddd"
+        android:textStyle="bold"
+        android:background="@drawable/login_selector"
+        />
 
 </LinearLayout>

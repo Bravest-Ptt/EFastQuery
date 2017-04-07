@@ -10,17 +10,21 @@ import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Animatable2;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PersistableBundle;
 import android.os.Process;
+import android.support.graphics.drawable.AnimatedVectorDrawableCompat;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import java.util.Timer;
@@ -90,13 +94,7 @@ public class SplashActivity extends AppCompatActivity {
             }
         } else {
             //delay 3s, and do the animation
-            Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    doAnimation(imageView);
-                }
-            }, 2500);
+            AnimatedVectorDrawableCompat animatedVectorDrawableCompat;
         }
 
         Timer timer = new Timer();
@@ -108,11 +106,20 @@ public class SplashActivity extends AppCompatActivity {
         }, 4000);
     }
 
+    private boolean hasLogin = false;
     private void startMainActivity() {
-        mHandler.sendEmptyMessage(FINISH);
-        Intent intent = new Intent(mContext, MainActivity.class);
-        startActivity(intent);
-        finish();
+        if (hasLogin) {
+            mHandler.sendEmptyMessage(FINISH);
+            Intent intent = new Intent(mContext, MainActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            ImageView nameView = (ImageView) findViewById(R.id.splash_app_name);
+            nameView.setVisibility(View.GONE);
+
+            Button button = (Button) findViewById(R.id.splash_app_login);
+            button.setVisibility(View.VISIBLE);
+        }
     }
 
     private AnimatorSet mSet;

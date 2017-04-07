@@ -316,10 +316,6 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
                 Log.d(TAG, "onClick: search_");
                 doSearch();
                 break;
-            case R.id.main_panel_favorite:
-                Log.d(TAG, "onClick: favorite");
-
-                break;
             case R.id.main_panel_search_clean:
                 mMainInput.setText("");
                 Utils.popSoftInput(mContext, mMainInput);
@@ -329,7 +325,7 @@ class ESearchMainPanel implements View.OnClickListener, TranslateListener<Result
 
     private void favoriteWord() {
         boolean exist = mFm.isFavoriteExist(mRequest);
-        //have been favorite, now need to delete the word 
+        //have been favorite, now need to delete the word
         setQueryWordFavorited(!exist);
         if (exist) {
             mFm.deleteFavorite(mRequest);

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" > 
-    
+
+	<PreferenceCategory
+		android:title="听写设置"
+		/>
     <ListPreference
         android:key="iat_language_preference"
         android:title="语言设置"
@@ -13,15 +16,15 @@
         android:key="iat_vadbos_preference"   
 		android:title="前端点超时" 
 		android:dialogTitle="请输入时间(0-10000)ms"
-        android:summary="默认值：短信转写5000，其他4000"
-		android:defaultValue="5000" />
+        android:summary="默认值：4000ms"
+		android:defaultValue="4000" />
     
     <EditTextPreference
         android:key="iat_vadeos_preference"   
 		android:title="后端点超时" 
 		android:dialogTitle="请输入时间(0-10000)ms"
-        android:summary="默认值：短信转写1800，其他700 "
-		android:defaultValue="1800" />
+        android:summary="默认值：2000ms "
+		android:defaultValue="2000ms" />
 
     <ListPreference
         android:key="iat_punc_preference"
@@ -30,11 +33,6 @@
         android:entryValues="@array/punc_values"
         android:summary="默认值：有标点 "
         android:defaultValue="1"  />
-    
-	<CheckBoxPreference
-		android:key="@string/pref_key_iat_show"
-		android:title="@string/pref_title_iat_show"
-		android:defaultValue="true" />
 
 </PreferenceScreen>
 

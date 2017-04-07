@@ -61,6 +61,7 @@
     <color name="splash_900">#212121</color>
     <color name="splash_1000">#000000</color>
     <color name="splash_800">#424242</color>
+    <color name="splash_login">#101010</color>
 
     <color name="black">#000000</color>
 </resources>

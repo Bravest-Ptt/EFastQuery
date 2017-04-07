@@ -1,21 +1,37 @@
 <resources>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimary">@color/MaterialBlue_500</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.DayNight">
+        <item name="colorPrimary">@color/home_red_500_4_toolbar</item>
+        <item name="colorPrimaryDark">@color/home_red_600_4_status_bar</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.export" parent="AppTheme.NoActionBar">
+        <item name="colorPrimary">@color/export_orange_500_4_toolbar</item>
+        <item name="colorPrimaryDark">@color/export_orange_600_4_status_bar</item>
+        <item name="colorAccent">@color/export_orange_600_4_status_bar</item>
+    </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.Splash" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/splash_900</item>
+        <item name="colorPrimaryDark">@color/splash_1000</item>
+        <item name="colorAccent">@color/splash_800</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 
     <style name="main_panel_background">
         <item name="android:layout_width">match_parent</item>
