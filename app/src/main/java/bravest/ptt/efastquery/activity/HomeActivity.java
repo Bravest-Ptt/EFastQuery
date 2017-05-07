@@ -1,32 +1,20 @@
-package bravest.ptt.efastquery;
+package bravest.ptt.efastquery.activity;
 
 import android.Manifest;
-import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
-import android.content.res.Resources;
-import android.content.res.XmlResourceParser;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -41,40 +29,30 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
-
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import bravest.ptt.efastquery.data.wordbook.DocBuilder;
-import bravest.ptt.efastquery.data.wordbook.WordBook;
-import bravest.ptt.efastquery.data.wordbook.XmlBuilder;
-import bravest.ptt.efastquery.data.wordbook.XmlParser;
+import bravest.ptt.efastquery.service.FloatingQueryService;
+import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.fragment.BaseFragment;
 import bravest.ptt.efastquery.fragment.ExportFragment;
 import bravest.ptt.efastquery.fragment.FavoriteFragment;
 import bravest.ptt.efastquery.fragment.FileManagerFragment;
 import bravest.ptt.efastquery.fragment.ImportFragment;
 import bravest.ptt.efastquery.fragment.MainFragment;
-import bravest.ptt.efastquery.provider.EFastQueryDbUtils;
 import bravest.ptt.efastquery.provider.FavoriteManager;
 import bravest.ptt.efastquery.utils.PLog;
 import bravest.ptt.efastquery.utils.Utils;
 
-public class MainActivity extends AppCompatActivity
+public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    public static final String TAG = "MainActivity";
+    public static final String TAG = "HomeActivity";
 
     public static final int REQUEST_CODE = 100;
 
-    private MainService mMainService;
+    private FloatingQueryService mFloatingQueryService;
 
     private NavigationView mNavigationView;
     private Toolbar mToolbar;
@@ -97,13 +75,13 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             Log.d(TAG, "onServiceConnected");
-            mMainService = ((MainService.MainBinder) iBinder).getService();
+            mFloatingQueryService = ((FloatingQueryService.MainBinder) iBinder).getService();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             Log.d(TAG, "onServiceDisconnected");
-            mMainService = null;
+            mFloatingQueryService = null;
         }
     };
 
@@ -216,7 +194,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void bindService() {
-        Intent intent = new Intent(this, MainService.class);
+        Intent intent = new Intent(this, FloatingQueryService.class);
         bindService(intent, mMainConnection, BIND_AUTO_CREATE);
         startService(intent);
     }
@@ -496,8 +474,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void showFloatingWindow() {
-        if (mMainService != null) {
-            boolean ret = mMainService.showFloatingWindow();
+        if (mFloatingQueryService != null) {
+            boolean ret = mFloatingQueryService.showFloatingWindow();
             if (!ret) {
                 Utils.showOverlayConfirmDialog(this);
             }
@@ -505,8 +483,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void hideFloatingWindow() {
-        if (mMainService != null) {
-            mMainService.hideFloatingWindow();
+        if (mFloatingQueryService != null) {
+            mFloatingQueryService.hideFloatingWindow();
         }
     }
 

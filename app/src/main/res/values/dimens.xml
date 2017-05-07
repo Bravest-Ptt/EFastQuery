@@ -25,4 +25,17 @@
 
 
     <dimen name="iat_recognize_button_size">70dp</dimen>
+
+    <!--SEAL -->
+    <dimen name="seal_margin_top">20dp</dimen>
+    <dimen name="seal_padding">40dp</dimen>
+
+    <!--login-->
+    <dimen name="login_register_h">54dp</dimen>
+    <dimen name="login_margin_bottom">34dp</dimen>
+    <dimen name="login_margin_side">30dp</dimen>
+    <dimen name="login_button_margin">20dp</dimen>
+
+    <!--register-->
+    <dimen name="register_app_name_padding">30dp</dimen>
 </resources>

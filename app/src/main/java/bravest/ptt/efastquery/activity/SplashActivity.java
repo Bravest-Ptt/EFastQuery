@@ -1,41 +1,41 @@
-package bravest.ptt.efastquery;
+package bravest.ptt.efastquery.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Animatable2;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.VectorDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
-import android.os.PersistableBundle;
-import android.os.Process;
 import android.support.graphics.drawable.AnimatedVectorDrawableCompat;
-import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
+import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.utils.PLog;
 
 public class SplashActivity extends AppCompatActivity {
 
+    private static final String TAG = "SplashActivity";
+
     private static final int FINISH = 1;
+
     private Context mContext;
+
+    private boolean mActivityActive = true;
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -53,9 +53,45 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         mContext = this;
+        mActivityActive = true;
 
+        initViews();
         initSealAnimation();
         initData();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mActivityActive = true;
+    }
+
+    private void initViews() {
+        View login = findViewById(R.id.login);
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleLogin();
+            }
+        });
+
+        View register = findViewById(R.id.register);
+        register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleRegister();
+            }
+        });
+    }
+
+    private void handleLogin() {
+        PLog.d(TAG, "handle login");
+        startActivity(new Intent(this, LoginActivity.class));
+    }
+
+    private void handleRegister() {
+        PLog.d(TAG, "handle register");
+        startActivity(new Intent(this,RegisterActivity.class));
     }
 
     private void initData() {
@@ -101,7 +137,7 @@ public class SplashActivity extends AppCompatActivity {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                startMainActivity();
+                //startMainActivity();
             }
         }, 4000);
     }
@@ -110,15 +146,12 @@ public class SplashActivity extends AppCompatActivity {
     private void startMainActivity() {
         if (hasLogin) {
             mHandler.sendEmptyMessage(FINISH);
-            Intent intent = new Intent(mContext, MainActivity.class);
+            Intent intent = new Intent(mContext, HomeActivity.class);
             startActivity(intent);
             finish();
         } else {
             ImageView nameView = (ImageView) findViewById(R.id.splash_app_name);
             nameView.setVisibility(View.GONE);
-
-            Button button = (Button) findViewById(R.id.splash_app_login);
-            button.setVisibility(View.VISIBLE);
         }
     }
 
@@ -128,14 +161,15 @@ public class SplashActivity extends AppCompatActivity {
         anim.setInterpolator(new LinearInterpolator());
         anim.setTarget(imageView);
 
-        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(imageView, "translationY", imageView.getY(), imageView.getY() + 100);
-        objectAnimator.setDuration(1000);
+        //ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(imageView, "translationY", imageView.getY(), imageView.getY() + 100);
+        //objectAnimator.setDuration(1000);
         mSet = new AnimatorSet();
-        mSet.playTogether(anim, objectAnimator);
+        //mSet.playTogether(anim, objectAnimator);
+        mSet.play(anim);
         mSet.start();
 
         ImageView nameView = (ImageView) findViewById(R.id.splash_app_name);
-        nameView.setVisibility(View.VISIBLE);
+        nameView.setVisibility(View.GONE);
     }
 
     @Override
@@ -147,7 +181,14 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        mActivityActive = false;
+        super.onPause();
+    }
+
+    @Override
     protected void onDestroy() {
+        mActivityActive = false;
         super.onDestroy();
     }
 }

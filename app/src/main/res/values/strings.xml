@@ -101,4 +101,16 @@
     <string name="overlay_confirm_content">请在手机设置中开启悬浮窗权限，以体验快查功能</string>
     <string name="overlay_confirm_negative">暂不开启</string>
     <string name="overlay_confirm_positive"><font color="#f44336"><b>去开启</b></font></string>
+
+    <!--login-->
+    <string name="login">登"&#160;""&#160;""&#160;""&#160;"录</string>
+    <string name="register">注"&#160;""&#160;""&#160;""&#160;"册</string>
+    <string name="login_phonenumber">手机号码</string>
+    <string name="login_password">密码</string>
+    <string name="login_forget_password">忘记密码？</string>
+
+    <!--register-->
+    <string name="register_verification_code">验证码</string>
+    <string name="register_verification_wait">请稍候~</string>
+    <string name="register_already">已经注册？点此登录</string>
 </resources>

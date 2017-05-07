@@ -1,10 +1,9 @@
-package bravest.ptt.efastquery;
+package bravest.ptt.efastquery.service;
 
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
@@ -13,23 +12,24 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import bravest.ptt.efastquery.utils.Utils;
+import bravest.ptt.efastquery.R;
+import bravest.ptt.efastquery.activity.HomeActivity;
 import bravest.ptt.efastquery.view.ESearchFloatButton;
 
 /**
  * Created by root on 12/28/16.
  */
 
-public class MainService extends Service {
+public class FloatingQueryService extends Service {
 
     private static final int FOREGROUND_SERVICE_NOTIFICATION_ID = 528;
-    public static final String TAG = "MainService";
+    public static final String TAG = "FloatingQueryService";
     private MainBinder mMainBinder = new MainBinder();
     private ESearchFloatButton mView;
 
     public class MainBinder extends Binder {
-        public MainService getService() {
-            return MainService.this;
+        public FloatingQueryService getService() {
+            return FloatingQueryService.this;
         }
     }
 
@@ -50,7 +50,7 @@ public class MainService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity.class), 0);
+                new Intent(this, HomeActivity.class), 0);
         builder.setContentIntent(contentIntent);
         builder.setSmallIcon(R.mipmap.ic_launcher);
         builder.setTicker("Foreground Service Start");

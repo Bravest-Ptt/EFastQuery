@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:fitsSystemWindows="true"
     android:background="@color/splash_900"
-    tools:context="bravest.ptt.efastquery.SplashActivity">
+    tools:context="bravest.ptt.efastquery.activity.SplashActivity">
 
     <ImageView
         android:padding="16dp"

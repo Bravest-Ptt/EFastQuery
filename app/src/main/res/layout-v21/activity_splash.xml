@@ -1,47 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_splash"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:fitsSystemWindows="true"
     android:background="@color/splash_900"
-    tools:context="bravest.ptt.efastquery.SplashActivity">
+    android:fitsSystemWindows="true"
+    tools:context="bravest.ptt.efastquery.activity.SplashActivity">
 
     <ImageView
-        android:padding="16dp"
         android:id="@+id/splash_seal_start"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/seal_padding"
+        android:layout_marginRight="@dimen/seal_padding"
+        android:layout_marginTop="@dimen/seal_margin_top"
         app:srcCompat="@drawable/seal_out_drawable" />
 
+    <TextView
+        android:id="@+id/splash_forget_password"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:padding="10dp"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:text="@string/login_forget_password"
+        android:textColor="@color/selector_forget_password"
+        android:layout_below="@+id/splash_seal_start"
+        android:layout_toRightOf="@+id/splash_app_name"
+        android:layout_toEndOf="@+id/splash_app_name"
+        android:layout_marginTop="10dp" />
+
     <ImageView
+        android:id="@+id/splash_app_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="48dp"
         android:paddingLeft="48dp"
         android:paddingRight="48dp"
-        android:paddingBottom="48dp"
-        android:id="@+id/splash_app_name"
-        android:layout_gravity="center_horizontal"
         android:visibility="gone"
+        app:srcCompat="@drawable/app_name_drawable" />
+
+    <LinearLayout
+        android:id="@+id/login_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/app_name_drawable"/>
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/login_margin_bottom"
+        android:layout_marginLeft="@dimen/login_margin_side"
+        android:layout_marginRight="@dimen/login_margin_side"
+        android:orientation="vertical">
 
-    <Button
-        android:layout_marginLeft="48dp"
-        android:layout_marginRight="48dp"
-        android:layout_marginBottom="48dp"
-        android:id="@+id/splash_app_login"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="微信登录"
-        android:textSize="18sp"
-        android:textColor="#dddddd"
-        android:textStyle="bold"
-        android:background="@drawable/login_selector"
-        />
+        <Button
+            android:id="@+id/login"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/login_register_h"
+            android:layout_marginLeft="@dimen/login_margin_side"
+            android:layout_marginRight="@dimen/login_margin_side"
+            android:layout_weight="1"
+            android:background="@drawable/login_selector"
+            android:clickable="true"
+            android:text="@string/login"
+            android:textColor="@color/white"
+            android:textSize="23sp" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/register"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/login_register_h"
+            android:layout_marginLeft="@dimen/login_margin_side"
+            android:layout_marginRight="@dimen/login_margin_side"
+            android:layout_marginTop="@dimen/login_button_margin"
+            android:layout_weight="1"
+            android:background="@drawable/login_selector"
+            android:clickable="true"
+            android:text="@string/register"
+            android:textColor="@color/white"
+            android:textSize="23sp" />
+    </LinearLayout>
+</RelativeLayout>

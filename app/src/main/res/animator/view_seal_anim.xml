@@ -16,19 +16,19 @@
         android:valueFrom="0.3"
         android:valueTo="1"
         android:valueType="floatType" />
-    <objectAnimator
-        android:duration="1000"
-        android:propertyName="scaleX"
-        android:valueFrom="1"
-        android:valueTo="0.8"
-        android:valueType="floatType"
-        />
+    <!--<objectAnimator-->
+        <!--android:duration="1000"-->
+        <!--android:propertyName="scaleX"-->
+        <!--android:valueFrom="1"-->
+        <!--android:valueTo="0.8"-->
+        <!--android:valueType="floatType"-->
+        <!--/>-->
 
-    <objectAnimator
-        android:duration="1000"
-        android:propertyName="scaleY"
-        android:valueFrom="1"
-        android:valueTo="0.8"
-        android:valueType="floatType"
-        />
+    <!--<objectAnimator-->
+        <!--android:duration="1000"-->
+        <!--android:propertyName="scaleY"-->
+        <!--android:valueFrom="1"-->
+        <!--android:valueTo="0.8"-->
+        <!--android:valueType="floatType"-->
+        <!--/>-->
 </set>

@@ -8,7 +8,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.KeyEvent;
 import android.view.View;
 
-import bravest.ptt.efastquery.MainActivity;
+import bravest.ptt.efastquery.activity.HomeActivity;
 import bravest.ptt.efastquery.R;
 
 /**
@@ -17,13 +17,13 @@ import bravest.ptt.efastquery.R;
 
 public abstract class BaseFragment extends Fragment {
 
-    protected MainActivity mActivity;
+    protected HomeActivity mActivity;
     protected SwipeRefreshLayout mRefresher;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mActivity = (MainActivity) getActivity();
+        mActivity = (HomeActivity) getActivity();
     }
 
     @Override
