@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
@@ -16,14 +15,11 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDelegate;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,19 +29,19 @@ import android.widget.Toast;
 
 import java.util.HashMap;
 
+import bravest.ptt.androidlib.activity.BaseActivity;
 import bravest.ptt.efastquery.service.FloatingQueryService;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.fragment.BaseFragment;
 import bravest.ptt.efastquery.fragment.ExportFragment;
 import bravest.ptt.efastquery.fragment.FavoriteFragment;
-import bravest.ptt.efastquery.fragment.FileManagerFragment;
 import bravest.ptt.efastquery.fragment.ImportFragment;
 import bravest.ptt.efastquery.fragment.MainFragment;
 import bravest.ptt.efastquery.provider.FavoriteManager;
 import bravest.ptt.efastquery.utils.PLog;
 import bravest.ptt.efastquery.utils.Utils;
 
-public class HomeActivity extends AppCompatActivity
+public class HomeActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final String TAG = "HomeActivity";
@@ -55,15 +51,20 @@ public class HomeActivity extends AppCompatActivity
     private FloatingQueryService mFloatingQueryService;
 
     private NavigationView mNavigationView;
+
     private Toolbar mToolbar;
 
     private FragmentManager mFragmentManager;
+
     private HashMap<Integer, BaseFragment> mFragmentMap;
+
     private MainFragment mMainFragment;
+
     private ExportFragment mExportFragment;
+
     private ImportFragment mImportFragment;
+
     private FavoriteFragment mFavoriteFragment;
-    private FileManagerFragment mFileManagerFragment;
 
     private BaseFragment mCurrentFragment;
 
@@ -74,26 +75,40 @@ public class HomeActivity extends AppCompatActivity
     private ServiceConnection mMainConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            Log.d(TAG, "onServiceConnected");
+            PLog.d(TAG, "onServiceConnected");
             mFloatingQueryService = ((FloatingQueryService.MainBinder) iBinder).getService();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            Log.d(TAG, "onServiceDisconnected");
+            PLog.d(TAG, "onServiceDisconnected");
             mFloatingQueryService = null;
         }
     };
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    protected void initVariables() {
         mContext = this;
+        bindService();
+        checkPermissions();
+    }
+
+    @Override
+    protected void initViews() {
+        setContentView(R.layout.activity_main);
+        initToolbarAndDrawerLayout();
+        initNavigationView();
+        initFragments();
+    }
+
+    @Override
+    protected void initData() {
+        mGroup = getSelectGroup();
+    }
+
+    private void initToolbarAndDrawerLayout() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        bindService();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -101,15 +116,20 @@ public class HomeActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        //Toolbar
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+    }
+
+    private void initNavigationView() {
         //navigation View
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
         mNavigationView.setCheckedItem(R.id.nav_home);
         mNavigationView.setItemTextColor(this.getResources().getColorStateList(R.color.nav_home_selector));
+        mNavigationView.setItemIconTintList(null);
+    }
 
-        //Toolbar
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-
+    private void initFragments() {
         //Init fragment
         mFragmentManager = getSupportFragmentManager();
         mFragmentMap = new HashMap<>();
@@ -122,37 +142,8 @@ public class HomeActivity extends AppCompatActivity
         mFragmentMap.put(R.id.nav_export, mExportFragment);
         mFragmentMap.put(R.id.nav_import, mImportFragment);
         mFragmentMap.put(R.id.nav_favorite_book, mFavoriteFragment);
-
         //set default fragment
-        initFragments(R.id.nav_home);
-
-        //CheckPermission
-        checkPermissions();
-
-        /*
-        //Creates a ColorStateList from an XML document using given a set of Resources
-        //and a Resource.Theme.
-
-        //The resource defined in 'color' subdirectory which in resource directory.
-
-        //If you want show original pictures color, you can use 'null' as the param for setItemIconTintList
-
-        ColorStateList colorStateList = null;
-        try {
-            XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
-            if (Build.VERSION.SDK_INT < 23) {
-                colorStateList = ColorStateList.createFromXml(getResources(),parser);
-            } else {
-                colorStateList = ColorStateList.createFromXml(getResources(),parser,null);
-            }
-        } catch (XmlPullParserException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-        mNavigationView.setItemIconTintList(null);
-
-        mGroup = getSelectGroup();
+        setFragment(R.id.nav_home);
     }
 
     private boolean checkPermissions() {
@@ -164,18 +155,14 @@ public class HomeActivity extends AppCompatActivity
             });
 
             if (allGranted) {
-//                XmlBuilder xmlBuilder = XmlBuilder.getInstance();
-//                ArrayList<WordBook> data = new ArrayList<>();
-//                xmlBuilder.domCreateXML(data,null);
             }
             return allGranted;
         }
         return true;
     }
 
-    private void initFragments(int id) {
+    private void setFragment(int id) {
         BaseFragment current = mFragmentMap.get(id);
-        BaseFragment old = mCurrentFragment;
         if (current == null) {
             return;
         }
@@ -213,26 +200,6 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.card_close:
-            case R.id.card_close_tv:
-                hideFloatingWindow();
-                break;
-            case R.id.card_open:
-            case R.id.card_open_tv:
-                showFloatingWindow();
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -259,19 +226,7 @@ public class HomeActivity extends AppCompatActivity
             menu.findItem(R.id.action_search).setVisible(true);
             menu.findItem(R.id.action_group).setVisible(false);
         }
-//        SearchView view = (SearchView) MenuItemCompat.getActionView(item);
-//        MenuItemCompat.setOnActionExpandListener(item, new MenuItemCompat.OnActionExpandListener(){
-//
-//            @Override
-//            public boolean onMenuItemActionExpand(MenuItem menuItem) {
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
-//                return true;
-//            }
-//        });
+
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -385,7 +340,7 @@ public class HomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        initFragments(id);
+        setFragment(id);
         invalidateOptionsMenu();
         switch (id) {
             case R.id.nav_open:
@@ -445,7 +400,7 @@ public class HomeActivity extends AppCompatActivity
 
     private void back2Home() {
         mNavigationView.setCheckedItem(R.id.nav_home);
-        initFragments(R.id.nav_home);
+        setFragment(R.id.nav_home);
         invalidateOptionsMenu();
         setStatusBarToolBarHeader(
                 R.string.home,
@@ -487,41 +442,6 @@ public class HomeActivity extends AppCompatActivity
             mFloatingQueryService.hideFloatingWindow();
         }
     }
-
-//    private void showFileChooser() {
-//        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-//        intent.setType("text/plain");
-//        intent.addCategory(Intent.CATEGORY_OPENABLE);
-//
-//        try {
-//            startActivityForResult(Intent.createChooser(intent, getString(R.string.select_file_import)), REQUEST_CODE);
-//        } catch (ActivityNotFoundException e) {
-//            Toast.makeText(this, getString(R.string.please_install_file_manager), Toast.LENGTH_SHORT).show();
-//        }
-//    }
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode != REQUEST_CODE) {
-//            return;
-//        }
-//        if (resultCode == RESULT_OK) {
-//            Uri uri = data.getData();
-//            String filePath = "/storage/emulated/0/efastquery/xml/default_1487050240222.xml";
-//            if (filePath == null || !filePath.endsWith("xml")) {
-//                Toast.makeText(this, getString(R.string.just_support_xml), Toast.LENGTH_SHORT).show();
-//                return;
-//            }
-//            Log.d(TAG, "onActivityResult: filepath = " + filePath);
-//
-//            ArrayList<WordBook> words = XmlParser.getInstance().parseXml(filePath);
-//            Log.d(TAG, "onActivityResult: words size = " + words.size());
-//            for (WordBook w : words) {
-//                Log.d(TAG, "onActivityResult: word = " + w.getWord() + ", phonetic = " + w.getPhonetic());
-//            }
-//        }
-//    }
-
 
     @Override
     protected void onDestroy() {

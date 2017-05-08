@@ -150,7 +150,10 @@ public class Utils {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, px, context.getResources().getDisplayMetrics());
     }
 
-    public static void getHexagonPoints(float x, float y, float length) {
+    public static void getHexagonPoints(float topX, float topY, float length) {
+        float x = topX;
+        float y = topY;
+        //根号3
         final float gen3 = 1.732f;
         PLog.log("左肩: x =  " + (x - (length / 2f) * gen3) + ", y = " + (y + length / 2f));
         PLog.log("右肩：x = " + (x + (length / 2f) * gen3) + ", y = " + (y + length / 2f));

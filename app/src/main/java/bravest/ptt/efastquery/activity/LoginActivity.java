@@ -4,19 +4,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import bravest.ptt.androidlib.activity.BaseActivity;
 import bravest.ptt.efastquery.R;
 import cn.bmob.v3.BmobUser;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
+
     private static final String TAG = "LoginActivity";
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void initVariables() {
+
+    }
+
+    @Override
+    protected void initViews() {
         setContentView(R.layout.activity_login);
-        Log.d(TAG, "onCreate: user= " + BmobUser.getCurrentUser().toString());
+    }
+
+    @Override
+    protected void initData() {
         BmobUser user = BmobUser.getCurrentUser();
         Log.d(TAG, "onCreate: phoneNumber:" + user.getMobilePhoneNumber());
         Log.d(TAG, "onCreate: username :" + user.getUsername());
-        Log.d(TAG, "onCreate: ");
     }
 }

@@ -12,21 +12,16 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
-import android.support.graphics.drawable.AnimatedVectorDrawableCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
+import bravest.ptt.androidlib.activity.BaseActivity;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.utils.PLog;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends BaseActivity {
 
     private static final String TAG = "SplashActivity";
 
@@ -34,6 +29,10 @@ public class SplashActivity extends AppCompatActivity {
 
     private Context mContext;
 
+    /**
+     *  oncreate and onresume is true
+     *  onpause and ondestory is false
+     */
     private boolean mActivityActive = true;
 
     private Handler mHandler = new Handler() {
@@ -49,24 +48,14 @@ public class SplashActivity extends AppCompatActivity {
     };
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
+    protected void initVariables() {
         mContext = this;
         mActivityActive = true;
-
-        initViews();
-        initSealAnimation();
-        initData();
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        mActivityActive = true;
-    }
-
-    private void initViews() {
+    protected void initViews() {
+        setContentView(R.layout.activity_splash);
         View login = findViewById(R.id.login);
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,6 +71,13 @@ public class SplashActivity extends AppCompatActivity {
                 handleRegister();
             }
         });
+
+        initSealAnimation();
+    }
+
+    @Override
+    protected void initData() {
+
     }
 
     private void handleLogin() {
@@ -92,10 +88,6 @@ public class SplashActivity extends AppCompatActivity {
     private void handleRegister() {
         PLog.d(TAG, "handle register");
         startActivity(new Intent(this,RegisterActivity.class));
-    }
-
-    private void initData() {
-
     }
 
     private void initSealAnimation() {
@@ -129,20 +121,17 @@ public class SplashActivity extends AppCompatActivity {
                 });
             }
         } else {
-            //delay 3s, and do the animation
-            AnimatedVectorDrawableCompat animatedVectorDrawableCompat;
         }
+    }
 
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                //startMainActivity();
-            }
-        }, 4000);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mActivityActive = true;
     }
 
     private boolean hasLogin = false;
+
     private void startMainActivity() {
         if (hasLogin) {
             mHandler.sendEmptyMessage(FINISH);
