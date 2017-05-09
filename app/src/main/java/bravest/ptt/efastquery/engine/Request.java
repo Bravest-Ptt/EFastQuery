@@ -7,7 +7,7 @@ import android.os.Handler;
  * Created by root on 12/27/16.
  */
 
-class Request {
+public class Request {
 
     public String mRequest;
     public Handler mHandler;

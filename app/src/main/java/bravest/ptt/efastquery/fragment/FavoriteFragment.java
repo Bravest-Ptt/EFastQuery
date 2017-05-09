@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.listeners.OnItemClickListener;
-import bravest.ptt.efastquery.engine.wordbook.W;
+import bravest.ptt.efastquery.interfaces.IWord;
 import bravest.ptt.efastquery.db.FavoriteManager;
 import bravest.ptt.androidlib.utils.PLog;
 import bravest.ptt.efastquery.adapter.FavoriteWordPagerAdapter;
@@ -29,7 +29,7 @@ import bravest.ptt.efastquery.adapter.recycler.FavoritePreAdapter;
 
 public class FavoriteFragment extends BaseFragment implements OnItemClickListener {
 
-    private ArrayList<W> mData = new ArrayList<>();
+    private ArrayList<IWord> mData = new ArrayList<>();
 
     private FavoriteManager mFm;
     private FavoritePreAdapter mAdapter;

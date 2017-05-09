@@ -14,11 +14,9 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -44,7 +42,7 @@ import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.listeners.OnFloatPanelVisibleListener;
 import bravest.ptt.efastquery.listeners.OnItemClickListener;
 import bravest.ptt.efastquery.engine.Result;
-import bravest.ptt.efastquery.engine.TranslateListener;
+import bravest.ptt.efastquery.listeners.OnTranslateListener;
 import bravest.ptt.efastquery.engine.TranslateManager;
 import bravest.ptt.efastquery.db.FavoriteManager;
 import bravest.ptt.efastquery.db.HistoryManager;
@@ -63,7 +61,7 @@ import static bravest.ptt.efastquery.engine.Result.YouDaoItem.YOUDAO_US_PHONETIC
  * Created by root on 1/4/17.
  */
 
-class ESearchMainPanelOn implements View.OnClickListener, TranslateListener<Result>, OnFloatPanelVisibleListener,
+class ESearchMainPanelOn implements View.OnClickListener, OnTranslateListener<Result>, OnFloatPanelVisibleListener,
         TextToSpeech.OnInitListener, TextWatcher, View.OnKeyListener, View.OnFocusChangeListener,
         OnItemClickListener, View.OnLongClickListener {
 

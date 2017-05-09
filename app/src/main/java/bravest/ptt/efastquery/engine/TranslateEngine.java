@@ -19,6 +19,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import bravest.ptt.efastquery.entity.word.Key;
+import bravest.ptt.efastquery.utils.S;
+
 /**
  * Created by root on 12/27/16.
  */
@@ -63,7 +66,7 @@ class TranslateEngine {
         if (key == null) {
             key = new Key(YOUDAO_ID, YOUDAO_SECRET);
         }
-        Log.d(TAG, "start: key id : " + key.keyId + ", key secret : " + key.keySecret);
+        Log.d(TAG, "start: key id : " + key.getKeyId() + ", key secret : " + key.getKeySecret());
 
         final Key finalKey = key;
 
@@ -77,9 +80,9 @@ class TranslateEngine {
                 BufferedReader resultReader = null;
                 try {
                     String urlPath = "http://fanyi.youdao.com/openapi.do?keyfrom="
-                            + finalKey.keyId
+                            + finalKey.getKeyId()
                             + "&key="
-                            + finalKey.keySecret
+                            + finalKey.getKeySecret()
                             + "&type=data&doctype=json&version=1.1&q="
                             + URLEncoder.encode(mRequest.mRequest, "utf-8");
                     URL getUrl = new URL(urlPath);

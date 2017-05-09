@@ -1,4 +1,4 @@
-package bravest.ptt.efastquery.engine.wordbook;
+package bravest.ptt.efastquery.engine.word;
 
 import android.os.Environment;
 import android.util.Log;
@@ -24,6 +24,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import bravest.ptt.efastquery.entity.word.WordBook;
+import bravest.ptt.efastquery.interfaces.IWord;
 import bravest.ptt.efastquery.listeners.OnBuildListener;
 
 /**
@@ -54,7 +56,7 @@ public class XmlBuilder extends Builder{
         return new XmlBuilder();
     }
 
-    public String createXML(File file, ArrayList<W> datas) {
+    public String createXML(File file, ArrayList<IWord> datas) {
         String xmlWriter = null;
 
         try {

@@ -11,15 +11,15 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 
-import bravest.ptt.efastquery.engine.wordbook.W;
-import bravest.ptt.efastquery.engine.wordbook.Word;
-import bravest.ptt.efastquery.engine.wordbook.WordBook;
+import bravest.ptt.efastquery.interfaces.IWord;
+import bravest.ptt.efastquery.entity.word.Word;
+import bravest.ptt.efastquery.entity.word.WordBook;
 
 /**
  * Created by root on 12/27/16.
  */
 
-public class Result implements Serializable, W {
+public class Result implements Serializable, IWord {
 
     private static final String TAG = "Result";
     //RESULT-NORMAL

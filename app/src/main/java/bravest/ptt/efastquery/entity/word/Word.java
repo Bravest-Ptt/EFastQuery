@@ -1,12 +1,14 @@
-package bravest.ptt.efastquery.engine.wordbook;
+package bravest.ptt.efastquery.entity.word;
 
 import java.util.Date;
+
+import bravest.ptt.efastquery.interfaces.IWord;
 
 /**
  * Created by root on 3/1/17.
  */
 
-public class Word implements W{
+public class Word implements IWord {
     protected String word;
     protected String trans;
     protected String tags;

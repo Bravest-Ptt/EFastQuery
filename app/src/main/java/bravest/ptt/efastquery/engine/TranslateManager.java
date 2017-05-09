@@ -7,6 +7,7 @@ import android.os.Message;
 import android.util.Log;
 
 import bravest.ptt.efastquery.R;
+import bravest.ptt.efastquery.listeners.OnTranslateListener;
 
 /**
  * Created by root on 12/27/16.
@@ -21,7 +22,7 @@ public class TranslateManager {
 
     private Request mRequest;
     private long mKey;
-    private TranslateListener mListener;
+    private OnTranslateListener mListener;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -104,7 +105,7 @@ public class TranslateManager {
         }
     }
 
-    public void setTranslateListener(TranslateListener listener) {
+    public void setTranslateListener(OnTranslateListener listener) {
         mListener = listener;
     }
 }

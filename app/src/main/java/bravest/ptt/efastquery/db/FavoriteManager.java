@@ -15,9 +15,9 @@ import java.util.Set;
 
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.engine.Result;
-import bravest.ptt.efastquery.engine.wordbook.W;
-import bravest.ptt.efastquery.engine.wordbook.Word;
-import bravest.ptt.efastquery.engine.wordbook.WordBook;
+import bravest.ptt.efastquery.interfaces.IWord;
+import bravest.ptt.efastquery.entity.word.Word;
+import bravest.ptt.efastquery.entity.word.WordBook;
 import bravest.ptt.androidlib.utils.RegularUtils;
 
 /**
@@ -128,7 +128,7 @@ public class FavoriteManager {
     public static final int MODE_WORD = 2;
     public static final int MODE_WORDBOOK = 3;
 
-    public ArrayList<W> getFavoriteByGroup(ArrayList<W> list, String group, int mode) {
+    public ArrayList<IWord> getFavoriteByGroup(ArrayList<IWord> list, String group, int mode) {
         if (TextUtils.isEmpty(group)) {
             return null;
         }

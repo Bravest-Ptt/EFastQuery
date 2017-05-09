@@ -1,10 +1,10 @@
-package bravest.ptt.efastquery.engine;
+package bravest.ptt.efastquery.utils;
 
 /**
  * Created by root on 12/27/16.
  */
 
-class S {
+public class S {
     public static String s(int i) {
         return i+"";
     }

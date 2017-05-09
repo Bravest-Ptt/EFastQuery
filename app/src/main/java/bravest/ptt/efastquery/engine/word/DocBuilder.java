@@ -1,4 +1,4 @@
-package bravest.ptt.efastquery.engine.wordbook;
+package bravest.ptt.efastquery.engine.word;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -15,6 +15,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import bravest.ptt.efastquery.R;
+import bravest.ptt.efastquery.entity.word.WordBook;
+import bravest.ptt.efastquery.interfaces.IWord;
 import bravest.ptt.efastquery.listeners.OnBuildListener;
 import bravest.ptt.efastquery.engine.Result;
 
@@ -46,7 +48,7 @@ public class DocBuilder extends Builder{
     private static final String TRANS_SPACE = "    ";
     private static final String ENTER_CHAR = "\n";
 
-    public void createDoc(File file, ArrayList<W> data) {
+    public void createDoc(File file, ArrayList<IWord> data) {
         try {
             AssetManager assetManager = mContext.getAssets();
 

@@ -14,9 +14,9 @@ import java.util.ArrayList;
 
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.listeners.OnBuildListener;
-import bravest.ptt.efastquery.engine.wordbook.DocBuilder;
-import bravest.ptt.efastquery.engine.wordbook.W;
-import bravest.ptt.efastquery.engine.wordbook.XmlBuilder;
+import bravest.ptt.efastquery.engine.word.DocBuilder;
+import bravest.ptt.efastquery.interfaces.IWord;
+import bravest.ptt.efastquery.engine.word.XmlBuilder;
 import bravest.ptt.efastquery.utils.FileUtils;
 import bravest.ptt.efastquery.db.FavoriteManager;
 import bravest.ptt.androidlib.utils.PLog;
@@ -140,7 +140,7 @@ public class ExportFragment extends FileManagerFragment implements AdapterView.O
 
             //Below should load async
             FavoriteManager fm = new FavoriteManager(getContext());
-            ArrayList<W> data = fm.getFavoriteByGroup(null, group_name, FavoriteManager.MODE_WORDBOOK);
+            ArrayList<IWord> data = fm.getFavoriteByGroup(null, group_name, FavoriteManager.MODE_WORDBOOK);
 
             if (TextUtils.equals(file_extension, getString(R.string.export_doc))) {
                 DocBuilder.getInstance(mActivity).setBuildListener(this).createDoc(file, data);

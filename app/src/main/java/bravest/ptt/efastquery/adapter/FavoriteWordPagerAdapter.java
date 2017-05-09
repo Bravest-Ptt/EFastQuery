@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.engine.Result;
-import bravest.ptt.efastquery.engine.wordbook.W;
+import bravest.ptt.efastquery.interfaces.IWord;
 import bravest.ptt.androidlib.utils.PLog;
 
 /**
@@ -20,11 +20,11 @@ import bravest.ptt.androidlib.utils.PLog;
 
 public class FavoriteWordPagerAdapter extends PagerAdapter {
 
-    private ArrayList<W> mData;
+    private ArrayList<IWord> mData;
     private Context mContext;
     private LayoutInflater mInflater;
 
-    public FavoriteWordPagerAdapter(Context mContext, ArrayList<W> mData) {
+    public FavoriteWordPagerAdapter(Context mContext, ArrayList<IWord> mData) {
         this.mData = mData;
         this.mContext = mContext;
         this.mInflater = LayoutInflater.from(mContext);

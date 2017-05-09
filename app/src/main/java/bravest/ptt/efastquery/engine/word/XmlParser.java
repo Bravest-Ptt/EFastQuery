@@ -1,4 +1,4 @@
-package bravest.ptt.efastquery.engine.wordbook;
+package bravest.ptt.efastquery.engine.word;
 
 import android.util.Log;
 
@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
+import bravest.ptt.efastquery.entity.word.WordBook;
 
 /**
  * Created by pengtian on 2017/2/13.

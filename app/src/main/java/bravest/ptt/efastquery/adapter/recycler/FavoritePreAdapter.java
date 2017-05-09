@@ -10,8 +10,8 @@ import java.util.Locale;
 
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.engine.Result;
-import bravest.ptt.efastquery.engine.wordbook.W;
-import bravest.ptt.efastquery.engine.wordbook.Word;
+import bravest.ptt.efastquery.interfaces.IWord;
+import bravest.ptt.efastquery.entity.word.Word;
 import bravest.ptt.efastquery.adapter.holder.AbsHolder;
 import bravest.ptt.efastquery.adapter.holder.FavoritePreHolder;
 
@@ -50,7 +50,7 @@ public class FavoritePreAdapter extends AbsAdapter {
         }
     }
 
-    private void bindDateItem(W result, FavoritePreHolder holder) {
+    private void bindDateItem(IWord result, FavoritePreHolder holder) {
         Word word = ((Result) result).getWord();
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         String time = df.format(word.getDate());
@@ -59,7 +59,7 @@ public class FavoritePreAdapter extends AbsAdapter {
     }
 
 
-    private void bindNormalItem(W result, FavoritePreHolder holder) {
+    private void bindNormalItem(IWord result, FavoritePreHolder holder) {
         Word word = ((Result) result).getWord();
         holder.getWordView().setText(word.getWord());
         holder.getExplainsView().setText(word.getTrans());

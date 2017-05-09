@@ -1,4 +1,4 @@
-package bravest.ptt.efastquery.engine.wordbook;
+package bravest.ptt.efastquery.engine.word;
 
 import java.io.File;
 
