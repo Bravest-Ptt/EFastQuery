@@ -1,5 +1,7 @@
 package bravest.ptt.efastquery.activity;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -38,7 +40,7 @@ public class RegisterActivity extends BaseActivity{
     }
 
     @Override
-    protected void initViews() {
+    protected void initViews(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.activity_register);
 
         mPhoneNumberEditor = (EditText) findViewById(R.id.phoneNumber);

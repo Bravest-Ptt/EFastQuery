@@ -10,8 +10,10 @@ import android.graphics.drawable.Animatable2;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
@@ -54,9 +56,8 @@ public class SplashActivity extends BaseActivity {
     }
 
     @Override
-    protected void initViews() {
+    protected void initViews(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.activity_splash);
-        PLog.log("aaaaaaaaaa");
         View login = findViewById(R.id.login);
         login.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,5 +1,6 @@
 package bravest.ptt.efastquery.activity;
 
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,7 +19,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     @Override
-    protected void initViews() {
+    protected void initViews(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.activity_login);
     }
 

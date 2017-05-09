@@ -8,8 +8,10 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -94,7 +96,7 @@ public class HomeActivity extends BaseActivity
     }
 
     @Override
-    protected void initViews() {
+    protected void initViews(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.activity_main);
         initToolbarAndDrawerLayout();
         initNavigationView();
