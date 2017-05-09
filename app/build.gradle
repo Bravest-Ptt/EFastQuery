@@ -81,7 +81,6 @@ dependencies {
     compile 'com.lorentzos.swipecards:library:1.0.9@aar'
     compile 'cn.bmob.android:bmob-sdk:3.5.5'
     compile 'cn.bmob.android:bmob-sms:1.0.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
     apt 'com.jakewharton:butterknife-compiler:8.2.1'
     compile project(':androidlib')
