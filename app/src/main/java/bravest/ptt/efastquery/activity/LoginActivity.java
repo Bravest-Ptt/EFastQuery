@@ -25,7 +25,9 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void initData() {
         BmobUser user = BmobUser.getCurrentUser();
-        Log.d(TAG, "onCreate: phoneNumber:" + user.getMobilePhoneNumber());
-        Log.d(TAG, "onCreate: username :" + user.getUsername());
+        if (user != null) {
+            Log.d(TAG, "onCreate: phoneNumber:" + user.getMobilePhoneNumber());
+            Log.d(TAG, "onCreate: username :" + user.getUsername());
+        }
     }
 }

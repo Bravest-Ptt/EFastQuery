@@ -56,6 +56,7 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void initViews() {
         setContentView(R.layout.activity_splash);
+        PLog.log("aaaaaaaaaa");
         View login = findViewById(R.id.login);
         login.setOnClickListener(new View.OnClickListener() {
             @Override
