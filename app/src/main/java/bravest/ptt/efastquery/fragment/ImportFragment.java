@@ -12,9 +12,9 @@ import java.io.File;
 import java.util.ArrayList;
 
 import bravest.ptt.efastquery.R;
-import bravest.ptt.efastquery.files.FileUtils;
+import bravest.ptt.efastquery.utils.FileUtils;
 
-import static bravest.ptt.efastquery.files.FileUtils.EXTERNAL;
+import static bravest.ptt.efastquery.utils.FileUtils.EXTERNAL;
 
 /**
  * Created by root on 2/13/17.

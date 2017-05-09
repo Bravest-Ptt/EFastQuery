@@ -14,7 +14,7 @@ import android.util.Log;
 
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.activity.HomeActivity;
-import bravest.ptt.efastquery.view.ESearchFloatButton;
+import bravest.ptt.efastquery.ui.ESearchOnFloatButton;
 
 /**
  * Created by root on 12/28/16.
@@ -25,7 +25,7 @@ public class FloatingQueryService extends Service {
     private static final int FOREGROUND_SERVICE_NOTIFICATION_ID = 528;
     public static final String TAG = "FloatingQueryService";
     private MainBinder mMainBinder = new MainBinder();
-    private ESearchFloatButton mView;
+    private ESearchOnFloatButton mView;
 
     public class MainBinder extends Binder {
         public FloatingQueryService getService() {
@@ -70,8 +70,8 @@ public class FloatingQueryService extends Service {
     public boolean showFloatingWindow() {
         if (mView == null) {
             try {
-                mView = new ESearchFloatButton(this);
-            } catch (ESearchFloatButton.InflaterNotReadyException e) {
+                mView = new ESearchOnFloatButton(this);
+            } catch (ESearchOnFloatButton.InflaterNotReadyException e) {
                 e.printStackTrace();
             }
         }

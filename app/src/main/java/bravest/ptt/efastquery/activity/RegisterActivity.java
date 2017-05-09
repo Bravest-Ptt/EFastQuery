@@ -1,19 +1,15 @@
 package bravest.ptt.efastquery.activity;
 
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.util.UUID;
-
 import bravest.ptt.androidlib.activity.BaseActivity;
 import bravest.ptt.efastquery.R;
-import bravest.ptt.efastquery.utils.PLog;
-import bravest.ptt.efastquery.utils.UserUtil;
+import bravest.ptt.androidlib.utils.PLog;
+import bravest.ptt.androidlib.utils.UserUtil;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;

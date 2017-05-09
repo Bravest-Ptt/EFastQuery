@@ -16,18 +16,18 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import bravest.ptt.efastquery.R;
-import bravest.ptt.efastquery.callback.ItemClickListener;
-import bravest.ptt.efastquery.data.wordbook.W;
-import bravest.ptt.efastquery.provider.FavoriteManager;
-import bravest.ptt.efastquery.utils.PLog;
-import bravest.ptt.efastquery.view.adapter.FDPagerAdapter;
-import bravest.ptt.efastquery.view.adapter.recycler.FavoritePreAdapter;
+import bravest.ptt.efastquery.listeners.OnItemClickListener;
+import bravest.ptt.efastquery.engine.wordbook.W;
+import bravest.ptt.efastquery.db.FavoriteManager;
+import bravest.ptt.androidlib.utils.PLog;
+import bravest.ptt.efastquery.adapter.FavoriteWordPagerAdapter;
+import bravest.ptt.efastquery.adapter.recycler.FavoritePreAdapter;
 
 /**
  * Created by root on 2/13/17.
  */
 
-public class FavoriteFragment extends BaseFragment implements ItemClickListener{
+public class FavoriteFragment extends BaseFragment implements OnItemClickListener {
 
     private ArrayList<W> mData = new ArrayList<>();
 
@@ -75,7 +75,7 @@ public class FavoriteFragment extends BaseFragment implements ItemClickListener{
     }
 
     private void initPageAdapter() {
-        mPagerAdapter = new FDPagerAdapter(getContext(), mData);
+        mPagerAdapter = new FavoriteWordPagerAdapter(getContext(), mData);
         mFDPager.setAdapter(mPagerAdapter);
     }
 

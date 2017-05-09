@@ -32,14 +32,14 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import bravest.ptt.efastquery.R;
-import bravest.ptt.efastquery.callback.ItemClickListener;
-import bravest.ptt.efastquery.utils.PLog;
+import bravest.ptt.efastquery.listeners.OnItemClickListener;
+import bravest.ptt.androidlib.utils.PLog;
 import bravest.ptt.efastquery.utils.Utils;
-import bravest.ptt.efastquery.view.adapter.recycler.FileManagerAdapter;
+import bravest.ptt.efastquery.adapter.recycler.FileManagerAdapter;
 
-import static bravest.ptt.efastquery.files.FileUtils.*;
+import static bravest.ptt.efastquery.utils.FileUtils.*;
 
-public class FileManagerFragment extends BaseFragment implements ItemClickListener, View.OnClickListener {
+public class FileManagerFragment extends BaseFragment implements OnItemClickListener, View.OnClickListener {
 
     protected LinearLayout mMainView;
     protected HorizontalScrollView mIndicatorScroller;

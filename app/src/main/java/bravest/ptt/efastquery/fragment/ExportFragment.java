@@ -13,23 +13,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import bravest.ptt.efastquery.R;
-import bravest.ptt.efastquery.callback.BuildListener;
-import bravest.ptt.efastquery.data.wordbook.DocBuilder;
-import bravest.ptt.efastquery.data.wordbook.W;
-import bravest.ptt.efastquery.data.wordbook.WordBook;
-import bravest.ptt.efastquery.data.wordbook.XmlBuilder;
-import bravest.ptt.efastquery.files.FileUtils;
-import bravest.ptt.efastquery.provider.FavoriteManager;
-import bravest.ptt.efastquery.utils.PLog;
+import bravest.ptt.efastquery.listeners.OnBuildListener;
+import bravest.ptt.efastquery.engine.wordbook.DocBuilder;
+import bravest.ptt.efastquery.engine.wordbook.W;
+import bravest.ptt.efastquery.engine.wordbook.XmlBuilder;
+import bravest.ptt.efastquery.utils.FileUtils;
+import bravest.ptt.efastquery.db.FavoriteManager;
+import bravest.ptt.androidlib.utils.PLog;
 import bravest.ptt.efastquery.utils.Utils;
 
-import static bravest.ptt.efastquery.files.FileUtils.EXTERNAL;
+import static bravest.ptt.efastquery.utils.FileUtils.EXTERNAL;
 
 /**
  * Created by root on 2/13/17.
  */
 
-public class ExportFragment extends FileManagerFragment implements AdapterView.OnItemSelectedListener, BuildListener{
+public class ExportFragment extends FileManagerFragment implements AdapterView.OnItemSelectedListener, OnBuildListener {
 
     private static final String TAG = "ExportFragment";
 

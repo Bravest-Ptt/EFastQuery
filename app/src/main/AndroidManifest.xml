@@ -43,7 +43,7 @@
         <service android:name=".service.FloatingQueryService" />
 
         <provider
-            android:name=".provider.EFastQueryProvider"
+            android:name=".db.EFastQueryProvider"
             android:authorities="bravest.ptt.efastquery" />
         <provider
             android:name="android.support.v4.content.FileProvider"

@@ -1,7 +1,5 @@
 package bravest.ptt.efastquery.fragment;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -11,20 +9,15 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.BounceInterpolator;
-import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,7 +37,7 @@ import java.util.ArrayList;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.msciat.settings.IatSettings;
 import bravest.ptt.efastquery.msciat.utils.JsonParser;
-import bravest.ptt.efastquery.utils.PLog;
+import bravest.ptt.androidlib.utils.PLog;
 import bravest.ptt.efastquery.utils.Utils;
 
 
