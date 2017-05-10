@@ -47,7 +47,7 @@ import bravest.ptt.efastquery.engine.TranslateManager;
 import bravest.ptt.efastquery.db.FavoriteManager;
 import bravest.ptt.efastquery.db.HistoryManager;
 import bravest.ptt.androidlib.utils.NetworkUtils;
-import bravest.ptt.androidlib.utils.PLog;
+import bravest.ptt.androidlib.utils.plog.PLog;
 import bravest.ptt.efastquery.utils.Utils;
 import bravest.ptt.efastquery.ui.ESearchOnFloatButton.InflaterNotReadyException;
 import bravest.ptt.efastquery.adapter.recycler.HistoryAdapter;

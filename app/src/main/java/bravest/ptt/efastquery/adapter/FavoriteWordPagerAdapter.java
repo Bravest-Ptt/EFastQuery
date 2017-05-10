@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.engine.Result;
 import bravest.ptt.efastquery.interfaces.IWord;
-import bravest.ptt.androidlib.utils.PLog;
+import bravest.ptt.androidlib.utils.plog.PLog;
 
 /**
  * Created by root on 3/1/17.

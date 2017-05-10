@@ -13,6 +13,7 @@ import cn.bmob.v3.Bmob;
  */
 
 public class App extends Application {
+
     private static final String MSC_APPID = "587a0f52";
 
     private static final String BMOB_APPID = "ce21dd4747a54ca096dd4d93f5ef4fac";

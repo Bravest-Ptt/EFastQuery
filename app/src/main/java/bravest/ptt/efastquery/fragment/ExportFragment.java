@@ -19,7 +19,7 @@ import bravest.ptt.efastquery.interfaces.IWord;
 import bravest.ptt.efastquery.engine.word.XmlBuilder;
 import bravest.ptt.efastquery.utils.FileUtils;
 import bravest.ptt.efastquery.db.FavoriteManager;
-import bravest.ptt.androidlib.utils.PLog;
+import bravest.ptt.androidlib.utils.plog.PLog;
 import bravest.ptt.efastquery.utils.Utils;
 
 import static bravest.ptt.efastquery.utils.FileUtils.EXTERNAL;

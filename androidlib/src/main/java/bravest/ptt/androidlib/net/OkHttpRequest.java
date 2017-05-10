@@ -32,7 +32,7 @@ import okhttp3.Response;
 
 public class OkHttpRequest implements Runnable {
 
-    private final static String cookiePath = "/data/data/com.youngheart/cache/cookie";
+    private final static String cookiePath = "/data/data/bravest.ptt.efastquery/cache/cookie";
     // 区分get还是post的枚举
     public static final String REQUEST_GET = "get";
     public static final String REQUEST_POST = "post";
@@ -50,8 +50,6 @@ public class OkHttpRequest implements Runnable {
 
     // 头信息
     HashMap<String, String> headers;
-
-    static long deltaBetweenServerAndClientTime; // 服务器时间和客户端时间的差值
 
     private Request request = null;
 
@@ -356,37 +354,6 @@ public class OkHttpRequest implements Runnable {
         okBuilder.addInterceptor(headerInterceptor);
 
     }
-
-    /**
-     * 更新服务器时间和本地时间的差值
-     */
-    public void updateDeltaBetweenServerAndClientTime(Request request) {
-//        if (response != null) {
-//            final Header header = response.getLastHeader("Date");
-//
-//
-//            if (header != null) {
-//                final String strServerDate = header.getValue();
-//                try {
-//                    if ((strServerDate != null) && !strServerDate.equals("")) {
-//                        final SimpleDateFormat sdf = new SimpleDateFormat(
-//                                "EEE, d MMM yyyy HH:mm:ss z", Locale.ENGLISH);
-//                        TimeZone.setDefault(TimeZone.getTimeZone("GMT+8"));
-//
-//                        Date serverDateUAT = sdf.parse(strServerDate);
-//
-//                        deltaBetweenServerAndClientTime = serverDateUAT
-//                                .getTime()
-//                                + 8 * 60 * 60 * 1000
-//                                - System.currentTimeMillis();
-//                    }
-//                } catch (java.text.ParseException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-    }
-
 
     /**
      * 自动管理Cookies

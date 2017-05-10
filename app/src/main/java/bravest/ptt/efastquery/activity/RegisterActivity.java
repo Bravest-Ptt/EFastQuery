@@ -8,10 +8,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+
 import bravest.ptt.androidlib.activity.BaseActivity;
+import bravest.ptt.androidlib.net.RemoteService;
+import bravest.ptt.androidlib.utils.ToastUtils;
 import bravest.ptt.efastquery.R;
-import bravest.ptt.androidlib.utils.PLog;
-import bravest.ptt.androidlib.utils.UserUtil;
+import bravest.ptt.androidlib.utils.plog.PLog;
+import bravest.ptt.efastquery.entity.User;
+import bravest.ptt.efastquery.utils.API;
+import bravest.ptt.efastquery.utils.UserUtil;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
@@ -70,15 +76,19 @@ public class RegisterActivity extends BaseActivity{
     }
 
     private void handleRegisterClick() {
-        BmobUser user = new BmobUser();
+        User user = new User();
         String phoneNumber =  mPhoneNumberEditor.getText().toString();
         String password =  mPasswordEditor.getText().toString();
         PLog.d(TAG, "onClick: phonenumber = " + phoneNumber);
         PLog.d(TAG, "onClick: password = " + password );
         user.setMobilePhoneNumber(phoneNumber);
-        user.setUsername(UserUtil.generateUserName(UserUtil.USER));
+        user.setUsername(UserUtil.generateUserName(UserUtil.USER_NAME_LENGTH));
         user.setPassword(password);
-        user.signUp(mSaveListener);
+
+        String jsonString = JSON.toJSONString(user);
+        PLog.log(jsonString);
+        ToastUtils.showToast(this, jsonString);
+        //RemoteService.getInstance().invoke(this, API.REGISTER, );
     }
 
     private void handleRegisterAlreadyClick() {

@@ -40,7 +40,7 @@ import bravest.ptt.efastquery.fragment.FavoriteFragment;
 import bravest.ptt.efastquery.fragment.ImportFragment;
 import bravest.ptt.efastquery.fragment.MainFragment;
 import bravest.ptt.efastquery.db.FavoriteManager;
-import bravest.ptt.androidlib.utils.PLog;
+import bravest.ptt.androidlib.utils.plog.PLog;
 import bravest.ptt.efastquery.utils.Utils;
 
 public class HomeActivity extends BaseActivity

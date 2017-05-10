@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import bravest.ptt.androidlib.utils.PLog;
+import bravest.ptt.androidlib.utils.plog.PLog;
 import bravest.ptt.efastquery.R;
 
 /**

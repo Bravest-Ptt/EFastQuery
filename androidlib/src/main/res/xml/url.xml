@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <url>
+    <!--注册用户-->
+    <Node
+        Expires="0"
+        Key="register"
+        NetType="post"
+        Url="https://api.bmob.cn/1/users" />
+
     <Node
         Expires="300"
         Key="getWeatherInfo"
@@ -19,15 +26,4 @@
         NetType="get"
         Url="http://www.weather.com.cn/data/cityinfo/101190404.html" />
 
-    <Node
-        Expires="0"
-        Key="deWeiLogin"
-        NetType="post"
-        Url="http://www.e-dewin.com:9991/DewinAppService.svc/AppLogin" />
-
-    <Node
-        Expires="30"
-        Key="serverDemo"
-        NetType="get"
-        Url="http://192.168.31.141:8080/ServerDemo/loginServlet" />
 </url>

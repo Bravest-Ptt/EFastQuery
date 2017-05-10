@@ -33,7 +33,7 @@ import java.util.ArrayList;
 
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.listeners.OnItemClickListener;
-import bravest.ptt.androidlib.utils.PLog;
+import bravest.ptt.androidlib.utils.plog.PLog;
 import bravest.ptt.efastquery.utils.Utils;
 import bravest.ptt.efastquery.adapter.recycler.FileManagerAdapter;
 

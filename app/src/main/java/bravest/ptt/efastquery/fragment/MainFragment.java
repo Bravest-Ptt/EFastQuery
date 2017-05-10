@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.msciat.settings.IatSettings;
 import bravest.ptt.efastquery.msciat.utils.JsonParser;
-import bravest.ptt.androidlib.utils.PLog;
+import bravest.ptt.androidlib.utils.plog.PLog;
 import bravest.ptt.efastquery.utils.Utils;
 
 

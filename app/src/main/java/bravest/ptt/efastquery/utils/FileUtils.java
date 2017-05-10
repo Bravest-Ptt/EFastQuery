@@ -16,7 +16,7 @@ import java.util.Collections;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.engine.file.DFFilter;
 import bravest.ptt.efastquery.engine.file.comparator.DRecentModifiedComparator;
-import bravest.ptt.androidlib.utils.PLog;
+import bravest.ptt.androidlib.utils.plog.PLog;
 
 /**
  * Created by root on 2/17/17.

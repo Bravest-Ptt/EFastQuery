@@ -1,12 +1,11 @@
 package bravest.ptt.androidlib.activity;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import bravest.ptt.androidlib.net.RequestManager;
-import bravest.ptt.androidlib.utils.PLog;
+import bravest.ptt.androidlib.utils.plog.PLog;
 
 /**
  * Created by pengtian on 2017/5/8.

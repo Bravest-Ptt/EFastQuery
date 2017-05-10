@@ -19,7 +19,7 @@ import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.listeners.OnItemClickListener;
 import bravest.ptt.efastquery.interfaces.IWord;
 import bravest.ptt.efastquery.db.FavoriteManager;
-import bravest.ptt.androidlib.utils.PLog;
+import bravest.ptt.androidlib.utils.plog.PLog;
 import bravest.ptt.efastquery.adapter.FavoriteWordPagerAdapter;
 import bravest.ptt.efastquery.adapter.recycler.FavoritePreAdapter;
 
