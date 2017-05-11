@@ -7,9 +7,11 @@ package bravest.ptt.androidlib.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import bravest.ptt.androidlib.utils.bmob.BmobConstants;
+
 public class PreferencesUtils {
 
-    public static String PREFERENCE_NAME = "android_shared";
+    final static String PREFERENCE_NAME = BmobConstants.BMOB_PREFERENCE_FILE;
 
     private PreferencesUtils() {
         throw new AssertionError();

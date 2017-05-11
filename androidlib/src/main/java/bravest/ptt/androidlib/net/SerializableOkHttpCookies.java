@@ -11,7 +11,7 @@ import okhttp3.Cookie;
  * Created by jieke on 2016/11/24.
  */
 
-public class SerializableOkHttpCookies implements Serializable {
+class SerializableOkHttpCookies implements Serializable {
     private transient final Cookie cookies;
     private transient Cookie clientCookies;
 

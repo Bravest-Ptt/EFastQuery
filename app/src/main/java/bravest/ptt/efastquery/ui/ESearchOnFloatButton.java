@@ -25,7 +25,7 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
     private WindowManager mWm;
     private WindowManager.LayoutParams mLayoutParams;
     private View mSearchView;
-    private ESearchMainPanelOn mMainPanel;
+    private ESearchMainPanel mMainPanel;
     private OnFloatPanelVisibleListener mMainPanelVisibleListener;
     private boolean mIsShowing = false;
 
@@ -68,7 +68,7 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
 
     private void initMainPanel() {
         try {
-            mMainPanel = new ESearchMainPanelOn(mContext, mWm, this);
+            mMainPanel = new ESearchMainPanel(mContext, mWm, this);
             mMainPanel.setViewVisibleListener(this);
         } catch (InflaterNotReadyException e) {
             e.printStackTrace();

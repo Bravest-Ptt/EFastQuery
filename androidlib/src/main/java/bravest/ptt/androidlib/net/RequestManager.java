@@ -1,17 +1,19 @@
 package bravest.ptt.androidlib.net;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import bravest.ptt.androidlib.activity.BaseActivity;
+import bravest.ptt.androidlib.net.bmob.BmobHttpRequest;
 
 public class RequestManager {
     private ArrayList<OkHttpRequest> requestList = null;
-    private BaseActivity activity;
+    private Context context;
 
 
-    public RequestManager(final BaseActivity activity) {
-        this.activity = activity;
+    public RequestManager(final Context context) {
+        this.context = context;
         // 异步请求列表
         requestList = new ArrayList<>();
     }
@@ -41,11 +43,13 @@ public class RequestManager {
         }
     }
 
+    //TODO Add request type for different request
+
     /**
      * 无参数调用
      */
     public OkHttpRequest createRequest(final URLData urlData, final RequestCallback requestCallback) {
-        final OkHttpRequest request = new OkHttpRequest(activity,urlData, null, requestCallback);
+        final OkHttpRequest request = new BmobHttpRequest(context, urlData, null, requestCallback);
         addRequest(request);
         return request;
     }
@@ -54,7 +58,7 @@ public class RequestManager {
      * 有参数调用
      */
     public OkHttpRequest createRequest(final URLData urlData, final List<RequestParameter> params, final RequestCallback requestCallback) {
-        final OkHttpRequest request = new OkHttpRequest(activity,urlData, params, requestCallback);
+        final OkHttpRequest request = new BmobHttpRequest(context, urlData, params, requestCallback);
         addRequest(request);
         return request;
     }

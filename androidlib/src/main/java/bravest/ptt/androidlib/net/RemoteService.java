@@ -1,5 +1,7 @@
 package bravest.ptt.androidlib.net;
 
+import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
@@ -28,6 +30,9 @@ public class RemoteService {
     public void invoke(final BaseActivity activity, final String apiKey, final List<RequestParameter> params, final RequestCallback callBack) {
 
         final URLData urlData = UrlConfigManager.findURL(activity, apiKey);
+        if (urlData == null) {
+            throw new NullPointerException();
+        }
         Log.i("urlData", urlData.toString());
         if (urlData.getMockClass() != null) {
             Log.i("MockService", "MockService");

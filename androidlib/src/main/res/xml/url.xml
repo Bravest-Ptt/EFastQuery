@@ -5,6 +5,7 @@
         Expires="0"
         Key="register"
         NetType="post"
+        ContentType="application/json"
         Url="https://api.bmob.cn/1/users" />
 
     <Node

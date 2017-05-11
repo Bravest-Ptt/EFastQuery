@@ -61,11 +61,11 @@ import static bravest.ptt.efastquery.engine.Result.YouDaoItem.YOUDAO_US_PHONETIC
  * Created by root on 1/4/17.
  */
 
-class ESearchMainPanelOn implements View.OnClickListener, OnTranslateListener<Result>, OnFloatPanelVisibleListener,
+class ESearchMainPanel implements View.OnClickListener, OnTranslateListener<Result>, OnFloatPanelVisibleListener,
         TextToSpeech.OnInitListener, TextWatcher, View.OnKeyListener, View.OnFocusChangeListener,
         OnItemClickListener, View.OnLongClickListener {
 
-    private static final String TAG = "ESearchMainPanelOn";
+    private static final String TAG = "ESearchMainPanel";
 
     private static final int WHAT_SEARCHING = 0x011;
 
@@ -152,7 +152,7 @@ class ESearchMainPanelOn implements View.OnClickListener, OnTranslateListener<Re
     private HomeRecentReceiver mHomeRecentReceiver;
 
 
-    public ESearchMainPanelOn(Context context, WindowManager wm, ESearchOnFloatButton button) throws InflaterNotReadyException {
+    public ESearchMainPanel(Context context, WindowManager wm, ESearchOnFloatButton button) throws InflaterNotReadyException {
         mContext = context;
         mWm = wm;
         mButton = button;

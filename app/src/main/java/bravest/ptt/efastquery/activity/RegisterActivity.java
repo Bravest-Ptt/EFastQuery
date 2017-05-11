@@ -88,6 +88,7 @@ public class RegisterActivity extends BaseActivity{
         String jsonString = JSON.toJSONString(user);
         PLog.log(jsonString);
         ToastUtils.showToast(this, jsonString);
+
         //RemoteService.getInstance().invoke(this, API.REGISTER, );
     }
 

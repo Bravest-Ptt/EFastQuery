@@ -17,7 +17,10 @@ public class URLData {
      * 请求地址
      */
     private String url;
+
     private String mockClass;
+
+    private String contentType;
 
     public URLData() {
     }
@@ -60,6 +63,14 @@ public class URLData {
 
     public void setMockClass(String mockClass) {
         this.mockClass = mockClass;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
     @Override

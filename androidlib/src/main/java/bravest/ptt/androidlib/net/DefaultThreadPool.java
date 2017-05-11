@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
  * 线程池 、缓冲队列
  * 
  */
-public class DefaultThreadPool {
+class DefaultThreadPool {
 	// 阻塞队列最大任务数量
 	static final int BLOCKING_QUEUE_SIZE = 20;
 	static final int THREAD_POOL_MAX_SIZE = 10;

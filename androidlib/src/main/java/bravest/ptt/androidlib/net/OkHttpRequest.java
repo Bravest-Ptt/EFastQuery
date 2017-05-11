@@ -1,9 +1,8 @@
 package bravest.ptt.androidlib.net;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
-
 
 import com.alibaba.fastjson.JSON;
 
@@ -14,34 +13,39 @@ import java.util.concurrent.TimeUnit;
 
 import bravest.ptt.androidlib.cache.CacheManager;
 import bravest.ptt.androidlib.utils.BaseUtils;
-import bravest.ptt.androidlib.utils.FrameConstants;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-/**
- * Created by jieke on 2016/11/24.
- */
-
-public class OkHttpRequest implements Runnable {
+public abstract class OkHttpRequest implements Runnable {
 
     private final static String cookiePath = "/data/data/bravest.ptt.efastquery/cache/cookie";
-    // 区分get还是post的枚举
+
     public static final String REQUEST_GET = "get";
+
     public static final String REQUEST_POST = "post";
-    private Activity activity;
+
+    public static final String REQUEST_PUT = "put";
+
+    private Context context;
+
     private URLData urlData = null;
+
     private RequestCallback requestCallback = null;
+
     private List<RequestParameter> parameter = null;
-    private String url = null; // 原始url
-    private String newUrl = null; // 拼接key-value后的url
+
+    // 原始url
+    private String url = null;
+
+    // 拼接key-value后的url
+    private String newUrl = null;
 
     // 切换回UI线程
     protected Handler handler;
@@ -57,12 +61,29 @@ public class OkHttpRequest implements Runnable {
 
     //创建okHttpClient对象
     private OkHttpClient mOkHttpClient;
+
     private OkHttpClient.Builder okBuilder;
 
-    public OkHttpRequest(Activity activity, final URLData data, final List<RequestParameter> params, final RequestCallback callBack) {
-        this.activity = activity;
+    /**
+     * get new url base on parameter
+     * @param url
+     * @param parameter
+     * @return
+     */
+    protected abstract String getNewUrl(String url, List<RequestParameter> parameter);
+
+    /**
+     * set http headers
+     * @param okBuilder
+     */
+    protected abstract void setHttpHeaders(OkHttpClient.Builder okBuilder, final URLData data);
+
+    public OkHttpRequest(Context context, final URLData data, final List<RequestParameter> params, final RequestCallback callBack) {
+        this.context = context;
+
         this.urlData = data;
         url = urlData.getUrl();
+
         this.parameter = params;
 
         this.requestCallback = callBack;
@@ -74,59 +95,56 @@ public class OkHttpRequest implements Runnable {
         headers = new HashMap<>();
     }
 
-    
     public Call getCall() {
         return call;
     }
 
-
     @Override
     public void run() {
-
         try {
-            if (urlData.getNetType().equals(REQUEST_GET)) {  //get请求时的处理
-
-                newUrl = getNewUrl(url, parameter);
-                Log.i("newUrl", newUrl);
-
-                // 如果这个get的API有缓存时间（大于0）直接返回缓存的数据
-                if (urlData.getExpires() > 0) {
-                    final String content = CacheManager.getInstance().getFileCache(newUrl);
-                    if (content != null) {
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                requestCallback.onSuccess(content + "  Expires");
-                            }
-
-                        });
-
-                        return;
+            String type = urlData.getNetType();
+            switch (type) {
+                case REQUEST_GET:
+                    //TODO
+                    newUrl = getNewUrl(url, parameter);
+                    Log.i("newUrl", newUrl);
+                    // 如果这个get的API有缓存时间（大于0）直接返回缓存的数据
+                    if (urlData.getExpires() > 0) {
+                        final String content = CacheManager.getInstance().getFileCache(newUrl);
+                        if (content != null) {
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    requestCallback.onSuccess(content + "  Expires");
+                                }
+                            });
+                            //TODO should return ?
+                            return;
+                        }
                     }
-                }
-                //建立一个请求
-                request = new Request.Builder().url(newUrl).build();
-
-
-            } else if (urlData.getNetType().equals(REQUEST_POST)) { //post 请求时的处理
-
-                FormBody body = getFormBody(parameter);
-                request = new Request.Builder().url(url).post(body).build();
-
-            } else { //其他处理
-                return;
+                    //建立一个请求
+                    request = new Request.Builder().url(newUrl).build();
+                    break;
+                case REQUEST_POST:
+                    FormBody postBody = getFormBody(parameter);
+                    request = new Request.Builder().url(url).post(postBody).build();
+                    break;
+                case REQUEST_PUT:
+                    FormBody putBody = getFormBody(parameter);
+                    request = new Request.Builder().url(url).put(putBody).build();
+                    break;
+                default:
+                    break;
             }
 
             okBuilder.connectTimeout(4000, TimeUnit.MILLISECONDS)
                     .readTimeout(4000, TimeUnit.MILLISECONDS)
                     .writeTimeout(4000, TimeUnit.MILLISECONDS);
 
-            addCookie();// 添加Cookie到请求头中
-
-            setHttpHeaders(okBuilder); //添加必要的头部信息
+            //添加必要的头部信息
+            setHttpHeaders(okBuilder, urlData);
 
             mOkHttpClient = okBuilder.build();
-
 
             //发送请求
             call = mOkHttpClient.newCall(request);
@@ -152,17 +170,16 @@ public class OkHttpRequest implements Runnable {
                 public void onResponse(Call call, Response response) throws IOException {
                     if (requestCallback != null) {
                         int code = response.code();
-                        if (code >= 200 && code < 300) {  //代表成功
-
-//                            updateDeltaBetweenServerAndClientTime(response);  // 更新服务器时间和本地时间的差值
-
+                        //代表成功
+                        if (code >= 200 && code < 300) {
                             //okHttp3 如果在头部中 添加了 gzip字段 会自动进行 gzip 解压 这里不在处理
                             String string = response.body().string();
                             Log.i("DataResponse", string);
 
                             final DataResponse dataResponse = JSON.parseObject(string, DataResponse.class);
 
-                            if (dataResponse.hasError()) {  // 包含错误
+                            // 包含错误
+                            if (dataResponse.hasError()) {
 
                                 if (dataResponse.getErrorType() == 1) {
                                     handler.post(new Runnable() {
@@ -194,14 +211,24 @@ public class OkHttpRequest implements Runnable {
 
                     } else {
                         // TODO: 2016/11/24  处理接口为空的情况
-
                     }
                 }
             });
         } catch (Exception e) {
             handleNetworkError("网络异常1");
         }
+    }
 
+    private OkHttpRequest handleGetRequest() {
+        return null;
+    }
+
+    private OkHttpRequest handlePostRequest() {
+        return null;
+    }
+
+    private OkHttpRequest handlePutRequest() {
+        return null;
     }
 
     /**
@@ -222,37 +249,6 @@ public class OkHttpRequest implements Runnable {
         return builder.build();
     }
 
-
-    /**
-     * 此种拼接方式为 1 没有参数时 xxx.api  2有参数时 xxx.api?k1=v1&k2=v2
-     *
-     * @param url
-     * @param parameter
-     * @return
-     */
-    private String getNewUrl(String url, List<RequestParameter> parameter) {
-
-        // 添加参数
-        final StringBuffer paramBuffer = new StringBuffer();
-
-        if ((parameter != null) && (parameter.size() > 0)) {
-
-            sortKeys();// 这里要对key进行排序
-
-            for (final RequestParameter p : parameter) {
-                if (paramBuffer.length() == 0) {
-                    paramBuffer.append(p.getName() + "=" + BaseUtils.UrlEncodeUnicode(p.getValue()));
-                } else {
-                    paramBuffer.append("&" + p.getName() + "=" + BaseUtils.UrlEncodeUnicode(p.getValue()));
-                }
-            }
-
-            return url + "?" + paramBuffer.toString();
-        } else {
-            return url;
-        }
-    }
-
     public void handleNetworkError(final String errorMsg) {
         if (requestCallback != null) {
             handler.post(new Runnable() {
@@ -264,6 +260,91 @@ public class OkHttpRequest implements Runnable {
         }
     }
 
+    //----------------------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------------------
+
+    /**
+     * 自动管理Cookies
+     */
+    private class CookiesManager implements CookieJar {
+        private final PersistentCookieStore cookieStore = new PersistentCookieStore(context);
+
+        @Override
+        public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+            if (cookies != null && cookies.size() > 0) {
+                for (Cookie item : cookies) {
+                    cookieStore.add(url, item);
+                }
+            }
+        }
+
+        @Override
+        public List<Cookie> loadForRequest(HttpUrl url) {
+            List<Cookie> cookies = cookieStore.get(url);
+            return cookies;
+        }
+    }
+
+
+    /**
+     * 从本地获取cookie列表
+     *
+     * @return
+     */
+    public void addCookie() {
+        okBuilder.cookieJar(new CookiesManager());
+    }
+
+    //    /**
+//     * 添加必要的头信息
+//     */
+//    public void setHttpHeaders(OkHttpClient.Builder okBuilder) {
+//
+//        Interceptor headerInterceptor = new Interceptor() {
+//            @Override
+//            public Response intercept(Chain chain) throws IOException {
+//                Request originalRequest = chain.request();
+//                Request.Builder requestBuilder = originalRequest.newBuilder()
+//                        .header(BmobConstants.ACCEPT_CHARSET, "UTF-8,*")
+//                        .header(BmobConstants.USER_AGENT, "Young Heart Android App ")
+//                        .header(BmobConstants.ACCEPT_ENCODING, "gzip")
+//                        .method(originalRequest.method(), originalRequest.body());
+//                Request request = requestBuilder.build();
+//                return chain.proceed(request);
+//            }
+//        };
+//
+//        okBuilder.addInterceptor(headerInterceptor);
+//
+//    }
+//
+//    /**
+//     * TODO
+//     * 此种拼接方式为 1 没有参数时 xxx.api  2有参数时 xxx.api?k1=v1&k2=v2
+//     *
+//     * @param url
+//     * @param parameter
+//     * @return
+//     */
+//    private String getNewUrl(String url, List<RequestParameter> parameter) {
+//        // 添加参数
+//        final StringBuffer paramBuffer = new StringBuffer();
+//        if ((parameter != null) && (parameter.size() > 0)) {
+//            //sortKeys();// 这里要对key进行排序
+//            for (final RequestParameter p : parameter) {
+//                if (paramBuffer.length() == 0) {
+//                    paramBuffer.append(p.getName() + "=" + BaseUtils.UrlEncodeUnicode(p.getValue()));
+//                } else {
+//                    paramBuffer.append("&" + p.getName() + "=" + BaseUtils.UrlEncodeUnicode(p.getValue()));
+//                }
+//            }
+//            return url + "?" + paramBuffer.toString();
+//        } else {
+//            return url;
+//        }
+//    }
 
     /**
      * 对key进行排序
@@ -321,61 +402,5 @@ public class OkHttpRequest implements Runnable {
 
         return str1IsLonger;
     }
-
-
-    /**
-     * 从本地获取cookie列表
-     *
-     * @return
-     */
-    public void addCookie() {
-        okBuilder.cookieJar(new CookiesManager());
-    }
-
-    /**
-     * 添加必要的头信息
-     */
-    public void setHttpHeaders(OkHttpClient.Builder okBuilder) {
-
-        Interceptor headerInterceptor = new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request originalRequest = chain.request();
-                Request.Builder requestBuilder = originalRequest.newBuilder()
-                        .header(FrameConstants.ACCEPT_CHARSET, "UTF-8,*")
-                        .header(FrameConstants.USER_AGENT, "Young Heart Android App ")
-                        .header(FrameConstants.ACCEPT_ENCODING, "gzip")
-                        .method(originalRequest.method(), originalRequest.body());
-                Request request = requestBuilder.build();
-                return chain.proceed(request);
-            }
-        };
-
-        okBuilder.addInterceptor(headerInterceptor);
-
-    }
-
-    /**
-     * 自动管理Cookies
-     */
-    private class CookiesManager implements CookieJar {
-        private final PersistentCookieStore cookieStore = new PersistentCookieStore(activity);
-
-        @Override
-        public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-            if (cookies != null && cookies.size() > 0) {
-                for (Cookie item : cookies) {
-                    cookieStore.add(url, item);
-                }
-            }
-        }
-
-        @Override
-        public List<Cookie> loadForRequest(HttpUrl url) {
-            List<Cookie> cookies = cookieStore.get(url);
-            return cookies;
-        }
-    }
-
 
 }
