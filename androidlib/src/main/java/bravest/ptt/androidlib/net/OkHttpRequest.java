@@ -12,28 +12,33 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import bravest.ptt.androidlib.cache.CacheManager;
-import bravest.ptt.androidlib.utils.BaseUtils;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public abstract class OkHttpRequest implements Runnable {
 
     private static final String TAG = "OkHttpRequest";
 
-    private final static String cookiePath = "/data/data/bravest.ptt.efastquery/cache/cookie";
+    private final static String cookiePath =
+            "/data/data/bravest.ptt.efastquery/cache/cookie";
 
-    public static final String REQUEST_GET = "get";
+    public static final MediaType TYPE_JSON =
+            MediaType.parse("application/json; charset=utf-8");
 
-    public static final String REQUEST_POST = "post";
+    public static final String REQUEST_GET = "GET";
 
-    public static final String REQUEST_PUT = "put";
+    public static final String REQUEST_POST = "POST";
+
+    public static final String REQUEST_PUT = "PUT";
 
     private Context context;
 
@@ -42,6 +47,8 @@ public abstract class OkHttpRequest implements Runnable {
     private RequestCallback requestCallback = null;
 
     private List<RequestParameter> parameter = null;
+
+    private String jsonString;
 
     // 原始url
     private String url = null;
@@ -80,13 +87,13 @@ public abstract class OkHttpRequest implements Runnable {
      */
     protected abstract void setHttpHeaders(OkHttpClient.Builder okBuilder, final URLData data);
 
-    public OkHttpRequest(Context context, final URLData data, final List<RequestParameter> params, final RequestCallback callBack) {
+    public OkHttpRequest(Context context, final URLData data, final String jsonString, final RequestCallback callBack) {
         this.context = context;
 
         this.urlData = data;
         url = urlData.getUrl();
 
-        this.parameter = params;
+        this.jsonString = jsonString;
 
         this.requestCallback = callBack;
 
@@ -104,7 +111,7 @@ public abstract class OkHttpRequest implements Runnable {
     @Override
     public void run() {
         try {
-            String type = urlData.getNetType();
+            String type = urlData.getNetType().toUpperCase();
             switch (type) {
                 case REQUEST_GET:
                     //TODO
@@ -128,12 +135,14 @@ public abstract class OkHttpRequest implements Runnable {
                     request = new Request.Builder().url(newUrl).build();
                     break;
                 case REQUEST_POST:
-                    FormBody postBody = getFormBody(parameter);
+                    //FormBody postBody = getFormBody(parameter);
+                    RequestBody postBody = RequestBody.create(TYPE_JSON, jsonString);
                     Log.d(TAG, "run: postBody = " + postBody);
                     request = new Request.Builder().url(url).post(postBody).build();
                     break;
                 case REQUEST_PUT:
-                    FormBody putBody = getFormBody(parameter);
+                    //FormBody putBody = getFormBody(parameter);
+                    RequestBody putBody = RequestBody.create(TYPE_JSON, jsonString);
                     request = new Request.Builder().url(url).put(putBody).build();
                     break;
                 default:
@@ -183,7 +192,6 @@ public abstract class OkHttpRequest implements Runnable {
 
                             // 包含错误
                             if (dataResponse.hasError()) {
-
                                 if (dataResponse.getErrorType() == 1) {
                                     handler.post(new Runnable() {
                                         @Override
@@ -194,13 +202,11 @@ public abstract class OkHttpRequest implements Runnable {
                                 } else {
                                     handleNetworkError(dataResponse.getErrorMessage());
                                 }
-
                             } else {
                                 //当是get请求 并且缓存时间>0时 保存到缓存
                                 if (urlData.getNetType().equals(REQUEST_GET) && urlData.getExpires() > 0) {
                                     CacheManager.getInstance().putFileCache(newUrl, dataResponse.getResult(), urlData.getExpires());
                                 }
-
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -210,15 +216,16 @@ public abstract class OkHttpRequest implements Runnable {
                             }
                         } else {
                             Log.d("DataResponse", "onResponse: = " + response.code() + ", " + response.message() + response.toString());
+                            Log.d("DataResponse", "onResponse:  = " + response.body().string() );
                             handleNetworkError("网络异常2");
                         }
-
                     } else {
                         // TODO: 2016/11/24  处理接口为空的情况
                     }
                 }
             });
         } catch (Exception e) {
+            Log.d(TAG, "run: message exception = " + e.getMessage());
             handleNetworkError("网络异常1");
         }
     }
@@ -233,24 +240,6 @@ public abstract class OkHttpRequest implements Runnable {
 
     private OkHttpRequest handlePutRequest() {
         return null;
-    }
-
-    /**
-     * FromBody 继承自 RequestBody  默认表单提交  默认编码格式为 utf—8
-     *
-     * @param parameter
-     * @return
-     */
-    private FormBody getFormBody(List<RequestParameter> parameter) {
-
-        FormBody.Builder builder = new FormBody.Builder();
-
-        if (parameter != null & parameter.size() > 0) {
-            for (RequestParameter requestParameter : parameter) {
-                builder.add(requestParameter.getName(), requestParameter.getValue());
-            }
-        }
-        return builder.build();
     }
 
     public void handleNetworkError(final String errorMsg) {
@@ -405,6 +394,23 @@ public abstract class OkHttpRequest implements Runnable {
         }
 
         return str1IsLonger;
+    }
+
+    /**
+     * FromBody 继承自 RequestBody  默认表单提交  默认编码格式为 utf—8
+     *
+     * @param parameter
+     * @return
+     */
+    private FormBody getFormBody(List<RequestParameter> parameter) {
+        FormBody.Builder builder = new FormBody.Builder();
+        if (parameter != null & parameter.size() > 0) {
+            for (RequestParameter requestParameter : parameter) {
+                //builder.add(requestParameter.getName(), requestParameter.getValue());
+            }
+        }
+       // return builder.build();
+        return null;
     }
 
 }

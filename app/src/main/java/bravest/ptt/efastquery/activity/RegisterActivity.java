@@ -90,15 +90,16 @@ public class RegisterActivity extends BaseActivity{
         user.setPassword(password);
 
         String jsonString = JSON.toJSONString(user);
+        jsonString = UserUtil.appendPassword(jsonString, User.PASSWORD, password);
         PLog.log(jsonString);
         ToastUtils.showToast(this, jsonString);
 
-        RequestParameter.Builder builder = new RequestParameter.Builder();
-        builder.param(User.USERNAME, UserUtil.generateUserName(UserUtil.USER_NAME_LENGTH))
-                .param(User.PASSWORD, password)
-                .param(User.MOBILE_PHONE_NUMBER, phoneNumber);
+//        RequestParameter.Builder builder = new RequestParameter.Builder()
+//                .param(User.USERNAME, UserUtil.generateUserName(UserUtil.USER_NAME_LENGTH))
+//                .param(User.PASSWORD, password)
+//                .param(User.MOBILE_PHONE_NUMBER, phoneNumber);
 
-        RemoteService.getInstance().invoke(this, API.REGISTER, builder, new RequestCallback() {
+        RemoteService.getInstance().invoke(this, API.REGISTER, jsonString, new RequestCallback() {
             @Override
             public void onSuccess(String content) {
                 Log.d(TAG, "onSuccess: ");

@@ -29,8 +29,8 @@ public class BmobHttpRequest extends OkHttpRequest {
 
     private Context mContext;
 
-    public BmobHttpRequest(Context context, URLData data, List<RequestParameter> params, RequestCallback callBack) {
-        super(context, data, params, callBack);
+    public BmobHttpRequest(Context context, URLData data, String jsonString, RequestCallback callBack) {
+        super(context, data, jsonString, callBack);
         this.mContext = context;
     }
 

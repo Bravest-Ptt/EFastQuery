@@ -32,6 +32,25 @@ public class UserUtil {
         return name;
     }
 
+    public static String appendPassword(String src, String pv, String password) {
+        return appendToJson(src, pv, password);
+    }
+
+    public static String appendToJson(String src, String key, String value) {
+        if (TextUtils.isEmpty(src)) {
+            throw new NullPointerException();
+        }
+        if (src.endsWith("}")) {
+            src = src.substring(0, src.lastIndexOf('}'));
+            src += ",";
+            src += "\"" + key + "\"";
+            src += ":";
+            src += "\"" + value + "\"";
+            src += "}";
+        }
+        return src;
+    }
+
     /**
      * desc:保存对象
      *

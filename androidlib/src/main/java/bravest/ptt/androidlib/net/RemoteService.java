@@ -27,7 +27,7 @@ public class RemoteService {
         return RemoteService.service;
     }
 
-    public void invoke(final BaseActivity activity, final String apiKey, final RequestParameter.Builder params, final RequestCallback callBack) {
+    public void invoke(final BaseActivity activity, final String apiKey, final String jsonString, final RequestCallback callBack) {
 
         final URLData urlData = UrlConfigManager.findURL(activity, apiKey);
         if (urlData == null) {
@@ -58,9 +58,9 @@ public class RemoteService {
                 e.printStackTrace();
             }
         } else {
-            if (params != null) {
+            if (jsonString != null) {
                 Log.i("httpParams", "httpParams");
-                  OkHttpRequest request = activity.getRequestManager().createRequest(urlData, params, callBack);
+                  OkHttpRequest request = activity.getRequestManager().createRequest(urlData, jsonString, callBack);
                   DefaultThreadPool.getInstance().execute(request);
             } else {
                 Log.i("http", "http");
