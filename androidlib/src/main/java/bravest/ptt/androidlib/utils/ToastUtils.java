@@ -5,6 +5,8 @@ package bravest.ptt.androidlib.utils;
  */
 
 import android.content.Context;
+import android.graphics.Color;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**

@@ -12,6 +12,30 @@ public class User implements Serializable{
 
     private static final long serialVersionUID = -2083503801443301445L;
 
+    public static final String OBJECT_ID = "objectId";
+
+    public static final String USERNAME = "username";
+
+    public static final String PASSWORD = "password";
+
+    public static final String EMAIL = "email";
+
+    public static final String EMAIL_VERIFIED = "emailVerified";
+
+    public static final String SESSION_TOKEN = "sessionToken";
+
+    public static final String MOBILE_PHONE_NUMBER = "mobilePhoneNumber";
+
+    public static final String MOBILE_PHONE_NUMBER_VERIFIED = "mobilePhoneNumberVerified";
+
+    public static final String AGE = "age";
+
+    public static final String CREATED_AT = "createdAt";
+
+    public static final String UPDATED_AT = "email";
+
+    public static final String COUNTER = "counter";
+
     private static User sUser = null;
 
     private String objectId;

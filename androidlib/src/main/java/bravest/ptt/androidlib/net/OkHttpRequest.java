@@ -25,6 +25,8 @@ import okhttp3.Response;
 
 public abstract class OkHttpRequest implements Runnable {
 
+    private static final String TAG = "OkHttpRequest";
+
     private final static String cookiePath = "/data/data/bravest.ptt.efastquery/cache/cookie";
 
     public static final String REQUEST_GET = "get";
@@ -127,6 +129,7 @@ public abstract class OkHttpRequest implements Runnable {
                     break;
                 case REQUEST_POST:
                     FormBody postBody = getFormBody(parameter);
+                    Log.d(TAG, "run: postBody = " + postBody);
                     request = new Request.Builder().url(url).post(postBody).build();
                     break;
                 case REQUEST_PUT:
@@ -206,6 +209,7 @@ public abstract class OkHttpRequest implements Runnable {
                                 });
                             }
                         } else {
+                            Log.d("DataResponse", "onResponse: = " + response.code() + ", " + response.message() + response.toString());
                             handleNetworkError("网络异常2");
                         }
 

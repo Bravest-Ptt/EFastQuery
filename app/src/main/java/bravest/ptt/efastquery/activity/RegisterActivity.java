@@ -10,8 +10,12 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 
+import java.util.ArrayList;
+
 import bravest.ptt.androidlib.activity.BaseActivity;
 import bravest.ptt.androidlib.net.RemoteService;
+import bravest.ptt.androidlib.net.RequestCallback;
+import bravest.ptt.androidlib.net.RequestParameter;
 import bravest.ptt.androidlib.utils.ToastUtils;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.androidlib.utils.plog.PLog;
@@ -89,7 +93,27 @@ public class RegisterActivity extends BaseActivity{
         PLog.log(jsonString);
         ToastUtils.showToast(this, jsonString);
 
-        //RemoteService.getInstance().invoke(this, API.REGISTER, );
+        RequestParameter.Builder builder = new RequestParameter.Builder();
+        builder.param(User.USERNAME, UserUtil.generateUserName(UserUtil.USER_NAME_LENGTH))
+                .param(User.PASSWORD, password)
+                .param(User.MOBILE_PHONE_NUMBER, phoneNumber);
+
+        RemoteService.getInstance().invoke(this, API.REGISTER, builder, new RequestCallback() {
+            @Override
+            public void onSuccess(String content) {
+                Log.d(TAG, "onSuccess: ");
+            }
+
+            @Override
+            public void onFail(String errorMessage) {
+                Log.d(TAG, "onFail:  "  + errorMessage);
+            }
+
+            @Override
+            public void onCookieExpired() {
+                Log.d(TAG, "onCookieExpired: ");
+            }
+        });
     }
 
     private void handleRegisterAlreadyClick() {

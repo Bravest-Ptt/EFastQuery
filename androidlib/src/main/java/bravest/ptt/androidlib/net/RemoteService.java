@@ -27,7 +27,7 @@ public class RemoteService {
         return RemoteService.service;
     }
 
-    public void invoke(final BaseActivity activity, final String apiKey, final List<RequestParameter> params, final RequestCallback callBack) {
+    public void invoke(final BaseActivity activity, final String apiKey, final RequestParameter.Builder params, final RequestCallback callBack) {
 
         final URLData urlData = UrlConfigManager.findURL(activity, apiKey);
         if (urlData == null) {

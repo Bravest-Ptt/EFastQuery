@@ -1,5 +1,7 @@
 package bravest.ptt.androidlib.net;
 
+import java.util.ArrayList;
+
 public class RequestParameter implements java.io.Serializable,
         Comparable<Object> {
 
@@ -58,5 +60,12 @@ public class RequestParameter implements java.io.Serializable,
 
     public void setValue(final String value) {
         this.value = value;
+    }
+
+    public static class Builder extends ArrayList<RequestParameter>{
+        public Builder param(String key, String value) {
+            this.add(new RequestParameter(key, value));
+            return this;
+        }
     }
 }
