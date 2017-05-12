@@ -1,5 +1,6 @@
 package bravest.ptt.androidlib.activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -17,9 +18,15 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     protected RequestManager requestManager = null;
 
+    protected Context mContext;
+
+    protected BaseActivity mActivity;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = this;
+        mActivity = this;
         requestManager = new RequestManager(this);
         initVariables();
         initViews(savedInstanceState);

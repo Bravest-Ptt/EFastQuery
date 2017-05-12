@@ -177,13 +177,18 @@ public class User implements Serializable{
     @Override
     public String toString() {
         return "User{" +
-                "username='" + username + '\'' +
+                "objectId='" + objectId + '\'' +
+                ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 ", emailVerified=" + emailVerified +
                 ", sessionToken='" + sessionToken + '\'' +
                 ", mobilePhoneNumber='" + mobilePhoneNumber + '\'' +
                 ", mobilePhoneNumberVerified=" + mobilePhoneNumberVerified +
+                ", age=" + age +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", counter=" + counter +
                 '}';
     }
 }

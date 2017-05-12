@@ -7,4 +7,12 @@
         NetType="post"
         ContentType="application/json"
         Url="https://api.bmob.cn/1/users" />
+
+    <!--获取当前用户信息-->
+    <Node
+        Expires="0"
+        Key="getUserInfo"
+        NetType="get"
+        ContentType="application/json"
+        Url="https://api.bmob.cn/1/users" />
 </url>

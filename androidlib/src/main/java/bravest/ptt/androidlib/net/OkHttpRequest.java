@@ -46,9 +46,11 @@ public abstract class OkHttpRequest implements Runnable {
 
     private RequestCallback requestCallback = null;
 
-    private List<RequestParameter> parameter = null;
+    //private List<RequestParameter> parameter = null;
 
-    private String jsonString;
+    //private String body;
+
+    private RequestParam param;
 
     // 原始url
     private String url = null;
@@ -76,10 +78,10 @@ public abstract class OkHttpRequest implements Runnable {
     /**
      * get new url base on parameter
      * @param url
-     * @param parameter
+     * @param param
      * @return
      */
-    protected abstract String getNewUrl(String url, List<RequestParameter> parameter);
+    protected abstract String getNewUrl(String url, RequestParam param);
 
     /**
      * set http headers
@@ -87,13 +89,13 @@ public abstract class OkHttpRequest implements Runnable {
      */
     protected abstract void setHttpHeaders(OkHttpClient.Builder okBuilder, final URLData data);
 
-    public OkHttpRequest(Context context, final URLData data, final String jsonString, final RequestCallback callBack) {
+    public OkHttpRequest(Context context, final URLData data, final RequestParam param, final RequestCallback callBack) {
         this.context = context;
 
         this.urlData = data;
         url = urlData.getUrl();
 
-        this.jsonString = jsonString;
+        this.param = param;
 
         this.requestCallback = callBack;
 
@@ -115,7 +117,7 @@ public abstract class OkHttpRequest implements Runnable {
             switch (type) {
                 case REQUEST_GET:
                     //TODO
-                    newUrl = getNewUrl(url, parameter);
+                    newUrl = getNewUrl(url, param);
                     Log.i("newUrl", newUrl);
                     // 如果这个get的API有缓存时间（大于0）直接返回缓存的数据
                     if (urlData.getExpires() > 0) {
@@ -136,13 +138,13 @@ public abstract class OkHttpRequest implements Runnable {
                     break;
                 case REQUEST_POST:
                     //FormBody postBody = getFormBody(parameter);
-                    RequestBody postBody = RequestBody.create(TYPE_JSON, jsonString);
+                    RequestBody postBody = RequestBody.create(TYPE_JSON, param.getBody());
                     Log.d(TAG, "run: postBody = " + postBody);
                     request = new Request.Builder().url(url).post(postBody).build();
                     break;
                 case REQUEST_PUT:
                     //FormBody putBody = getFormBody(parameter);
-                    RequestBody putBody = RequestBody.create(TYPE_JSON, jsonString);
+                    RequestBody putBody = RequestBody.create(TYPE_JSON, param.getBody());
                     request = new Request.Builder().url(url).put(putBody).build();
                     break;
                 default:
@@ -181,43 +183,55 @@ public abstract class OkHttpRequest implements Runnable {
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     if (requestCallback != null) {
-                        int code = response.code();
                         //代表成功
-                        if (code >= 200 && code < 300) {
+                        if (response.isSuccessful()) {
                             //okHttp3 如果在头部中 添加了 gzip字段 会自动进行 gzip 解压 这里不在处理
-                            String string = response.body().string();
-                            Log.i("DataResponse", string);
+                            final String content = response.body().string();
+                            Log.i("DataResponse", content);
+                            //当是get请求 并且缓存时间>0时 保存到缓存
+                            if (urlData.getNetType().equals(REQUEST_GET) && urlData.getExpires() > 0) {
+                                CacheManager.getInstance().putFileCache(newUrl, content, urlData.getExpires());
+                            }
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    requestCallback.onSuccess(content);
+                                }
+                            });
 
-                            final DataResponse dataResponse = JSON.parseObject(string, DataResponse.class);
+
+                            //final DataResponse dataResponse = JSON.parseObject(string, DataResponse.class);
 
                             // 包含错误
-                            if (dataResponse.hasError()) {
-                                if (dataResponse.getErrorType() == 1) {
-                                    handler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            requestCallback.onCookieExpired();
-                                        }
-                                    });
-                                } else {
-                                    handleNetworkError(dataResponse.getErrorMessage());
-                                }
-                            } else {
-                                //当是get请求 并且缓存时间>0时 保存到缓存
-                                if (urlData.getNetType().equals(REQUEST_GET) && urlData.getExpires() > 0) {
-                                    CacheManager.getInstance().putFileCache(newUrl, dataResponse.getResult(), urlData.getExpires());
-                                }
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        requestCallback.onSuccess(dataResponse.getResult() + "  success");
-                                    }
-                                });
-                            }
+//                            if (dataResponse.hasError()) {
+//                                if (dataResponse.getErrorType() == 1) {
+//                                    handler.post(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            requestCallback.onCookieExpired();
+//                                        }
+//                                    });
+//                                } else {
+//                                    handleNetworkError(dataResponse.getErrorMessage());
+//                                }
+//                            } else {
+//                                //当是get请求 并且缓存时间>0时 保存到缓存
+//                                if (urlData.getNetType().equals(REQUEST_GET) && urlData.getExpires() > 0) {
+//                                    CacheManager.getInstance().putFileCache(newUrl, dataResponse.getResult(), urlData.getExpires());
+//                                }
+//                                handler.post(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        requestCallback.onSuccess(dataResponse.getResult() + "  success");
+//                                    }
+//                                });
+//                            }
                         } else {
                             Log.d("DataResponse", "onResponse: = " + response.code() + ", " + response.message() + response.toString());
-                            Log.d("DataResponse", "onResponse:  = " + response.body().string() );
-                            handleNetworkError("网络异常2");
+                            String body = response.body().string();
+                            Log.d("DataResponse", "onResponse:  = " +  body);
+                            String errorMessage = JSON.parseObject(body).getString("error");
+                            handleNetworkError(errorMessage);
                         }
                     } else {
                         // TODO: 2016/11/24  处理接口为空的情况
@@ -339,78 +353,78 @@ public abstract class OkHttpRequest implements Runnable {
 //        }
 //    }
 
-    /**
-     * 对key进行排序
-     * 我们可以将xxx.api?k1=v1&k2=v2 这样的url格式作为标记  放入 app 缓存
-     * 需要注意的是 我们要对 k1 k2 这些key进行排序 这样这些标记才能唯一
-     * xxxx.api?k1=v1&k2=v2  xxxx.api?k2=v2&k1=v1 其实是一个请求
-     */
-    public void sortKeys() {
-        for (int i = 1; i < parameter.size(); i++) {
-            for (int j = i; j > 0; j--) {
-                RequestParameter p1 = parameter.get(j - 1);
-                RequestParameter p2 = parameter.get(j);
-                if (compare(p1.getName(), p2.getName())) {
-                    // 交互p1和p2这两个对象，写的超级恶心
-                    String name = p1.getName();
-                    String value = p1.getValue();
-
-                    p1.setName(p2.getName());
-                    p1.setValue(p2.getValue());
-
-                    p2.setName(name);
-                    p2.setValue(value);
-                }
-            }
-        }
-    }
-
-    // 返回true说明str1大，返回false说明str2大
-    public boolean compare(String str1, String str2) {
-        String uppStr1 = str1.toUpperCase();
-        String uppStr2 = str2.toUpperCase();
-
-        boolean str1IsLonger = true;
-        int minLen = 0;
-
-        if (str1.length() < str2.length()) {
-            minLen = str1.length();
-            str1IsLonger = false;
-        } else {
-            minLen = str2.length();
-            str1IsLonger = true;
-        }
-
-        for (int index = 0; index < minLen; index++) {
-            char ch1 = uppStr1.charAt(index);
-            char ch2 = uppStr2.charAt(index);
-            if (ch1 != ch2) {
-                if (ch1 > ch2) {
-                    return true; // str1大
-                } else {
-                    return false; // str2大
-                }
-            }
-        }
-
-        return str1IsLonger;
-    }
-
-    /**
-     * FromBody 继承自 RequestBody  默认表单提交  默认编码格式为 utf—8
-     *
-     * @param parameter
-     * @return
-     */
-    private FormBody getFormBody(List<RequestParameter> parameter) {
-        FormBody.Builder builder = new FormBody.Builder();
-        if (parameter != null & parameter.size() > 0) {
-            for (RequestParameter requestParameter : parameter) {
-                //builder.add(requestParameter.getName(), requestParameter.getValue());
-            }
-        }
-       // return builder.build();
-        return null;
-    }
+//    /**
+//     * 对key进行排序
+//     * 我们可以将xxx.api?k1=v1&k2=v2 这样的url格式作为标记  放入 app 缓存
+//     * 需要注意的是 我们要对 k1 k2 这些key进行排序 这样这些标记才能唯一
+//     * xxxx.api?k1=v1&k2=v2  xxxx.api?k2=v2&k1=v1 其实是一个请求
+//     */
+//    public void sortKeys() {
+//        for (int i = 1; i < parameter.size(); i++) {
+//            for (int j = i; j > 0; j--) {
+//                RequestParameter p1 = parameter.get(j - 1);
+//                RequestParameter p2 = parameter.get(j);
+//                if (compare(p1.getName(), p2.getName())) {
+//                    // 交互p1和p2这两个对象，写的超级恶心
+//                    String name = p1.getName();
+//                    String value = p1.getValue();
+//
+//                    p1.setName(p2.getName());
+//                    p1.setValue(p2.getValue());
+//
+//                    p2.setName(name);
+//                    p2.setValue(value);
+//                }
+//            }
+//        }
+//    }
+//
+//    // 返回true说明str1大，返回false说明str2大
+//    public boolean compare(String str1, String str2) {
+//        String uppStr1 = str1.toUpperCase();
+//        String uppStr2 = str2.toUpperCase();
+//
+//        boolean str1IsLonger = true;
+//        int minLen = 0;
+//
+//        if (str1.length() < str2.length()) {
+//            minLen = str1.length();
+//            str1IsLonger = false;
+//        } else {
+//            minLen = str2.length();
+//            str1IsLonger = true;
+//        }
+//
+//        for (int index = 0; index < minLen; index++) {
+//            char ch1 = uppStr1.charAt(index);
+//            char ch2 = uppStr2.charAt(index);
+//            if (ch1 != ch2) {
+//                if (ch1 > ch2) {
+//                    return true; // str1大
+//                } else {
+//                    return false; // str2大
+//                }
+//            }
+//        }
+//
+//        return str1IsLonger;
+//    }
+//
+//    /**
+//     * FromBody 继承自 RequestBody  默认表单提交  默认编码格式为 utf—8
+//     *
+//     * @param parameter
+//     * @return
+//     */
+//    private FormBody getFormBody(List<RequestParameter> parameter) {
+//        FormBody.Builder builder = new FormBody.Builder();
+//        if (parameter != null & parameter.size() > 0) {
+//            for (RequestParameter requestParameter : parameter) {
+//                //builder.add(requestParameter.getName(), requestParameter.getValue());
+//            }
+//        }
+//       // return builder.build();
+//        return null;
+//    }
 
 }

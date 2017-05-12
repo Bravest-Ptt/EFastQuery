@@ -57,8 +57,8 @@ public class RequestManager {
     /**
      * 有参数调用
      */
-    public OkHttpRequest createRequest(final URLData urlData, final String jsonString, final RequestCallback requestCallback) {
-        final OkHttpRequest request = new BmobHttpRequest(context, urlData, jsonString, requestCallback);
+    public OkHttpRequest createRequest(final URLData urlData, final RequestParam param, final RequestCallback requestCallback) {
+        final OkHttpRequest request = new BmobHttpRequest(context, urlData, param, requestCallback);
         addRequest(request);
         return request;
     }

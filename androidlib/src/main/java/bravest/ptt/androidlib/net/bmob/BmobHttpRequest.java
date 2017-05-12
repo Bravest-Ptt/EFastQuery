@@ -4,13 +4,17 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.json.JSONException;
+
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 import bravest.ptt.androidlib.net.OkHttpRequest;
 import bravest.ptt.androidlib.net.RequestCallback;
-import bravest.ptt.androidlib.net.RequestParameter;
+import bravest.ptt.androidlib.net.RequestParam;
 import bravest.ptt.androidlib.net.URLData;
+import bravest.ptt.androidlib.utils.BaseUtils;
 import bravest.ptt.androidlib.utils.bmob.BmobConstants;
 import bravest.ptt.androidlib.utils.JNIUtils;
 import bravest.ptt.androidlib.utils.PreferencesUtils;
@@ -29,14 +33,43 @@ public class BmobHttpRequest extends OkHttpRequest {
 
     private Context mContext;
 
-    public BmobHttpRequest(Context context, URLData data, String jsonString, RequestCallback callBack) {
-        super(context, data, jsonString, callBack);
+    public BmobHttpRequest(Context context, URLData data, RequestParam param, RequestCallback callBack) {
+        super(context, data, param, callBack);
         this.mContext = context;
     }
 
-    @Override
-    protected String getNewUrl(String url, List<RequestParameter> parameter) {
-        return null;
+    /**
+     * TODO refer bmob api document
+     * 此种拼接方式为 1 没有参数时 xxx.api  2有参数时 xxx.api?k1=v1&k2=v2
+     *
+     * @param url
+     * @param param
+     * @return
+     */
+    protected String getNewUrl(String url, RequestParam param) {
+        try {
+            // 添加参数
+            final StringBuffer paramBuffer = new StringBuffer();
+            if ((param != null) && (param.length() > 0)) {
+                //sortKeys();// 这里要对key进行排序
+                Iterator<String> keys = param.keys();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    String value = param.get(key).toString();
+                    if (paramBuffer.length() == 0) {
+                        paramBuffer.append(key + "=" + BaseUtils.UrlEncodeUnicode(value));
+                    } else {
+                        paramBuffer.append("&" + key + "=" + BaseUtils.UrlEncodeUnicode(value));
+                    }
+                }
+                return url + "?" + paramBuffer.toString();
+            } else {
+                return url;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return url;
     }
 
     @Override

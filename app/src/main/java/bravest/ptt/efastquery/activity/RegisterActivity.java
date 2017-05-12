@@ -10,16 +10,15 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 
-import java.util.ArrayList;
 
 import bravest.ptt.androidlib.activity.BaseActivity;
 import bravest.ptt.androidlib.net.RemoteService;
-import bravest.ptt.androidlib.net.RequestCallback;
-import bravest.ptt.androidlib.net.RequestParameter;
+import bravest.ptt.androidlib.net.RequestParam;
 import bravest.ptt.androidlib.utils.ToastUtils;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.androidlib.utils.plog.PLog;
 import bravest.ptt.efastquery.entity.User;
+import bravest.ptt.efastquery.net.AbstractRequestCallback;
 import bravest.ptt.efastquery.utils.API;
 import bravest.ptt.efastquery.utils.UserUtil;
 import cn.bmob.v3.BmobUser;
@@ -80,7 +79,7 @@ public class RegisterActivity extends BaseActivity{
     }
 
     private void handleRegisterClick() {
-        User user = new User();
+        final User user = new User();
         String phoneNumber =  mPhoneNumberEditor.getText().toString();
         String password =  mPasswordEditor.getText().toString();
         PLog.d(TAG, "onClick: phonenumber = " + phoneNumber);
@@ -99,20 +98,28 @@ public class RegisterActivity extends BaseActivity{
 //                .param(User.PASSWORD, password)
 //                .param(User.MOBILE_PHONE_NUMBER, phoneNumber);
 
-        RemoteService.getInstance().invoke(this, API.REGISTER, jsonString, new RequestCallback() {
+
+        RemoteService.getInstance().invoke(this, API.REGISTER, new RequestParam(jsonString), new AbstractRequestCallback(mContext) {
             @Override
             public void onSuccess(String content) {
-                Log.d(TAG, "onSuccess: ");
-            }
-
-            @Override
-            public void onFail(String errorMessage) {
-                Log.d(TAG, "onFail:  "  + errorMessage);
-            }
-
-            @Override
-            public void onCookieExpired() {
-                Log.d(TAG, "onCookieExpired: ");
+                ToastUtils.showToast(mContext, content);
+                PLog.log(content);
+                User user1 = JSON.parseObject(content, User.class);
+                PLog.log(user1.toString());
+                RequestParam param =  new RequestParam();
+                param.param(User.OBJECT_ID, user1.getObjectId());
+                RemoteService.getInstance().invoke(mActivity, API.GET_USER_INFO,
+                        param,
+                        new AbstractRequestCallback(mContext) {
+                            @Override
+                            public void onSuccess(String content) {
+                                ToastUtils.showToast(mContext, content);
+                                PLog.log("user2" + content);
+                                User user2 = JSON.parseObject(content, User.class);
+                                PLog.log(user2.toString());
+                            }
+                        }
+                );
             }
         });
     }
