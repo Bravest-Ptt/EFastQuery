@@ -5,10 +5,16 @@ package bravest.ptt.efastquery.utils;
  */
 
 public interface API {
+    /**
+     * API key must same as url.xml
+     */
+
     String REGISTER = "register";
     String LOGIN = "login";
     String UPDATE = "update";
     String GET_USER_INFO = "getUserInfo";
+    String REQUEST_SMS_CODE = "requestSmsCode";
+    String VERIFY_SMS_CODE = "verifySmsCode";
 
     public interface BmobError {
 

@@ -40,6 +40,8 @@ public abstract class OkHttpRequest implements Runnable {
 
     public static final String REQUEST_PUT = "PUT";
 
+    public static final String REQUEST_DELETE = "DELETE";
+
     private Context context;
 
     private URLData urlData = null;
@@ -81,7 +83,7 @@ public abstract class OkHttpRequest implements Runnable {
      * @param param
      * @return
      */
-    protected abstract String getNewUrl(String url, RequestParam param);
+    protected abstract String getNewUrl(String url, String method, RequestParam param);
 
     /**
      * set http headers
@@ -112,12 +114,12 @@ public abstract class OkHttpRequest implements Runnable {
 
     @Override
     public void run() {
-        try {
+//        try {
             String type = urlData.getNetType().toUpperCase();
             switch (type) {
                 case REQUEST_GET:
                     //TODO
-                    newUrl = getNewUrl(url, param);
+                    newUrl = getNewUrl(url, type, param);
                     Log.i("newUrl", newUrl);
                     // 如果这个get的API有缓存时间（大于0）直接返回缓存的数据
                     if (urlData.getExpires() > 0) {
@@ -238,10 +240,11 @@ public abstract class OkHttpRequest implements Runnable {
                     }
                 }
             });
-        } catch (Exception e) {
-            Log.d(TAG, "run: message exception = " + e.getMessage());
-            handleNetworkError("网络异常1");
-        }
+        //}
+//        catch (Exception e) {
+//            Log.d(TAG, "run: message exception = " + e.getMessage());
+//            handleNetworkError("网络异常1");
+//        }
     }
 
     private OkHttpRequest handleGetRequest() {

@@ -71,6 +71,7 @@
     <!--login-->
     <color name="login_normal">#22ffffff</color>
     <color name="login_pressed">#fb8c00</color>
+    <color name="login_disabled">#55ffffff</color>
 </resources>
 
 

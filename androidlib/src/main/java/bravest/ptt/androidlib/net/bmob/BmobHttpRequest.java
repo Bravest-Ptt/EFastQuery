@@ -7,6 +7,8 @@ import android.util.Log;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,6 +20,7 @@ import bravest.ptt.androidlib.utils.BaseUtils;
 import bravest.ptt.androidlib.utils.bmob.BmobConstants;
 import bravest.ptt.androidlib.utils.JNIUtils;
 import bravest.ptt.androidlib.utils.PreferencesUtils;
+import bravest.ptt.androidlib.utils.plog.PLog;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -46,28 +49,58 @@ public class BmobHttpRequest extends OkHttpRequest {
      * @param param
      * @return
      */
-    protected String getNewUrl(String url, RequestParam param) {
+    protected String getNewUrl(String url, String method, RequestParam param) {
         try {
-            // 添加参数
-            final StringBuffer paramBuffer = new StringBuffer();
-            if ((param != null) && (param.length() > 0)) {
-                //sortKeys();// 这里要对key进行排序
-                Iterator<String> keys = param.keys();
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    String value = param.get(key).toString();
-                    if (paramBuffer.length() == 0) {
-                        paramBuffer.append(key + "=" + BaseUtils.UrlEncodeUnicode(value));
-                    } else {
-                        paramBuffer.append("&" + key + "=" + BaseUtils.UrlEncodeUnicode(value));
-                    }
-                }
-                return url + "?" + paramBuffer.toString();
-            } else {
+            if (param == null) {
                 return url;
             }
-        } catch (JSONException e) {
+
+            // 添加参数
+            final StringBuffer paramBuffer = new StringBuffer();
+            paramBuffer.append(url);
+
+            if (param.hasId()) {
+                paramBuffer.append("/"+param.getObjectId());
+            }
+
+            if (param.hasBody()) {
+                switch (method) {
+                    case REQUEST_GET:
+                        paramBuffer.append("?where="+URLEncoder.encode(param.getBody(), "utf-8"));
+                        break;
+                    case REQUEST_POST:
+                        break;
+                    case REQUEST_PUT:
+                        break;
+                    case REQUEST_DELETE:
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            url = paramBuffer.toString();
+            PLog.log("new url = " + url);
+
+//            if ((param != null) && (param.length() > 0)) {
+//                //sortKeys();// 这里要对key进行排序
+//                Iterator<String> keys = param.keys();
+//                while (keys.hasNext()) {
+//                    String key = keys.next();
+//                    String value = param.get(key).toString();
+//                    if (paramBuffer.length() == 0) {
+//                        paramBuffer.append(key + "=" + URLEncoder.encode(value, "utf-8"));
+//                    } else {
+//                        paramBuffer.append("&" + key + "=" + BaseUtils.UrlEncodeUnicode(value));
+//                    }
+//                }
+//                return url + "?" + paramBuffer.toString();
+//            } else {
+//                return url;
+//            }
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+            return url;
         }
         return url;
     }

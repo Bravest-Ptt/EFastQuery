@@ -3,6 +3,7 @@
     <item android:drawable="@drawable/login_pressed"
         android:state_pressed="true"
         android:state_enabled="true"/>
-    <item android:drawable="@drawable/login_normal"
-        android:state_enabled="true"/>
+    <item android:drawable="@drawable/login_disabled"
+        android:state_enabled="false"/>
+    <item android:drawable="@drawable/login_normal" />
 </selector>

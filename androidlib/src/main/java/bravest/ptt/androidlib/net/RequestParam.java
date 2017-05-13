@@ -1,42 +1,99 @@
 package bravest.ptt.androidlib.net;
 
+import android.text.TextUtils;
+
+import com.alibaba.fastjson.JSON;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 
-public class RequestParam extends JSONObject implements java.io.Serializable {
+public class RequestParam implements java.io.Serializable {
 
     private static final long serialVersionUID = 1274906854152052510L;
 
     private String body;
 
+    private String objectId;
+
+//    private JSONObject param;
+
+    public RequestParam(String objectId, String body) {
+        this.objectId = objectId;
+        this.body = body;
+//        this.param = new JSONObject();
+    }
+
     public RequestParam(String body) {
+        checkParam(body);
         this.body = body;
     }
 
+
     public RequestParam() {
+//        this.param = new JSONObject();
     }
 
-    public void param(String key, String value) {
-        try {
-            this.put(key, value);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
+//    public  RequestParam param(String key, String value) {
+//        try {
+//            this.put(key, value);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            return this;
+//        }
+//        return this;
+//    }
+
+//    public boolean hasParam() {
+//        if (keys() == null) {
+//            return false;
+//        }
+//        return keys().hasNext();
+//    }
+
+//    public String stringParam() {
+//        JSON.
+//    }
 
     public String getBody() {
         return body;
     }
 
-    public void setBody(String body) {
+    public RequestParam setBody(String body) {
+        checkParam(body);
         this.body = body;
+        return this;
     }
 
+    public String getObjectId() {
+        return objectId;
+    }
 
+    public RequestParam setObjectId(String objectId) {
+        checkParam(objectId);
+        this.objectId = objectId;
+        return this;
+    }
+
+    public boolean hasId() {
+        return !TextUtils.isEmpty(objectId);
+    }
+
+    public boolean hasBody() {
+        return !TextUtils.isEmpty(body);
+    }
+
+    private void checkParam(String... param) {
+        for (String p:param) {
+            if (TextUtils.isEmpty(p)) {
+                throw new NullPointerException();
+            }
+        }
+    }
 
     //----------------------------------------------------------------------------------------
 //    public int compareTo(final Object another) {

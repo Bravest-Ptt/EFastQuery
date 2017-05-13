@@ -15,4 +15,21 @@
         NetType="get"
         ContentType="application/json"
         Url="https://api.bmob.cn/1/users" />
+
+    <!--http://docs.bmob.cn/restful/developdoc/index.html?menukey=develop_doc&key=develop_restful#index_短信服务-->
+    <!--request sms code-->
+    <Node
+        Expires="0"
+        Key="requestSmsCode"
+        NetType="POST"
+        ContentType="application/json"
+        Url="https://api.bmob.cn/1/requestSmsCode" />
+
+    <!--verify sms code-->
+    <Node
+        Expires="0"
+        Key="requestSmsCode"
+        NetType="POST"
+        ContentType="application/json"
+        Url="https://api.bmob.cn/1/verifySmsCode" />
 </url>

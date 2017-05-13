@@ -4,18 +4,19 @@ import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import bravest.ptt.androidlib.net.bmob.BmobHttpRequest;
 
 public class RequestManager {
-    private ArrayList<OkHttpRequest> requestList = null;
+    private List<OkHttpRequest> requestList = null;
     private Context context;
 
 
     public RequestManager(final Context context) {
         this.context = context;
         // 异步请求列表
-        requestList = new ArrayList<>();
+        requestList = new CopyOnWriteArrayList<>();
     }
 
     /**
