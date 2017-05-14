@@ -17,7 +17,7 @@ import java.util.UUID;
  * Created by pengtian on 2017/5/7.
  */
 
-public class UserUtil {
+public class UserUtils {
     public static final int USER_NAME_LENGTH = 10;
 
     private final static String FILENAME = "user_data";
@@ -31,6 +31,8 @@ public class UserUtil {
         }
         return name;
     }
+
+    public static final String JSON_EMPTY = "{}";
 
     public static String appendPassword(String src, String pv, String password) {
         return appendToJson(src, pv, password);

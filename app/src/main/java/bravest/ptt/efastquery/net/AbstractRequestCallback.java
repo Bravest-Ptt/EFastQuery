@@ -1,6 +1,7 @@
 package bravest.ptt.efastquery.net;
 
 import android.content.Context;
+import android.content.DialogInterface;
 
 import bravest.ptt.androidlib.net.RequestCallback;
 import bravest.ptt.androidlib.utils.DialogUtils;
@@ -24,12 +25,16 @@ public abstract class AbstractRequestCallback implements RequestCallback {
     @Override
     public void onFail(String errorMessage) {
         DialogUtils.showAlert(mContext
-                ,"Error"
-                ,errorMessage
-                ,"OK"
-                ,null
-                ,null
-                ,null
+                , "Error"
+                , errorMessage
+                , "OK"
+                , new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }
+                , null
+                , null
         );
     }
 

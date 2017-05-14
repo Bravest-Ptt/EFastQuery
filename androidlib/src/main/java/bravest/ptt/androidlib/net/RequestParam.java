@@ -38,6 +38,14 @@ public class RequestParam implements java.io.Serializable {
 //        this.param = new JSONObject();
     }
 
+    @Override
+    public String toString() {
+        return "RequestParam{" +
+                "body='" + body + '\'' +
+                ", objectId='" + objectId + '\'' +
+                '}';
+    }
+
 //    public  RequestParam param(String key, String value) {
 //        try {
 //            this.put(key, value);

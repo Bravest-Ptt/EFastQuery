@@ -11,7 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import bravest.ptt.androidlib.R;
 import bravest.ptt.androidlib.cache.CacheManager;
+import bravest.ptt.androidlib.utils.plog.PLog;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Cookie;
@@ -173,11 +175,14 @@ public abstract class OkHttpRequest implements Runnable {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                requestCallback.onFail(e.getMessage());
+                                //Todo 网络错误，没有网络连接
+                                PLog.log(e);
+                                handleNetworkError(context.getString(R.string.network_error));
                             }
                         });
                     } else {
                         // TODO: 2016/11/24  处理接口为空的情况
+                        PLog.log("api is null");
                     }
 
                 }
@@ -189,7 +194,7 @@ public abstract class OkHttpRequest implements Runnable {
                         if (response.isSuccessful()) {
                             //okHttp3 如果在头部中 添加了 gzip字段 会自动进行 gzip 解压 这里不在处理
                             final String content = response.body().string();
-                            Log.i("DataResponse", content);
+                            PLog.log("okhttprequest : onResponse : " + content);
                             //当是get请求 并且缓存时间>0时 保存到缓存
                             if (urlData.getNetType().equals(REQUEST_GET) && urlData.getExpires() > 0) {
                                 CacheManager.getInstance().putFileCache(newUrl, content, urlData.getExpires());
@@ -229,11 +234,16 @@ public abstract class OkHttpRequest implements Runnable {
 //                                });
 //                            }
                         } else {
-                            Log.d("DataResponse", "onResponse: = " + response.code() + ", " + response.message() + response.toString());
-                            String body = response.body().string();
-                            Log.d("DataResponse", "onResponse:  = " +  body);
-                            String errorMessage = JSON.parseObject(body).getString("error");
-                            handleNetworkError(errorMessage);
+                            try {
+                                Log.d("DataResponse", "onResponse: = " + response.code() + ", " + response.message() + response.toString());
+                                String body = response.body().string();
+                                Log.d("DataResponse", "onResponse:  = " +  body);
+                                String errorMessage = JSON.parseObject(body).getString("error");
+                                handleNetworkError(errorMessage);
+                            } catch (Exception e) {
+                                PLog.log(e);
+                                handleNetworkError(context.getString(R.string.network_error));
+                            }
                         }
                     } else {
                         // TODO: 2016/11/24  处理接口为空的情况

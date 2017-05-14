@@ -5,8 +5,7 @@ import android.content.Context;
 import java.io.Serializable;
 import java.util.Date;
 
-import bravest.ptt.efastquery.utils.UserUtil;
-import cn.bmob.v3.BmobUser;
+import bravest.ptt.efastquery.utils.UserUtils;
 
 public class User implements Serializable{
 
@@ -77,7 +76,7 @@ public class User implements Serializable{
      */
     public static User getInstance(Context context) {
         if (sUser == null) {
-            sUser = (User) UserUtil.readObject(context);
+            sUser = (User) UserUtils.readObject(context);
         }
         return sUser;
     }

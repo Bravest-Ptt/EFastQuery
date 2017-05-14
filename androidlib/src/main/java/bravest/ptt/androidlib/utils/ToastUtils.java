@@ -6,6 +6,7 @@ package bravest.ptt.androidlib.utils;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +19,9 @@ public class ToastUtils {
     private static Toast toast = null; //Toast的对象！
 
     public static void showToast(Context mContext, String id) {
+        if (TextUtils.isEmpty(id)) {
+            return;
+        }
         if (toast == null) {
             toast = Toast.makeText(mContext, id, Toast.LENGTH_SHORT);
         }

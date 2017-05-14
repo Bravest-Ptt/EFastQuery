@@ -12,7 +12,11 @@ public class PLog {
 
     public static void log(Object o) {
         if (DEBUG) {
-            Log.d(TAG, o.toString());
+            if (o != null) {
+                Log.d(TAG, o.toString());
+            } else {
+                Log.d(TAG, "log object is null !!!!!");
+            }
         }
     }
 

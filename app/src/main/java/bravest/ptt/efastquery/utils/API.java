@@ -15,6 +15,8 @@ public interface API {
     String GET_USER_INFO = "getUserInfo";
     String REQUEST_SMS_CODE = "requestSmsCode";
     String VERIFY_SMS_CODE = "verifySmsCode";
+    String QUERY_SMS_STATE = "querySmsState";
+    String IS_MOBILE_USED = "isMobileUsed";
 
     public interface BmobError {
 
