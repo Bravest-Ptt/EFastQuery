@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 
 import bravest.ptt.androidlib.net.RequestCallback;
 import bravest.ptt.androidlib.utils.DialogUtils;
+import bravest.ptt.efastquery.R;
 
 /**
  * Created by pengtian on 2017/5/12.
@@ -25,6 +26,7 @@ public abstract class AbstractRequestCallback implements RequestCallback {
     @Override
     public void onFail(String errorMessage) {
         DialogUtils.showAlert(mContext
+                , R.style.Dialog_Error
                 , "Error"
                 , errorMessage
                 , "OK"

@@ -49,6 +49,7 @@ public class DialogUtils {
      * @return 对话框
      */
     public static AlertDialog showAlert(Context context,
+                                        int styleId,
                                         String title,
                                         String message,
                                         String confirmButton,
@@ -61,7 +62,7 @@ public class DialogUtils {
                                         boolean cancelable,
                                         DialogInterface.OnCancelListener onCancelListener,
                                         DialogInterface.OnDismissListener onDismissListener) {
-        AlertDialog.Builder promptBuilder = new AlertDialog.Builder(context);
+        AlertDialog.Builder promptBuilder = new AlertDialog.Builder(context, styleId);
         if (title != null) {
             promptBuilder.setTitle(title);
         }
@@ -109,13 +110,14 @@ public class DialogUtils {
      * @return 对话框
      */
     public static AlertDialog showAlert(Context context,
+                                        int styleId,
                                         String title,
                                         String message,
                                         String confirmButton,
                                         DialogInterface.OnClickListener confirmButtonClickListener,
                                         String cancelButton,
                                         DialogInterface.OnClickListener cancelButtonClickListener) {
-        return showAlert(context, title, message, confirmButton,
+        return showAlert(context, styleId, title, message, confirmButton,
                 confirmButtonClickListener, null, null, cancelButton,
                 cancelButtonClickListener, null, true, null, null);
     }
@@ -129,7 +131,7 @@ public class DialogUtils {
      * @param confirmButton 确定按钮的名字
      */
     public static AlertDialog showPrompt(Context context, String message, String confirmButton) {
-        return showAlert(context, null, message, confirmButton, null, null,
+        return showAlert(context, 0, null, message, confirmButton, null, null,
                 null, null, null, null, true, null, null);
     }
 
@@ -141,7 +143,7 @@ public class DialogUtils {
      * @param message 提示的消息
      */
     public static AlertDialog showPrompt(Context context, String message) {
-        return showAlert(context, null, message, "OK", null, null, null, null,
+        return showAlert(context, 0, null, message, "OK", null, null, null, null,
                 null, null, true, null, null);
     }
 }

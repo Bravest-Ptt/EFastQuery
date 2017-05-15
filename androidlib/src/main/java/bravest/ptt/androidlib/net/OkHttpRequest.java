@@ -118,10 +118,10 @@ public abstract class OkHttpRequest implements Runnable {
     public void run() {
 //        try {
             String type = urlData.getNetType().toUpperCase();
+            newUrl = getNewUrl(url, type, param);
             switch (type) {
                 case REQUEST_GET:
                     //TODO
-                    newUrl = getNewUrl(url, type, param);
                     Log.i("newUrl", newUrl);
                     // 如果这个get的API有缓存时间（大于0）直接返回缓存的数据
                     if (urlData.getExpires() > 0) {

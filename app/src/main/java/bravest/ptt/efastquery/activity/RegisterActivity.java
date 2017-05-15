@@ -84,9 +84,11 @@ public class RegisterActivity extends BaseActivity {
 
     @Override
     protected void initVariables() {
-        mWaitingDialog = new ProgressDialog(this);
+        mWaitingDialog = new ProgressDialog(this, R.style.NoBorderProgressDialog);
+        mWaitingDialog.setCancelable(false);
+        //mWaitingDialog.setContentView(R.layout.dialog_progress);
         mWaitingDialog.setIndeterminate(true);
-        mWaitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        //mWaitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
     }
 
     @Override
@@ -280,7 +282,8 @@ public class RegisterActivity extends BaseActivity {
                 API.QUERY_SMS_STATE,
                 //":" is for api
                 //url ：https://api.bmob.cn/1/querySms/:smsId （注意smsId前有冒号(:)）
-                new RequestParam(":"+entity.getSmsId(), null),
+                // new RequestParam(":"+entity.getSmsId(), null),
+                new RequestParam(entity.getSmsId(), null),
                 new RegisterCallback(mContext) {
                     @Override
                     public void onSuccess(String content) {
@@ -339,16 +342,10 @@ public class RegisterActivity extends BaseActivity {
 
     private void showWaitProgressBar() {
         mWaitingDialog.show();
-        mWaitingDialog
-                .getWindow()
-                .setLayout(
-                        Utils.getScreenWidth(mContext) / 2 ,
-                        Utils.getScreenHeight(mContext) / 2
-                );
     }
 
     private void hideWaitProgressBar() {
-        //mWaitingDialog.dismiss();
+        mWaitingDialog.dismiss();
     }
 
     /**
