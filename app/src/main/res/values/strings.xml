@@ -126,4 +126,5 @@
     <string name="verify_username">用户名</string>
     <string name="verify_sex_male">男生</string>
     <string name="verify_sex_female">女生</string>
+    <string name="verify_sex_profile">选择头像&#038;性别</string>
 </resources>

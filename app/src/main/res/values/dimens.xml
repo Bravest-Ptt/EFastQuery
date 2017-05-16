@@ -38,4 +38,9 @@
 
     <!--register-->
     <dimen name="register_app_name_padding">30dp</dimen>
+
+    <!--verify profile-->
+    <dimen name="verify_profile_width">96dp</dimen>
+    <dimen name="verify_profile_border_width">2dp</dimen>
+    <dimen name="verify_profile_margin">24dp</dimen>
 </resources>

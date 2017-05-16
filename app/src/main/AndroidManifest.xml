@@ -80,7 +80,10 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Login" />
-        <activity android:name=".activity.RegisterVerifyActivity"></activity>
+        <activity android:name=".activity.RegisterVerifyActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Login" />
     </application>
 
 </manifest>

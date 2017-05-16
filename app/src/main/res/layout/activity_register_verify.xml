@@ -9,6 +9,7 @@
     android:paddingRight="@dimen/register_app_name_padding">
 
     <ImageView
+        android:id="@+id/imageView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
@@ -18,6 +19,7 @@
         android:id="@+id/verification_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:textColorHint="@color/white">
 
         <EditText
@@ -29,6 +31,58 @@
             android:textColor="@color/white"
             android:textColorHint="#dedede" />
     </android.support.design.widget.TextInputLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/sex_profile_panel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColorHint="@color/white">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:clickable="false"
+                android:enabled="false"
+                android:focusable="false"
+                android:hint="@string/verify_sex_profile"
+                android:inputType="numberDecimal"
+                android:textColor="@color/white"
+                android:textColorHint="#dedede" />
+        </android.support.design.widget.TextInputLayout>
+
+        <LinearLayout
+            android:id="@+id/verify_sex_profile_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/sex_profile_panel"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/male_profile_image"
+                android:layout_width="@dimen/verify_profile_width"
+                android:layout_height="@dimen/verify_profile_width"
+                android:layout_gravity="center"
+                android:src="@mipmap/ic_launcher"
+                app:civ_border_color="@color/splash_1000"
+                app:civ_border_width="@dimen/verify_profile_border_width" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/female_profile_image"
+                android:layout_width="@dimen/verify_profile_width"
+                android:layout_height="@dimen/verify_profile_width"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="@dimen/verify_profile_margin"
+                android:src="@mipmap/female"
+                app:civ_border_color="@color/splash_1000"
+                app:civ_border_width="@dimen/verify_profile_border_width" />
+        </LinearLayout>
+    </RelativeLayout>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/username_panel"
@@ -45,10 +99,11 @@
     </android.support.design.widget.TextInputLayout>
 
     <RadioGroup
-        android:layout_marginTop="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <android.support.v7.widget.AppCompatRadioButton
             android:id="@+id/user_sex_male"
@@ -63,9 +118,9 @@
 
         <android.support.v7.widget.AppCompatRadioButton
             android:id="@+id/user_sex_female"
-            android:layout_gravity="center_vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:text="@string/verify_sex_female"
             android:textColor="@color/white"
@@ -77,6 +132,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:clickable="true"
         android:gravity="center_horizontal"
         android:text="@string/register"
         android:textColor="@color/selector_send_code"
