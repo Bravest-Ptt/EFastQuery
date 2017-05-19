@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/toolbar_confirm_width"
+    android:layout_height="@dimen/toolbar_confirm_height"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/toolbar_confirm"
+        android:layout_width="@dimen/toolbar_confirm_width"
+        android:layout_height="@dimen/toolbar_confirm_height"
+        android:background="@drawable/login_selector"
+        android:text="@string/import_confirm"
+        android:textColor="@color/white" />
+</LinearLayout>

@@ -43,4 +43,8 @@
     <dimen name="verify_profile_width">96dp</dimen>
     <dimen name="verify_profile_border_width">2dp</dimen>
     <dimen name="verify_profile_margin">24dp</dimen>
+
+    <!--toolbar height-->
+    <dimen name="toolbar_confirm_width">50dp</dimen>
+    <dimen name="toolbar_confirm_height">30dp</dimen>
 </resources>

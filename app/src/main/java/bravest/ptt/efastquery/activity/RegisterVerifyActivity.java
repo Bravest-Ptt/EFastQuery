@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import bravest.ptt.androidlib.activity.BaseActivity;
 import bravest.ptt.androidlib.utils.plog.PLog;
@@ -15,6 +16,10 @@ import bravest.ptt.efastquery.entity.User;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RegisterVerifyActivity extends BaseActivity {
+
+    public static final int REQUEST_CODE = 1001;
+
+    public static final String PROFILE_URL = "profile_url";
 
     private EditText mVerifyCodeEditor;
 
@@ -99,8 +104,28 @@ public class RegisterVerifyActivity extends BaseActivity {
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        PLog.log("REQUEST_CODE = " + requestCode);
+        if (data == null) {
+            PLog.log("data is null");
+            return;
+        }
+        if (requestCode == REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                String url = data.getStringExtra(PROFILE_URL);
+                PLog.log("url = " + url);
+            } else if (resultCode == RESULT_CANCELED) {
+                PLog.log("profile canceled");
+            }
+        }
+    }
+
     private void handleMaleImageClick() {
         PLog.log("handleMaleImageClick");
+        startActivityForResult(new Intent(mActivity, ClipImageActivity.class),
+                REQUEST_CODE);
     }
 
     private void handleMaleImageLongClick() {
