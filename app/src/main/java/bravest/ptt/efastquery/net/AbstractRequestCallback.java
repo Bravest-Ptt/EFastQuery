@@ -26,15 +26,11 @@ public abstract class AbstractRequestCallback implements RequestCallback {
     @Override
     public void onFail(String errorMessage) {
         DialogUtils.showAlert(mContext
-                , R.style.Dialog_Error
+                , R.style.Dialog_Confirm_Blue
                 , "Error"
                 , errorMessage
                 , "OK"
-                , new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                }
+                , null
                 , null
                 , null
         );

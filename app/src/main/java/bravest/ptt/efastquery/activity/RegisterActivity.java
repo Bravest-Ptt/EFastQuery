@@ -102,7 +102,7 @@ public class RegisterActivity extends BaseActivity {
         mRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               //handleRequestSmsCode();
+              // handleRequestSmsCode();
                 startVerifyActivity(null);
             }
         });

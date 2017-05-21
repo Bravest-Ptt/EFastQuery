@@ -144,12 +144,12 @@ public abstract class OkHttpRequest implements Runnable {
                     //FormBody postBody = getFormBody(parameter);
                     RequestBody postBody = RequestBody.create(TYPE_JSON, param.getBody());
                     Log.d(TAG, "run: postBody = " + postBody);
-                    request = new Request.Builder().url(url).post(postBody).build();
+                    request = new Request.Builder().url(newUrl).post(postBody).build();
                     break;
                 case REQUEST_PUT:
                     //FormBody putBody = getFormBody(parameter);
                     RequestBody putBody = RequestBody.create(TYPE_JSON, param.getBody());
-                    request = new Request.Builder().url(url).put(putBody).build();
+                    request = new Request.Builder().url(newUrl).put(putBody).build();
                     break;
                 default:
                     break;

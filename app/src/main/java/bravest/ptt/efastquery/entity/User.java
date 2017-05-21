@@ -61,6 +61,8 @@ public class User implements Serializable{
 
     private Number counter;
 
+    private String smsCode;
+
     public User(String username, String password) {
         this.username = username;
         this.password = password;
@@ -171,6 +173,14 @@ public class User implements Serializable{
 
     public void setCounter(Number counter) {
         this.counter = counter;
+    }
+
+    public String getSmsCode() {
+        return smsCode;
+    }
+
+    public void setSmsCode(String smsCode) {
+        this.smsCode = smsCode;
     }
 
     @Override

@@ -134,4 +134,7 @@
     <string name="verify_please_input_code">请输入验证码</string>
     <string name="verify_please_input_name">请输入用户名</string>
     <string name="verify_please_choose_profile">选个头像吧</string>
+    <string name="verify_user_name_used">该用户名已被使用！</string>
+    <string name="register_success">注册成功</string>
+    <string name="register_failed">注册失败</string>
 </resources>

@@ -118,16 +118,20 @@ public class BmobHttpRequest extends OkHttpRequest {
                     requestBuilder.header(BmobConstants.X_BMOB_CONTENT_TYPE, data.getContentType());
                 }
 
-                String token = PreferencesUtils.getString(mContext, BmobConstants.BMOB_SESSION_KEY);
+                String token = PreferencesUtils.getString(mContext,
+                        BmobConstants.PREF_USER,
+                        BmobConstants.PREF_KEY_TOKEN);
                 if (!TextUtils.isEmpty(token)) {
                     Log.d(TAG, "intercept: token = " + token);
                     requestBuilder.header(BmobConstants.X_BMOB_SESSION_TOKEN, token);
                 }
 
+                Log.d(TAG, "intercept: method = " + originalRequest.method() + ", body = " + originalRequest.body());
                 requestBuilder.header(BmobConstants.X_BMOB_APP_ID, JNIUtils.getApplicationId())
                         .header(BmobConstants.X_BMOB_REST_API_KEY, JNIUtils.getRestAPIKey())
                         .method(originalRequest.method(), originalRequest.body());
                 Request request = requestBuilder.build();
+                Log.d(TAG, "intercept: JNIUtils.getApplicationId()c = " + JNIUtils.getApplicationId() + ", X_BMOB_REST_API_KEY = " + JNIUtils.getRestAPIKey());
                 return chain.proceed(request);
             }
         };

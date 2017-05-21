@@ -188,7 +188,7 @@
         <item name="android:backgroundDimEnabled">true</item><!--模糊-->
     </style>
 
-    <style name="Dialog_Error" parent="AlertDialog.AppCompat.Light">
+    <style name="Dialog_Error" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorAccent">@color/login_pressed</item>
     </style>
 

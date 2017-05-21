@@ -11,8 +11,10 @@ public class BmobConstants {
 	public static final String X_BMOB_CONTENT_TYPE = "Content-Type";
 	public static final String X_BMOB_SESSION_TOKEN = "X-Bmob-Session-Token";
 
-    public static final String BMOB_PREFERENCE_FILE = "efastquery_shared_pref";
-
     //session token shared preference key
-	public static final String BMOB_SESSION_KEY = "session_token";
+	public static final String PREF_USER = "efastquery_user";
+
+	public static final String PREF_KEY_USER = "user_object";
+
+	public static final String PREF_KEY_TOKEN = "session_token";
 }
