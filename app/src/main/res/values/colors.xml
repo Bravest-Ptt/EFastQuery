@@ -73,6 +73,9 @@
     <color name="login_pressed">#fb8c00</color>
     <color name="login_disabled">#55ffffff</color>
     <color name="transparent">#00000000</color>
+
+    <color name="blue">#4674e7</color>
+    <color name="blue_dark">#aa4674e7</color>
 </resources>
 
 

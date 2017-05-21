@@ -4,15 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/splash_800"
+    android:orientation="vertical"
     tools:context="bravest.ptt.efastquery.activity.ClipImageActivity">
 
     <include
-        android:id="@+id/toolbar"
-        layout="@layout/toobar_layout"/>
+        layout="@layout/toobar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <ImageView
+        android:src="@mipmap/female"
         android:id="@+id/src_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:scaleType="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </LinearLayout>

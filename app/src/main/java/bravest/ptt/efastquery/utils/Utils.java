@@ -3,6 +3,7 @@ package bravest.ptt.efastquery.utils;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,12 +11,16 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
@@ -23,6 +28,12 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -38,6 +49,8 @@ import bravest.ptt.efastquery.R;
  */
 
 public class Utils {
+
+    private static final String TAG = "Utils";
 
     public static int dp2px(int dp) {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
@@ -232,5 +245,98 @@ public class Utils {
                 builder.show();
             }
         }
+    }
+
+    /**
+     * 加载本地图片
+     * http://bbs.3gstdy.com
+     *
+     * @param url
+     * @return
+     */
+    public static Bitmap getLocalBitmap(String url) {
+        try {
+            FileInputStream fis = new FileInputStream(url);
+            return BitmapFactory.decodeStream(fis);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Log.d(TAG, "getLocalBitmap:  " + Log.getStackTraceString(e));
+            return null;
+        }
+    }
+
+    /**
+     * 把 content 类型的uri 转换为 file 类型的 uri （其实，就是通过content类型的uri
+     * 解释为bitmap，然后保存在sd卡中，通过保存路径来获得file类型额uri）
+     *
+     * @param uri
+     * @return
+     */
+    public static Uri convertUri(Context context, Uri uri) {
+        InputStream is = null;
+        try {
+            is = context.getContentResolver().openInputStream(uri);
+            Bitmap bitmap = BitmapFactory.decodeStream(is);
+            is.close();
+            return saveBitmap(context, bitmap);
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * 把 Bitmap 保存在SD卡路径后，返回file 类型的 uri
+     *
+     * @param bm
+     * @return
+     */
+    public static Uri saveBitmap(Context context, Bitmap bm) {
+        File tmDir = new File(Environment.getExternalStorageDirectory()
+                + "/" + context.getString(R.string.app_name));
+        if (!tmDir.exists()) {
+            tmDir.mkdir();
+        }
+        File img = new File(tmDir.getAbsolutePath() + "/tmp.png");
+        try {
+            FileOutputStream fos = new FileOutputStream(img);
+            bm.compress(Bitmap.CompressFormat.PNG, 85, fos);
+            fos.flush();
+            fos.close();
+            return Uri.fromFile(img);
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Bitmap getBitmapFromUri(Context context, Uri uri) {
+        try {
+            // 读取uri所在的图片
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+            return bitmap;
+        } catch (Exception e) {
+            Log.e("[Android]", e.getMessage());
+            Log.e("[Android]", "目录为：" + uri);
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static ProgressDialog newFullScreenProgressDialog(Context context) {
+        ProgressDialog dialog = new ProgressDialog(context, R.style.NoBorderProgressDialog);
+        dialog.setCancelable(false);
+        dialog.setIndeterminate(true);
+        return dialog;
     }
 }

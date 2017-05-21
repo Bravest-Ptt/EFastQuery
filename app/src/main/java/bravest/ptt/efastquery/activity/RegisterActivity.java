@@ -84,11 +84,7 @@ public class RegisterActivity extends BaseActivity {
 
     @Override
     protected void initVariables() {
-        mWaitingDialog = new ProgressDialog(this, R.style.NoBorderProgressDialog);
-        mWaitingDialog.setCancelable(false);
-        //mWaitingDialog.setContentView(R.layout.dialog_progress);
-        mWaitingDialog.setIndeterminate(true);
-        //mWaitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mWaitingDialog = Utils.newFullScreenProgressDialog(this);
     }
 
     @Override

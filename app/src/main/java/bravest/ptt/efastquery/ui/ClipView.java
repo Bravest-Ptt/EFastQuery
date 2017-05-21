@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -13,6 +14,8 @@ import android.view.View;
  */
 
 public class ClipView extends View {
+
+    private static final String TAG = "ClipView";
 
     private Paint paint = new Paint();
     private Paint borderPaint = new Paint();
@@ -24,7 +27,7 @@ public class ClipView extends View {
     /**
      * 裁剪框长宽比，默认4：3
      */
-    private double clipRatio = 0.75;
+    private double clipRatio = 1;
     /**
      * 裁剪框宽度
      */
@@ -88,6 +91,8 @@ public class ClipView extends View {
             clipTopMargin = (height - clipHeight) / 2;
         }
 
+        Log.d(TAG, "onDraw: clipHeight = " + clipHeight + ", clipWidth = " +clipWidth);
+        Log.d(TAG, "onDraw: clipLeftMargin = " + clipLeftMargin + " , " + clipTopMargin);
         // 防止横屏时，覆盖标题栏
         if (clipTopMargin <= customTopBarHeight) {
             clipTopMargin = customTopBarHeight + 20;

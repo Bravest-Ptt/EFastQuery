@@ -32,6 +32,20 @@
             android:textColorHint="#dedede" />
     </android.support.design.widget.TextInputLayout>
 
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/username_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColorHint="@color/white">
+
+        <EditText
+            android:id="@+id/username_editor"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="@string/verify_username"
+            android:textColor="@color/white" />
+    </android.support.design.widget.TextInputLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -43,13 +57,11 @@
             android:textColorHint="@color/white">
 
             <EditText
+                android:id="@+id/sex_profile_editor"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:clickable="false"
-                android:enabled="false"
                 android:focusable="false"
-                android:hint="@string/verify_sex_profile"
-                android:inputType="numberDecimal"
                 android:textColor="@color/white"
                 android:textColorHint="#dedede" />
         </android.support.design.widget.TextInputLayout>
@@ -68,8 +80,9 @@
                 android:layout_width="@dimen/verify_profile_width"
                 android:layout_height="@dimen/verify_profile_width"
                 android:layout_gravity="center"
-                android:src="@mipmap/ic_launcher"
+                android:src="@mipmap/male"
                 app:civ_border_color="@color/splash_1000"
+                android:padding="@dimen/margin_dp_4"
                 app:civ_border_width="@dimen/verify_profile_border_width" />
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -77,55 +90,12 @@
                 android:layout_width="@dimen/verify_profile_width"
                 android:layout_height="@dimen/verify_profile_width"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="@dimen/verify_profile_margin"
                 android:src="@mipmap/female"
+                android:padding="@dimen/margin_dp_4"
                 app:civ_border_color="@color/splash_1000"
                 app:civ_border_width="@dimen/verify_profile_border_width" />
         </LinearLayout>
     </RelativeLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/username_panel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColorHint="@color/white">
-
-        <EditText
-            android:id="@+id/username_editor"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:hint="@string/verify_username"
-            android:textColor="@color/white" />
-    </android.support.design.widget.TextInputLayout>
-
-    <RadioGroup
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:orientation="horizontal"
-        android:visibility="gone">
-
-        <android.support.v7.widget.AppCompatRadioButton
-            android:id="@+id/user_sex_male"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:checked="true"
-            android:text="@string/verify_sex_male"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
-
-        <android.support.v7.widget.AppCompatRadioButton
-            android:id="@+id/user_sex_female"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:text="@string/verify_sex_female"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
-    </RadioGroup>
 
     <TextView
         android:id="@+id/register"

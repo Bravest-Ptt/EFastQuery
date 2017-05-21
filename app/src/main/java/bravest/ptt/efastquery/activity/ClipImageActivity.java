@@ -1,17 +1,26 @@
 package bravest.ptt.efastquery.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
+import android.support.v7.util.AsyncListUtil;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -21,11 +30,17 @@ import android.widget.LinearLayout;
 import java.io.ByteArrayOutputStream;
 
 import bravest.ptt.androidlib.activity.BaseActivity;
+import bravest.ptt.androidlib.utils.ToastUtils;
 import bravest.ptt.androidlib.utils.plog.PLog;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.ui.ClipView;
+import bravest.ptt.efastquery.utils.Utils;
+
+import static bravest.ptt.efastquery.activity.RegisterVerifyActivity.PROFILE_URL;
 
 public class ClipImageActivity extends BaseActivity implements View.OnTouchListener {
+
+    private static final String TAG = "ClipImageActivity";
 
     private ImageView mSrcImage;
     private View mConfirm;
@@ -54,28 +69,34 @@ public class ClipImageActivity extends BaseActivity implements View.OnTouchListe
 
     private Toolbar mToolbar;
 
+    private String mUrl;
     @Override
     protected void initVariables() {
-
+        Intent intent = getIntent();
+        if (intent != null) {
+            mUrl = intent.getStringExtra(PROFILE_URL);
+        }
     }
 
     @Override
     protected void initViews(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.activity_clip_image);
 
-        //init toolbar
-        mToolbar=(Toolbar)findViewById(R.id.toolbar);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        //init toolbar confirm button
+        mConfirm = this.findViewById(R.id.toolbar_confirm);
+        mConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setResult(RESULT_CANCELED);
-                onBackPressed();
+                new SaveAsyncTask().execute();
             }
         });
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        lp.gravity= Gravity.RIGHT;
-        mToolbar.addView(mTopSpinner,lp);
+
+        //init toolbar
+        mToolbar=(Toolbar)findViewById(R.id.toolbar);
+        mToolbar.setTitle(getString(R.string.verify_clip_profile));
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
         mSrcImage = (ImageView) this.findViewById(R.id.src_image);
         mSrcImage.setOnTouchListener(this);
@@ -88,31 +109,10 @@ public class ClipImageActivity extends BaseActivity implements View.OnTouchListe
                 initClipView(mSrcImage.getTop());
             }
         });
-
-        mConfirm = (View) this.findViewById(R.id.confirm);
-        mConfirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleConfirm();
-            }
-        });
     }
 
     @Override
     protected void initData() {
-    }
-
-    private void handleConfirm() {
-//        Bitmap clipBitmap = getBitmap();
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        clipBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//        byte[] bitmapByte = baos.toByteArray();
-//
-//        Intent intent = new Intent();
-//        intent.setClass(getApplicationContext(), .class);
-//        intent.putExtra("bitmap", bitmapByte);
-//
-//        startActivity(intent);
     }
 
     /**
@@ -121,8 +121,19 @@ public class ClipImageActivity extends BaseActivity implements View.OnTouchListe
      * @param top
      */
     private void initClipView(int top) {
-        mBitmap = BitmapFactory.decodeResource(this.getResources(),
-                R.mipmap.female);
+        Log.d(TAG, "initClipView: top = " + top);
+        if (TextUtils.isEmpty(mUrl)) {
+            Log.d(TAG, "initClipView: error happened url is null!");
+            onBackPressed();
+        }
+        Log.d(TAG, "initClipView: mUrl = " + mUrl);
+        Uri uri = Uri.parse(mUrl);
+        mBitmap = Utils.getBitmapFromUri(mContext, uri);
+
+        if (mBitmap == null) {
+            Log.d(TAG, "initClipView: error happened : bitmap is null!");
+            onBackPressed();
+        }
         mClipView = new ClipView(ClipImageActivity.this);
         mClipView.setCustomTopBarHeight(top);
         mClipView.addOnDrawCompleteListener(new ClipView.OnDrawListenerComplete() {
@@ -158,8 +169,9 @@ public class ClipImageActivity extends BaseActivity implements View.OnTouchListe
             }
         });
 
-        this.addContentView(mClipView, new LayoutParams(
-                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        this.addContentView(mClipView,params);
     }
 
     public boolean onTouch(View v, MotionEvent event) {
@@ -255,6 +267,63 @@ public class ClipImageActivity extends BaseActivity implements View.OnTouchListe
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        setResult(RESULT_CANCELED);
         PLog.log("onBackPressed");
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId()==android.R.id.home){
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private class SaveAsyncTask extends AsyncTask {
+
+        private ProgressDialog dialog;
+
+        public SaveAsyncTask() {
+            dialog = Utils.newFullScreenProgressDialog(mContext);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.show();
+        }
+
+        @Override
+        protected Object doInBackground(Object[] params) {
+            //handleConfirm();
+            Bitmap result = getBitmap();
+            Uri uri = Utils.saveBitmap(mContext, result);
+            if (uri == null) {
+                PLog.d(TAG, "uri result in saveBitmap is null");
+                onBackPressed();
+                 return null;
+            }
+
+            return uri;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+            int result = RESULT_CANCELED;
+            Intent data = new Intent();
+            if (o == null) {
+                ToastUtils.showToast(mContext, getString(R.string.verify_clip_profile_failed));
+            } else {
+                Uri uri = (Uri) o;
+                result = RESULT_OK;
+                PLog.d(TAG, "result uri = " + uri);
+                data.putExtra(PROFILE_URL, uri.toString());
+            }
+            setResult(result, data);
+            dialog.dismiss();
+            finish();
+        }
     }
 }

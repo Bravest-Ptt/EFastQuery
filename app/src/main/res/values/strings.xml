@@ -127,4 +127,11 @@
     <string name="verify_sex_male">男生</string>
     <string name="verify_sex_female">女生</string>
     <string name="verify_sex_profile">选择头像&#038;性别</string>
+    <string name="verify_sex_rechoose">长按头像可重选</string>
+
+    <string name="verify_clip_profile">裁剪头像</string>
+    <string name="verify_clip_profile_failed">选取头像失败</string>
+    <string name="verify_please_input_code">请输入验证码</string>
+    <string name="verify_please_input_name">请输入用户名</string>
+    <string name="verify_please_choose_profile">选个头像吧</string>
 </resources>
