@@ -181,9 +181,10 @@ public class RegisterVerifyActivity extends BaseActivity {
                             Utils.getBitmapFromUri(mContext, Uri.parse(uri)));
                 }
 
-//              使用Glide会导致有图片缓存,why?
+              //使用Glide会导致有图片缓存,why?
 //                Glide.with(mActivity)
 //                        .load(Uri.parse(uri))
+//                        .skipMemoryCache(true)
 //                        .diskCacheStrategy(DiskCacheStrategy.NONE)
 //                        .into(mMaleImageView);
             } else if (resultCode == RESULT_CANCELED) {
