@@ -69,4 +69,11 @@
         Url="https://api.bmob.cn/1/users" />
 
 
+    <!--上传JPG图片-->
+    <Node
+        ContentType="image/jpeg"
+        Expires="0"
+        Key="uploadJPGImage"
+        NetType="POST"
+        Url="https://api.bmob.cn/2/files" />
 </url>

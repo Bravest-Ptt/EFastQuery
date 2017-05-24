@@ -27,6 +27,9 @@ import android.widget.ImageView;
 import android.support.v7.widget.Toolbar;
 import android.widget.LinearLayout;
 
+import com.zxy.tiny.Tiny;
+import com.zxy.tiny.callback.FileCallback;
+
 import java.io.ByteArrayOutputStream;
 
 import bravest.ptt.androidlib.activity.BaseActivity;
@@ -49,18 +52,30 @@ public class ClipImageActivity extends BaseActivity implements View.OnTouchListe
     private Matrix mMatrix = new Matrix();
     private Matrix mSavedMatrix = new Matrix();
 
-    /** 动作标志：无 */
+    /**
+     * 动作标志：无
+     */
     private static final int NONE = 0;
-    /** 动作标志：拖动 */
+    /**
+     * 动作标志：拖动
+     */
     private static final int DRAG = 1;
-    /** 动作标志：缩放 */
+    /**
+     * 动作标志：缩放
+     */
     private static final int ZOOM = 2;
-    /** 初始化动作标志 */
+    /**
+     * 初始化动作标志
+     */
     private int mMode = NONE;
 
-    /** 记录起始坐标 */
+    /**
+     * 记录起始坐标
+     */
     private PointF mStart = new PointF();
-    /** 记录缩放时两指中间点坐标 */
+    /**
+     * 记录缩放时两指中间点坐标
+     */
     private PointF mMid = new PointF();
 
     private float mOldDist = 1f;
@@ -70,6 +85,7 @@ public class ClipImageActivity extends BaseActivity implements View.OnTouchListe
     private Toolbar mToolbar;
 
     private String mUrl;
+
     @Override
     protected void initVariables() {
         Intent intent = getIntent();
@@ -92,7 +108,7 @@ public class ClipImageActivity extends BaseActivity implements View.OnTouchListe
         });
 
         //init toolbar
-        mToolbar=(Toolbar)findViewById(R.id.toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setTitle(getString(R.string.verify_clip_profile));
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -171,7 +187,7 @@ public class ClipImageActivity extends BaseActivity implements View.OnTouchListe
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        this.addContentView(mClipView,params);
+        this.addContentView(mClipView, params);
     }
 
     public boolean onTouch(View v, MotionEvent event) {
@@ -273,7 +289,7 @@ public class ClipImageActivity extends BaseActivity implements View.OnTouchListe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId()==android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             onBackPressed();
             return true;
         }
@@ -283,6 +299,21 @@ public class ClipImageActivity extends BaseActivity implements View.OnTouchListe
     private class SaveAsyncTask extends AsyncTask {
 
         private ProgressDialog dialog;
+
+        private void saveFileFailed() {
+            ToastUtils.showToast(mContext, getString(R.string.verify_clip_profile_failed));
+            setResult(RESULT_CANCELED, new Intent());
+            dialog.dismiss();
+            finish();
+        }
+
+        private void saveFileSuccess(String file) {
+            Intent data = new Intent();
+            data.putExtra(PROFILE_URL, file);
+            setResult(RESULT_OK, data);
+            dialog.dismiss();
+            finish();
+        }
 
         public SaveAsyncTask() {
             dialog = Utils.newFullScreenProgressDialog(mContext);
@@ -296,34 +327,43 @@ public class ClipImageActivity extends BaseActivity implements View.OnTouchListe
 
         @Override
         protected Object doInBackground(Object[] params) {
-            //handleConfirm();
             Bitmap result = getBitmap();
-            Uri uri = Utils.saveBitmap(mContext, result);
-            if (uri == null) {
+            if (result == null) {
                 PLog.d(TAG, "uri result in saveBitmap is null");
                 onBackPressed();
-                 return null;
+                return null;
             }
-
-            return uri;
+            return result;
         }
 
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
-            int result = RESULT_CANCELED;
-            Intent data = new Intent();
+            final Bitmap resultBitmap = (Bitmap) o;
             if (o == null) {
-                ToastUtils.showToast(mContext, getString(R.string.verify_clip_profile_failed));
-            } else {
-                Uri uri = (Uri) o;
-                result = RESULT_OK;
-                PLog.d(TAG, "result uri = " + uri);
-                data.putExtra(PROFILE_URL, uri.toString());
+                saveFileFailed();
+                return;
             }
-            setResult(result, data);
-            dialog.dismiss();
-            finish();
+
+            //Compress the image.
+            Tiny.FileCompressOptions options = new Tiny.FileCompressOptions();
+            Tiny.getInstance()
+                    .source(resultBitmap)
+                    .asFile()
+                    .withOptions(options)
+                    .compress(new FileCallback() {
+                        @Override
+                        public void callback(boolean isSuccess, String outfile) {
+                            //return the compressed file path
+                            Log.d(TAG, "callback: success = " + isSuccess);
+                            Log.d(TAG, "callback: outFile = " + outfile);
+                            if (isSuccess) {
+                                saveFileSuccess(outfile);
+                            } else {
+                                saveFileFailed();
+                            }
+                        }
+                    });
         }
     }
 }

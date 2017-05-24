@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
@@ -22,6 +23,7 @@ import org.w3c.dom.Text;
 
 import java.net.URI;
 import java.net.URL;
+import java.util.UUID;
 
 import bravest.ptt.androidlib.activity.BaseActivity;
 import bravest.ptt.androidlib.net.RemoteService;
@@ -32,10 +34,12 @@ import bravest.ptt.androidlib.utils.ToastUtils;
 import bravest.ptt.androidlib.utils.bmob.BmobConstants;
 import bravest.ptt.androidlib.utils.plog.PLog;
 import bravest.ptt.efastquery.R;
+import bravest.ptt.efastquery.entity.ProfileEntity;
 import bravest.ptt.efastquery.entity.SmsCodeEntity;
 import bravest.ptt.efastquery.entity.User;
 import bravest.ptt.efastquery.net.AbstractRequestCallback;
 import bravest.ptt.efastquery.utils.API;
+import bravest.ptt.efastquery.utils.UserUtils;
 import bravest.ptt.efastquery.utils.Utils;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -73,6 +77,8 @@ public class RegisterVerifyActivity extends BaseActivity {
     private String mPassword;
 
     private ProgressDialog mDialog;
+
+    private String mProfilePath;
 
     @Override
     protected void initVariables() {
@@ -170,23 +176,25 @@ public class RegisterVerifyActivity extends BaseActivity {
             }
         } else if (requestCode == REQUEST_CODE_CLIP) {
             if (resultCode == RESULT_OK) {
-                String uri = data.getStringExtra(PROFILE_URL);
-                PLog.log("uri = " + uri);
+                String file = data.getStringExtra(PROFILE_URL);
+                mProfilePath = file;
+                PLog.log("file = " + file);
                 mIsProfileDone = true;
+                ImageView profile;
                 if (mIsMale) {
-                    mMaleImageView.setImageBitmap(
-                            Utils.getBitmapFromUri(mContext, Uri.parse(uri)));
+                    profile = mMaleImageView;
+//                    mMaleImageView.setImageBitmap(
+//                            Utils.getBitmapFromUri(mContext, Uri.parse(uri)));
                 } else {
-                    mFemaleImageView.setImageBitmap(
-                            Utils.getBitmapFromUri(mContext, Uri.parse(uri)));
+                    profile = mFemaleImageView;
                 }
 
-              //使用Glide会导致有图片缓存,why?
-//                Glide.with(mActivity)
-//                        .load(Uri.parse(uri))
-//                        .skipMemoryCache(true)
-//                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-//                        .into(mMaleImageView);
+                //使用Glide会导致有图片缓存,why? 因为开启了内存缓存
+                Glide.with(mActivity)
+                        .load(file)
+                        .skipMemoryCache(true)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .into(profile);
             } else if (resultCode == RESULT_CANCELED) {
                 mIsProfileDone = false;
                 PLog.log("profile canceled");
@@ -245,7 +253,9 @@ public class RegisterVerifyActivity extends BaseActivity {
             return;
         }
 
-        //第二步，验证验证码是否正确
+        //第二步，验证用户名是否被使用
+        //为什么不验证验证码是否正确是因为，一旦验证正确，这时候验证码就是失效。
+        // 但是用户名被使用是不允许的。
         mDialog.show();
 //        if (mSmsCodeEntity == null) {
 //            PLog.d(TAG, "mSmsEntity is null, error!");
@@ -253,50 +263,42 @@ public class RegisterVerifyActivity extends BaseActivity {
 //            mDialog.dismiss();
 //            return;
 //        }
+//
+//        PLog.log(mSmsCodeEntity);
+//        mSmsCodeEntity = new SmsCodeEntity();
+//        mSmsCodeEntity.setMobilePhoneNumber("13057538162");
+//        PLog.log(JSON.toJSONString(mSmsCodeEntity));
+//        User user = new User();
+//        user.setMobilePhoneNumber("13057538162");
+//        user.setObjectId("1234");
+//        user.setUsername("nishisishu");
+//        ProfileEntity profileEntity = new ProfileEntity();
+//        profileEntity.setType("File");
+//        profileEntity.setCdn("helol");
+//        profileEntity.setFilename("heanf");
+//        profileEntity.setUrl("jada");
+//        user.setProfile(profileEntity);
+//        PLog.log(JSON.toJSONString(user));
 
-        PLog.log(mSmsCodeEntity);
-        SmsCodeEntity entity = new SmsCodeEntity();
-        entity.setMobilePhoneNumber("13057538162");
-        PLog.log(JSON.toJSONString(entity));
-        RequestParam param = new RequestParam(JSON.toJSONString(entity));
-        param.setObjectId(code);
+
+        User user = new User();
+        user.setUsername(name);
         RemoteService.getInstance().invoke(
                 mActivity,
-                API.VERIFY_SMS_CODE,
-                param,
+                API.IS_USER_NAME_USED,
+                new RequestParam(null, JSON.toJSONString(user)),
                 new AbstractRequestCallback(mContext) {
                     @Override
                     public void onSuccess(String content) {
-                        super.onSuccess(content);
-                        SmsCodeEntity entity = JSON.parseObject(content, SmsCodeEntity.class);
-                        if (entity != null && TextUtils.equals("OK", entity.getMsg())) {
-                            //第三步，用户名是否有人已经使用
-                            hasUserNameRegistered(
-                                    name,
-                                    new AbstractRequestCallback(mContext) {
-                                        @Override
-                                        public void onSuccess(String content) {
-                                            if (!TextUtils.isEmpty(content) &&
-                                                    content.contains(User.USERNAME)) {
-                                                ToastUtils.showToast(mContext,
-                                                        getString(R.string.verify_user_name_used));
-                                                mDialog.dismiss();
-                                            } else {
-                                                //第四步，注册用户(手机号，密码，用户名)，上传头像
-                                                registerUserAndUploadProfile();
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onFail(String errorMessage) {
-                                            super.onFail(errorMessage);
-                                            mDialog.dismiss();
-                                        }
-                                    }
-                            );
-                        } else {
-                            PLog.log("verify sms code error, onsuccess but body is not ok");
+                        if (!TextUtils.isEmpty(content) &&
+                                content.contains(User.USERNAME)) {
+                            ToastUtils.showToast(mContext,
+                                    getString(R.string.verify_user_name_used));
                             mDialog.dismiss();
+                        } else {
+                            //第三步，上传用户信息并验证验证码是否正确
+                            //registerUserAndUploadProfile();
+                            uploadProfile();
                         }
                     }
 
@@ -315,23 +317,44 @@ public class RegisterVerifyActivity extends BaseActivity {
         //第六步，将用户信息保存在本地
     }
 
-    //第三步，用户名是否有人已经使用
-    private void hasUserNameRegistered(String userName, AbstractRequestCallback callback) {
-        final User user = new User();
-        user.setUsername(userName);
+    //第三步，验证验证码是否正确
+    private void verifySmsCode() {
+        RequestParam param = new RequestParam(JSON.toJSONString(mSmsCodeEntity));
+        param.setObjectId(mVerifyCodeEditor.getText().toString());
         RemoteService.getInstance().invoke(
                 mActivity,
-                API.IS_USER_NAME_USED,
-                new RequestParam(null, JSON.toJSONString(user)),
-                callback);
+                API.VERIFY_SMS_CODE,
+                param,
+                new AbstractRequestCallback(mContext) {
+                    @Override
+                    public void onSuccess(String content) {
+                        super.onSuccess(content);
+                        SmsCodeEntity entity = JSON.parseObject(content, SmsCodeEntity.class);
+                        if (entity != null && TextUtils.equals(BmobConstants.OK, entity.getMsg())) {
+                            //第四步，注册用户到系统中
+                            registerUserAndUploadProfile();
+                        } else {
+                            PLog.log("verify sms code error, onsuccess but body is not ok");
+                            mDialog.dismiss();
+                        }
+                    }
+
+                    @Override
+                    public void onFail(String errorMessage) {
+                        super.onFail(errorMessage);
+                        mDialog.dismiss();
+                    }
+                }
+        );
     }
 
-    //第四步，注册用户(手机号，密码，用户名)
+    //第三步，注册用户(手机号，密码，用户名)
     private void registerUserAndUploadProfile() {
+        Log.d(TAG, "registerUserAndUploadProfile: step 4");
         final User user = new User();
         user.setUsername(mUserNameEditor.getText().toString());
         user.setMobilePhoneNumber(mSmsCodeEntity.getMobilePhoneNumber());
-        user.setSmsCode(mSmsCodeEntity.getSmsId());
+        user.setSmsCode(mVerifyCodeEditor.getText().toString());
         user.setPassword(mPassword);
 
         RequestParam param = new RequestParam(JSON.toJSONString(user));
@@ -343,9 +366,11 @@ public class RegisterVerifyActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String content) {
                         super.onSuccess(content);
+                        Log.d(TAG, "onSuccess: content = " + content);
                         User resultUser = JSON.parseObject(content, User.class);
                         if (resultUser != null) {
                             //保存用户信息
+                            Log.d(TAG, "onSuccess: step 5");
                             storeUserInfo(resultUser);
                             //第五步，上传头像
                             uploadProfile();
@@ -383,6 +408,31 @@ public class RegisterVerifyActivity extends BaseActivity {
     //第五步，上传头像
     //TODO 压缩用户头像，然后再上传
     private void uploadProfile() {
+        //1、上传头像文件到服务器，并处理返回的头像json数据
+        //2、将头像实体关联到服务器对应用户的数据中
+        Log.d(TAG, "uploadProfile: step 5");
+        RequestParam param = new RequestParam(mProfilePath.substring(
+                mProfilePath.lastIndexOf('/') + 1), mProfilePath);
+        RemoteService.getInstance().invoke(
+                mActivity,
+                API.UPLOAD_JPG_IMAGE,
+                param,
+                new AbstractRequestCallback(mContext) {
+                    @Override
+                    public void onSuccess(String content) {
+                        super.onSuccess(content);
+                        Log.d(TAG, "onSuccess: content step 5 = " + content);
+                        ProfileEntity entity = JSON.parseObject(content, ProfileEntity.class);
+                        Log.d(TAG, "onSuccess: entity = " + entity);
+                    }
+
+                    @Override
+                    public void onFail(String errorMessage) {
+                        super.onFail(errorMessage);
+                        mDialog.dismiss();
+                    }
+                }
+        );
 
     }
 

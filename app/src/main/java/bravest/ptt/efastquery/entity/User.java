@@ -63,6 +63,8 @@ public class User implements Serializable{
 
     private String smsCode;
 
+    private ProfileEntity profile;
+
     public User(String username, String password) {
         this.username = username;
         this.password = password;
@@ -181,6 +183,14 @@ public class User implements Serializable{
 
     public void setSmsCode(String smsCode) {
         this.smsCode = smsCode;
+    }
+
+    public ProfileEntity getProfile() {
+        return profile;
+    }
+
+    public void setProfile(ProfileEntity profile) {
+        this.profile = profile;
     }
 
     @Override

@@ -46,11 +46,7 @@ public interface API {
     String IS_USER_NAME_USED = "isUserNameUsed";
 
     /**
-     * 上传png格式图片
+     * 上传JPG格式图片
      */
-    String UPLOAD_PNG_IMAGE = "uploadPngImage";
-
-    public interface BmobError {
-
-    }
+    String UPLOAD_JPG_IMAGE = "uploadJPGImage";
 }

@@ -100,5 +100,7 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
 
     //compress image
+    //tiny image compress framework
+    //https://github.com/Sunzxyong/Tiny/blob/master/README.md
     compile 'com.zxy.android:tiny:0.0.5'
 }

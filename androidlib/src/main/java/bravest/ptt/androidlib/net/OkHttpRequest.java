@@ -2,10 +2,12 @@ package bravest.ptt.androidlib.net;
 
 import android.content.Context;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +37,9 @@ public abstract class OkHttpRequest implements Runnable {
 
     public static final MediaType TYPE_JSON =
             MediaType.parse("application/json; charset=utf-8");
+
+    public static final MediaType TYPE_IMAGE_JPEG =
+            MediaType.parse("image/jpeg");
 
     public static final String REQUEST_GET = "GET";
 
@@ -79,8 +84,11 @@ public abstract class OkHttpRequest implements Runnable {
 
     private OkHttpClient.Builder okBuilder;
 
+    private MediaType mediaType;
+
     /**
      * get new url base on parameter
+     *
      * @param url
      * @param param
      * @return
@@ -89,6 +97,7 @@ public abstract class OkHttpRequest implements Runnable {
 
     /**
      * set http headers
+     *
      * @param okBuilder
      */
     protected abstract void setHttpHeaders(OkHttpClient.Builder okBuilder, final URLData data);
@@ -114,102 +123,115 @@ public abstract class OkHttpRequest implements Runnable {
         return call;
     }
 
+    private String getMediaTypeString(MediaType type) {
+        return type.toString();
+    }
+
+    private RequestBody getMediaTypeAndBody() {
+        String contentType = urlData.getContentType().toLowerCase();
+        RequestBody body;
+        if (getMediaTypeString(TYPE_IMAGE_JPEG).contains(contentType)) {
+            mediaType = TYPE_IMAGE_JPEG;
+            File file = new File(param.getBody());
+            body = RequestBody.create(mediaType, file);
+        } else if (getMediaTypeString(TYPE_JSON).contains(contentType)){
+            mediaType = TYPE_JSON;
+            body = RequestBody.create(mediaType, param.getBody());
+        } else {
+            mediaType = TYPE_JSON;
+            body = RequestBody.create(mediaType, param.getBody());
+        }
+        return body;
+    }
+
     @Override
     public void run() {
-//        try {
-            String type = urlData.getNetType().toUpperCase();
-            newUrl = getNewUrl(url, type, param);
-            switch (type) {
-                case REQUEST_GET:
-                    //TODO
-                    Log.i("newUrl", newUrl);
-                    // 如果这个get的API有缓存时间（大于0）直接返回缓存的数据
-                    if (urlData.getExpires() > 0) {
-                        final String content = CacheManager.getInstance().getFileCache(newUrl);
-                        if (content != null) {
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    requestCallback.onSuccess(content + "  Expires");
-                                }
-                            });
-                            //TODO should return ?
-                            return;
-                        }
-                    }
-                    //建立一个请求
-                    request = new Request.Builder().url(newUrl).build();
-                    break;
-                case REQUEST_POST:
-                    //FormBody postBody = getFormBody(parameter);
-                    RequestBody postBody = RequestBody.create(TYPE_JSON, param.getBody());
-                    Log.d(TAG, "run: postBody = " + postBody);
-                    request = new Request.Builder().url(newUrl).post(postBody).build();
-                    break;
-                case REQUEST_PUT:
-                    //FormBody putBody = getFormBody(parameter);
-                    RequestBody putBody = RequestBody.create(TYPE_JSON, param.getBody());
-                    request = new Request.Builder().url(newUrl).put(putBody).build();
-                    break;
-                default:
-                    break;
-            }
+        String type = urlData.getNetType().toUpperCase();
+        newUrl = getNewUrl(url, type, param);
 
-            okBuilder.connectTimeout(4000, TimeUnit.MILLISECONDS)
-                    .readTimeout(4000, TimeUnit.MILLISECONDS)
-                    .writeTimeout(4000, TimeUnit.MILLISECONDS);
-
-            //添加必要的头部信息
-            setHttpHeaders(okBuilder, urlData);
-
-            mOkHttpClient = okBuilder.build();
-
-            //发送请求
-            call = mOkHttpClient.newCall(request);
-            //结果回调
-            call.enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, final IOException e) {
-                    if (requestCallback != null) {
-
+        RequestBody body = getMediaTypeAndBody();
+        switch (type) {
+            case REQUEST_GET:
+                //TODO
+                Log.i("newUrl", newUrl);
+                // 如果这个get的API有缓存时间（大于0）直接返回缓存的数据
+                if (urlData.getExpires() > 0) {
+                    final String content = CacheManager.getInstance().getFileCache(newUrl);
+                    if (content != null) {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                //Todo 网络错误，没有网络连接
-                                PLog.log(e);
-                                handleNetworkError(context.getString(R.string.network_error));
+                                requestCallback.onSuccess(content + "  Expires");
                             }
                         });
-                    } else {
-                        // TODO: 2016/11/24  处理接口为空的情况
-                        PLog.log("api is null");
+                        //TODO should return ?
+                        return;
                     }
-
                 }
+                //建立一个请求
+                request = new Request.Builder().url(newUrl).build();
+                break;
+            case REQUEST_POST:
+                request = new Request.Builder().url(newUrl).post(body).build();
+                break;
+            case REQUEST_PUT:
+                request = new Request.Builder().url(newUrl).put(body).build();
+                break;
+            default:
+                break;
+        }
 
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    if (requestCallback != null) {
-                        //代表成功
-                        if (response.isSuccessful()) {
-                            //okHttp3 如果在头部中 添加了 gzip字段 会自动进行 gzip 解压 这里不在处理
-                            final String content = response.body().string();
-                            PLog.log("okhttprequest : onResponse : " + content);
-                            //当是get请求 并且缓存时间>0时 保存到缓存
-                            if (urlData.getNetType().equals(REQUEST_GET) && urlData.getExpires() > 0) {
-                                CacheManager.getInstance().putFileCache(newUrl, content, urlData.getExpires());
+        okBuilder.connectTimeout(4000, TimeUnit.MILLISECONDS)
+                .readTimeout(4000, TimeUnit.MILLISECONDS)
+                .writeTimeout(4000, TimeUnit.MILLISECONDS);
+
+        //添加必要的头部信息
+        setHttpHeaders(okBuilder, urlData);
+
+        mOkHttpClient = okBuilder.build();
+
+        //发送请求
+        call = mOkHttpClient.newCall(request);
+        //结果回调
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, final IOException e) {
+                if (requestCallback != null) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            PLog.log(e);
+                            handleNetworkError(context.getString(R.string.network_error));
+                        }
+                    });
+                } else {
+                    // TODO: 2016/11/24  处理接口为空的情况
+                    PLog.log("api is null");
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (requestCallback != null) {
+                    //代表成功
+                    if (response.isSuccessful()) {
+                        //okHttp3 如果在头部中 添加了 gzip字段 会自动进行 gzip 解压 这里不在处理
+                        final String content = response.body().string();
+                        PLog.log("okhttprequest : onResponse : " + content);
+                        //当是get请求 并且缓存时间>0时 保存到缓存
+                        if (urlData.getNetType().equals(REQUEST_GET) && urlData.getExpires() > 0) {
+                            CacheManager.getInstance().putFileCache(newUrl, content, urlData.getExpires());
+                        }
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                requestCallback.onSuccess(content);
                             }
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    requestCallback.onSuccess(content);
-                                }
-                            });
+                        });
 
+                        //final DataResponse dataResponse = JSON.parseObject(string, DataResponse.class);
 
-                            //final DataResponse dataResponse = JSON.parseObject(string, DataResponse.class);
-
-                            // 包含错误
+                        // 包含错误
 //                            if (dataResponse.hasError()) {
 //                                if (dataResponse.getErrorType() == 1) {
 //                                    handler.post(new Runnable() {
@@ -233,40 +255,23 @@ public abstract class OkHttpRequest implements Runnable {
 //                                    }
 //                                });
 //                            }
-                        } else {
-                            try {
-                                Log.d("DataResponse", "onResponse: = " + response.code() + ", " + response.message() + response.toString());
-                                String body = response.body().string();
-                                Log.d("DataResponse", "onResponse:  = " +  body);
-                                String errorMessage = JSON.parseObject(body).getString("error");
-                                handleNetworkError(errorMessage);
-                            } catch (Exception e) {
-                                PLog.log(e);
-                                handleNetworkError(context.getString(R.string.network_error));
-                            }
-                        }
                     } else {
-                        // TODO: 2016/11/24  处理接口为空的情况
+                        try {
+                            Log.d("DataResponse", "onResponse: = " + response.code() + ", " + response.message() + response.toString());
+                            String body = response.body().string();
+                            Log.d("DataResponse", "onResponse:  = " + body);
+                            String errorMessage = JSON.parseObject(body).getString("error");
+                            handleNetworkError(errorMessage);
+                        } catch (Exception e) {
+                            PLog.log(e);
+                            handleNetworkError(context.getString(R.string.network_error));
+                        }
                     }
+                } else {
+                    // TODO: 2016/11/24  处理接口为空的情况
                 }
-            });
-        //}
-//        catch (Exception e) {
-//            Log.d(TAG, "run: message exception = " + e.getMessage());
-//            handleNetworkError("网络异常1");
-//        }
-    }
-
-    private OkHttpRequest handleGetRequest() {
-        return null;
-    }
-
-    private OkHttpRequest handlePostRequest() {
-        return null;
-    }
-
-    private OkHttpRequest handlePutRequest() {
-        return null;
+            }
+        });
     }
 
     public void handleNetworkError(final String errorMsg) {
