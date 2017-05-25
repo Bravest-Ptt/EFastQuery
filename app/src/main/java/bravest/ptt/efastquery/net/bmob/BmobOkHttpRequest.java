@@ -1,26 +1,21 @@
-package bravest.ptt.androidlib.net.bmob;
+package bravest.ptt.efastquery.net.bmob;
 
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
-import org.json.JSONException;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Iterator;
-import java.util.List;
 
-import bravest.ptt.androidlib.net.OkHttpRequest;
+import bravest.ptt.androidlib.net.AbstractOkHttpRequest;
 import bravest.ptt.androidlib.net.RequestCallback;
 import bravest.ptt.androidlib.net.RequestParam;
 import bravest.ptt.androidlib.net.URLData;
-import bravest.ptt.androidlib.utils.BaseUtils;
 import bravest.ptt.androidlib.utils.bmob.BmobConstants;
 import bravest.ptt.androidlib.utils.JNIUtils;
-import bravest.ptt.androidlib.utils.PreferencesUtils;
 import bravest.ptt.androidlib.utils.plog.PLog;
+import bravest.ptt.efastquery.entity.User;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -30,13 +25,13 @@ import okhttp3.Response;
  * Created by root on 5/11/17.
  */
 
-public class BmobHttpRequest extends OkHttpRequest {
+public class BmobOkHttpRequest extends AbstractOkHttpRequest {
 
-    private static final String TAG = "BmobHttpRequest";
+    private static final String TAG = "BmobOkHttpRequest";
 
     private Context mContext;
 
-    public BmobHttpRequest(Context context, URLData data, RequestParam param, RequestCallback callBack) {
+    public BmobOkHttpRequest(Context context, URLData data, RequestParam param, RequestCallback callBack) {
         super(context, data, param, callBack);
         this.mContext = context;
     }
@@ -81,23 +76,6 @@ public class BmobHttpRequest extends OkHttpRequest {
 
             url = paramBuffer.toString();
             PLog.log("new url = " + url);
-
-//            if ((param != null) && (param.length() > 0)) {
-//                //sortKeys();// 这里要对key进行排序
-//                Iterator<String> keys = param.keys();
-//                while (keys.hasNext()) {
-//                    String key = keys.next();
-//                    String value = param.get(key).toString();
-//                    if (paramBuffer.length() == 0) {
-//                        paramBuffer.append(key + "=" + URLEncoder.encode(value, "utf-8"));
-//                    } else {
-//                        paramBuffer.append("&" + key + "=" + BaseUtils.UrlEncodeUnicode(value));
-//                    }
-//                }
-//                return url + "?" + paramBuffer.toString();
-//            } else {
-//                return url;
-//            }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             return url;
@@ -118,12 +96,13 @@ public class BmobHttpRequest extends OkHttpRequest {
                     requestBuilder.header(BmobConstants.X_BMOB_CONTENT_TYPE, data.getContentType());
                 }
 
-                String token = PreferencesUtils.getString(mContext,
-                        BmobConstants.PREF_USER,
-                        BmobConstants.PREF_KEY_TOKEN);
-                if (!TextUtils.isEmpty(token)) {
-                    Log.d(TAG, "intercept: token = " + token);
-                    requestBuilder.header(BmobConstants.X_BMOB_SESSION_TOKEN, token);
+                User user = User.getInstance(mContext);
+                if (user != null) {
+                    String token = user.getSessionToken();
+                    if (!TextUtils.isEmpty(token)) {
+                        Log.d(TAG, "intercept: token = " + token);
+                        requestBuilder.header(BmobConstants.X_BMOB_SESSION_TOKEN, token);
+                    }
                 }
 
                 Log.d(TAG, "intercept: method = " + originalRequest.method() + ", body = " + originalRequest.body());

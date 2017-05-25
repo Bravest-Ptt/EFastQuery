@@ -3,24 +3,18 @@ package bravest.ptt.efastquery.activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
-import android.support.v7.util.AsyncListUtil;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -30,9 +24,7 @@ import android.widget.LinearLayout;
 import com.zxy.tiny.Tiny;
 import com.zxy.tiny.callback.FileCallback;
 
-import java.io.ByteArrayOutputStream;
-
-import bravest.ptt.androidlib.activity.BaseActivity;
+import bravest.ptt.androidlib.activity.AbstractBaseActivity;
 import bravest.ptt.androidlib.utils.ToastUtils;
 import bravest.ptt.androidlib.utils.plog.PLog;
 import bravest.ptt.efastquery.R;
@@ -88,6 +80,7 @@ public class ClipImageActivity extends BaseActivity implements View.OnTouchListe
 
     @Override
     protected void initVariables() {
+        super.initVariables();
         Intent intent = getIntent();
         if (intent != null) {
             mUrl = intent.getStringExtra(PROFILE_URL);

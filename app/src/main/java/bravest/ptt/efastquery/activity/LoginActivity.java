@@ -1,21 +1,33 @@
 package bravest.ptt.efastquery.activity;
 
+import android.content.Intent;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 
-import bravest.ptt.androidlib.activity.BaseActivity;
+import bravest.ptt.androidlib.activity.AbstractBaseActivity;
 import bravest.ptt.efastquery.R;
-import cn.bmob.v3.BmobUser;
+import bravest.ptt.efastquery.entity.User;
 
 public class LoginActivity extends BaseActivity {
 
     private static final String TAG = "LoginActivity";
 
+    public static final String REGISTER_SUCCESS_PROFILE_FAILED
+            = "register_success_profile_failed";
+
     @Override
     protected void initVariables() {
-
+        super.initVariables();
+        Intent intent = getIntent();
+        if (intent != null 
+                && TextUtils.equals(intent.getAction(), REGISTER_SUCCESS_PROFILE_FAILED)) {
+            User user = User.getInstance(mContext);
+            Log.d(TAG, "initVariables: user = " + user);
+        } else {
+            Log.d(TAG, "initVariables:  user is null!");
+        }
     }
 
     @Override
@@ -25,10 +37,5 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        BmobUser user = BmobUser.getCurrentUser();
-        if (user != null) {
-            Log.d(TAG, "onCreate: phoneNumber:" + user.getMobilePhoneNumber());
-            Log.d(TAG, "onCreate: username :" + user.getUsername());
-        }
     }
 }

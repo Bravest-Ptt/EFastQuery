@@ -31,7 +31,7 @@ import android.widget.Toast;
 
 import java.util.HashMap;
 
-import bravest.ptt.androidlib.activity.BaseActivity;
+import bravest.ptt.androidlib.activity.AbstractBaseActivity;
 import bravest.ptt.efastquery.service.FloatingQueryService;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.fragment.BaseFragment;
@@ -90,6 +90,7 @@ public class HomeActivity extends BaseActivity
 
     @Override
     protected void initVariables() {
+        super.initVariables();
         mContext = this;
         bindService();
         checkPermissions();

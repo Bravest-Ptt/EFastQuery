@@ -13,7 +13,7 @@ public interface API {
 
     String LOGIN = "login";
 
-    String UPDATE = "update";
+    String UPDATE_USER_INFO = "updateUserInfo";
 
     /**
      *  获取用户信息

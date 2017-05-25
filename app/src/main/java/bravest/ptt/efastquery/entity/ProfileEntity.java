@@ -16,7 +16,7 @@ public class ProfileEntity implements Serializable{
     private String cdn;
 
     @JSONField(name="__type")
-    private String type;
+    private String type = "File";
 
     private String group;
 

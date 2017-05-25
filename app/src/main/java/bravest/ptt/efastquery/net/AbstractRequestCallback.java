@@ -13,10 +13,10 @@ import bravest.ptt.efastquery.R;
 
 public abstract class AbstractRequestCallback implements RequestCallback {
 
-    private Context mContext;
+    protected Context context;
 
     public AbstractRequestCallback(Context context) {
-        this.mContext = context;
+        this.context = context;
     }
 
     @Override
@@ -25,7 +25,7 @@ public abstract class AbstractRequestCallback implements RequestCallback {
 
     @Override
     public void onFail(String errorMessage) {
-        DialogUtils.showAlert(mContext
+        DialogUtils.showAlert(context
                 , R.style.Dialog_Confirm_Blue
                 , "Error"
                 , errorMessage
@@ -38,6 +38,6 @@ public abstract class AbstractRequestCallback implements RequestCallback {
 
     @Override
     public void onCookieExpired() {
-        DialogUtils.showPrompt(mContext, "请重新登录");
+        DialogUtils.showPrompt(context, "请重新登录");
     }
 }

@@ -28,9 +28,9 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public abstract class OkHttpRequest implements Runnable {
+public abstract class AbstractOkHttpRequest implements Runnable {
 
-    private static final String TAG = "OkHttpRequest";
+    private static final String TAG = "AbstractOkHttpRequest";
 
     private final static String cookiePath =
             "/data/data/bravest.ptt.efastquery/cache/cookie";
@@ -102,7 +102,7 @@ public abstract class OkHttpRequest implements Runnable {
      */
     protected abstract void setHttpHeaders(OkHttpClient.Builder okBuilder, final URLData data);
 
-    public OkHttpRequest(Context context, final URLData data, final RequestParam param, final RequestCallback callBack) {
+    public AbstractOkHttpRequest(Context context, final URLData data, final RequestParam param, final RequestCallback callBack) {
         this.context = context;
 
         this.urlData = data;
@@ -128,6 +128,10 @@ public abstract class OkHttpRequest implements Runnable {
     }
 
     private RequestBody getMediaTypeAndBody() {
+        if (TextUtils.equals(urlData.getNetType(), REQUEST_GET)) {
+            Log.d(TAG, "getMediaTypeAndBody: GET net type , there's no body need create");
+            return null;
+        }
         String contentType = urlData.getContentType().toLowerCase();
         RequestBody body;
         if (getMediaTypeString(TYPE_IMAGE_JPEG).contains(contentType)) {

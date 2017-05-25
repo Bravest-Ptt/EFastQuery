@@ -1,7 +1,6 @@
 package bravest.ptt.efastquery.activity;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,9 +14,6 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 
-import org.json.JSONObject;
-
-import bravest.ptt.androidlib.activity.BaseActivity;
 import bravest.ptt.androidlib.net.RemoteService;
 import bravest.ptt.androidlib.net.RequestParam;
 import bravest.ptt.androidlib.utils.RegularUtils;
@@ -84,6 +80,7 @@ public class RegisterActivity extends BaseActivity {
 
     @Override
     protected void initVariables() {
+        super.initVariables();
         mWaitingDialog = Utils.newFullScreenProgressDialog(this);
     }
 
@@ -102,8 +99,8 @@ public class RegisterActivity extends BaseActivity {
         mRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              //handleRequestSmsCode();
-                startVerifyActivity(null);
+                handleRequestSmsCode();
+                //startVerifyActivity(null);
             }
         });
 
@@ -111,13 +108,6 @@ public class RegisterActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 handleRegisterAlreadyClick();
-            }
-        });
-
-        mVerificationSender.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //handleRequestSmscode();
             }
         });
     }
@@ -201,7 +191,7 @@ public class RegisterActivity extends BaseActivity {
 
         //3、判断手机号是否被使用
         askMobilePhoneNumberUsed(number,
-                new RegisterCallback(mContext) {
+                new RegisterCallback() {
                     @Override
                     public void onSuccess(String content) {
                         super.onSuccess(content);
@@ -252,7 +242,7 @@ public class RegisterActivity extends BaseActivity {
                 mActivity,
                 API.REQUEST_SMS_CODE,
                 param,
-                new RegisterCallback(mContext) {
+                new RegisterCallback() {
                     @Override
                     public void onSuccess(String content) {
                         super.onSuccess(content);
@@ -281,7 +271,7 @@ public class RegisterActivity extends BaseActivity {
                 //url ：https://api.bmob.cn/1/querySms/:smsId （注意smsId前有冒号(:)）
                 // new RequestParam(":"+entity.getSmsId(), null),
                 new RequestParam(entity.getSmsId(), null),
-                new RegisterCallback(mContext) {
+                new RegisterCallback() {
                     @Override
                     public void onSuccess(String content) {
                         hideWaitProgressBar();
@@ -392,8 +382,8 @@ public class RegisterActivity extends BaseActivity {
      *  重写onFail，用于dismiss掉ProgressBar
      */
     private class RegisterCallback extends AbstractRequestCallback {
-        public RegisterCallback(Context context) {
-            super(context);
+        public RegisterCallback() {
+            super(mContext);
         }
 
         @Override

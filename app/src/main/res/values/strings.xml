@@ -137,4 +137,6 @@
     <string name="verify_user_name_used">该用户名已被使用！</string>
     <string name="register_success">注册成功</string>
     <string name="register_failed">注册失败</string>
+    
+    <string name="register_success_but_profile_failed">注册成功，上传头像失败，将使用默认头像</string>
 </resources>

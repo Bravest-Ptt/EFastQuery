@@ -1,35 +1,24 @@
 package bravest.ptt.efastquery.activity;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-import org.w3c.dom.Text;
-
-import java.net.URI;
-import java.net.URL;
-import java.util.UUID;
-
-import bravest.ptt.androidlib.activity.BaseActivity;
 import bravest.ptt.androidlib.net.RemoteService;
 import bravest.ptt.androidlib.net.RequestParam;
-import bravest.ptt.androidlib.utils.DialogUtils;
-import bravest.ptt.androidlib.utils.PreferencesUtils;
 import bravest.ptt.androidlib.utils.ToastUtils;
 import bravest.ptt.androidlib.utils.bmob.BmobConstants;
 import bravest.ptt.androidlib.utils.plog.PLog;
@@ -39,9 +28,10 @@ import bravest.ptt.efastquery.entity.SmsCodeEntity;
 import bravest.ptt.efastquery.entity.User;
 import bravest.ptt.efastquery.net.AbstractRequestCallback;
 import bravest.ptt.efastquery.utils.API;
-import bravest.ptt.efastquery.utils.UserUtils;
 import bravest.ptt.efastquery.utils.Utils;
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static bravest.ptt.efastquery.activity.LoginActivity.REGISTER_SUCCESS_PROFILE_FAILED;
 
 public class RegisterVerifyActivity extends BaseActivity {
 
@@ -82,6 +72,7 @@ public class RegisterVerifyActivity extends BaseActivity {
 
     @Override
     protected void initVariables() {
+        super.initVariables();
         Intent intent = getIntent();
         if (intent != null) {
             mSmsCodeEntity = (SmsCodeEntity) intent.getExtras().get(SmsCodeEntity.getName());
@@ -152,7 +143,6 @@ public class RegisterVerifyActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-
     }
 
     @Override
@@ -183,13 +173,11 @@ public class RegisterVerifyActivity extends BaseActivity {
                 ImageView profile;
                 if (mIsMale) {
                     profile = mMaleImageView;
-//                    mMaleImageView.setImageBitmap(
-//                            Utils.getBitmapFromUri(mContext, Uri.parse(uri)));
                 } else {
                     profile = mFemaleImageView;
                 }
 
-                //使用Glide会导致有图片缓存,why? 因为开启了内存缓存
+                //使用Glide会导致有图片缓存,why? 因为开启了内存缓存,这里将内存缓存关闭
                 Glide.with(mActivity)
                         .load(file)
                         .skipMemoryCache(true)
@@ -257,37 +245,18 @@ public class RegisterVerifyActivity extends BaseActivity {
         //为什么不验证验证码是否正确是因为，一旦验证正确，这时候验证码就是失效。
         // 但是用户名被使用是不允许的。
         mDialog.show();
-//        if (mSmsCodeEntity == null) {
-//            PLog.d(TAG, "mSmsEntity is null, error!");
-//            ToastUtils.showToast(mContext, "Unknown Error Happened");
-//            mDialog.dismiss();
-//            return;
-//        }
-//
-//        PLog.log(mSmsCodeEntity);
-//        mSmsCodeEntity = new SmsCodeEntity();
-//        mSmsCodeEntity.setMobilePhoneNumber("13057538162");
-//        PLog.log(JSON.toJSONString(mSmsCodeEntity));
-//        User user = new User();
-//        user.setMobilePhoneNumber("13057538162");
-//        user.setObjectId("1234");
-//        user.setUsername("nishisishu");
-//        ProfileEntity profileEntity = new ProfileEntity();
-//        profileEntity.setType("File");
-//        profileEntity.setCdn("helol");
-//        profileEntity.setFilename("heanf");
-//        profileEntity.setUrl("jada");
-//        user.setProfile(profileEntity);
-//        PLog.log(JSON.toJSONString(user));
-
+        if (mSmsCodeEntity == null) {
+            PLog.d(TAG, "mSmsEntity is null, error!");
+            ToastUtils.showToast(mContext, "Unknown Error Happened");
+            mDialog.dismiss();
+            return;
+        }
 
         User user = new User();
         user.setUsername(name);
-        RemoteService.getInstance().invoke(
-                mActivity,
-                API.IS_USER_NAME_USED,
+        _NET(API.IS_USER_NAME_USED,
                 new RequestParam(null, JSON.toJSONString(user)),
-                new AbstractRequestCallback(mContext) {
+                new InnerRequestCallback() {
                     @Override
                     public void onSuccess(String content) {
                         if (!TextUtils.isEmpty(content) &&
@@ -297,8 +266,7 @@ public class RegisterVerifyActivity extends BaseActivity {
                             mDialog.dismiss();
                         } else {
                             //第三步，上传用户信息并验证验证码是否正确
-                            //registerUserAndUploadProfile();
-                            uploadProfile();
+                            registerUserAndUploadProfile();
                         }
                     }
 
@@ -309,15 +277,151 @@ public class RegisterVerifyActivity extends BaseActivity {
                     }
                 }
         );
+    }
 
-        //第四步，注册用户(手机号，密码，用户名)，上传头像
+    //第三步，注册用户(手机号，密码，用户名)
+    private void registerUserAndUploadProfile() {
+        Log.d(TAG, "registerUserAndUploadProfile: step 4");
+        final User user = new User();
+        user.setUsername(mUserNameEditor.getText().toString());
+        user.setMobilePhoneNumber(mSmsCodeEntity.getMobilePhoneNumber());
+        user.setSmsCode(mVerifyCodeEditor.getText().toString());
+        user.setPassword(mPassword);
+        user.setSex(mIsMale);
 
-        //第五步，更新服务器用户头像地址URL
+        RequestParam param = new RequestParam(JSON.toJSONString(user));
+        _NET(API.REGISTER, param, new InnerRequestCallback() {
+                    @Override
+                    public void onSuccess(String content) {
+                        super.onSuccess(content);
+                        Log.d(TAG, "onSuccess: content = " + content);
+                        User resultUser = JSON.parseObject(content, User.class);
+                        if (resultUser != null) {
+                            //保存用户信息
+                            Log.d(TAG, "onSuccess: step 5");
+                            storeUserInfo(resultUser);
+                            //第四步，上传头像
+                            uploadProfile();
+                        } else {
+                            ToastUtils.showToast(mContext,
+                                    getString(R.string.register_failed));
+                            mDialog.dismiss();
+                        }
+                    }
 
-        //第六步，将用户信息保存在本地
+                    @Override
+                    public void onFail(String errorMessage) {
+                        super.onFail(errorMessage);
+                        mDialog.dismiss();
+                    }
+                }
+        );
+    }
+
+    //第四步，上传头像
+    private void uploadProfile() {
+        //上传头像文件到服务器，并处理返回的头像json数据
+        Log.d(TAG, "uploadProfile: step 5");
+        RequestParam param = new RequestParam(mProfilePath.substring(
+                mProfilePath.lastIndexOf('/') + 1), mProfilePath);
+        _NET(API.UPLOAD_JPG_IMAGE, param, new InnerRequestCallback() {
+                    @Override
+                    public void onSuccess(String content) {
+                        super.onSuccess(content);
+                        //第五步,将头像文件与数据库联合起来
+                        combineUserWithProfile(content);
+                    }
+
+                    @Override
+                    public void onFail(String errorMessage) {
+                        String message = getString(
+                                R.string.register_success_but_profile_failed);
+                        super.onFail(message);
+                        mDialog.dismiss();
+                        registerSuccessButProfileFailed();
+                    }
+                }
+        );
+    }
+
+    //第五步,将头像实体关联到服务器对应用户的数据中
+    private void combineUserWithProfile(String content) {
+        Log.d(TAG, "onSuccess: content step 5 = " + content);
+        final ProfileEntity finalProfile = JSON.parseObject(content, ProfileEntity.class);
+        Log.d(TAG, "onSuccess: entity = " + finalProfile);
+
+        //get object id
+        User user = User.getInstance(mContext);
+        if (user == null) {
+            mDialog.dismiss();
+            registerSuccessButProfileFailed();
+        }
+
+        String objectId = user.getObjectId();
+        Log.d(TAG, "combineUserWithProfile: object id = " + objectId);
+
+        User tmpUser = new User();
+        tmpUser.setProfile(finalProfile);
+        String updateUserJson = JSON.toJSONString(tmpUser);
+        Log.d(TAG, "combineUserWithProfile: update json = " + updateUserJson);
+        RequestParam param = new RequestParam(objectId, updateUserJson);
+
+        _NET(API.UPDATE_USER_INFO, param, new InnerRequestCallback() {
+            @Override
+            public void onSuccess(String content) {
+                super.onSuccess(content);
+                Log.d(TAG, "onSuccess: content = " + content);
+                registerSuccess(finalProfile);
+            }
+
+            @Override
+            public void onFail(String errorMessage) {
+                String message = getString(
+                        R.string.register_success_but_profile_failed);
+                super.onFail(message);
+                mDialog.dismiss();
+                registerSuccessButProfileFailed();
+            }
+        });
+    }
+
+    private void registerSuccess(ProfileEntity profile) {
+        User user = User.getInstance(mContext);
+        if (user != null) {
+            user.setProfile(profile);
+            Log.d(TAG, "registerSuccess: user = " + user);
+            User.saveUserLocal(mContext, user);
+        }
+        registerSuccessButProfileFailed();
+    }
+
+
+    private void registerSuccessButProfileFailed() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setAction(REGISTER_SUCCESS_PROFILE_FAILED);
+        startActivity(intent);
+        finish();
+    }
+
+    //保存用户信息到本地
+    private void storeUserInfo(User user) {
+        User.saveUserLocal(mContext, user);
+    }
+
+    private void handleRegisterAlreadyClick() {
+        PLog.log("handleRegisterAlreadyClick");
+        startActivity(new Intent(this, LoginActivity.class));
+        finish();
+    }
+
+    private void chooseProfileFromGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, null);
+        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+        startActivityForResult(intent, REQUEST_CODE_GALLERY);
     }
 
     //第三步，验证验证码是否正确
+    //NO NEED
     private void verifySmsCode() {
         RequestParam param = new RequestParam(JSON.toJSONString(mSmsCodeEntity));
         param.setObjectId(mVerifyCodeEditor.getText().toString());
@@ -346,105 +450,5 @@ public class RegisterVerifyActivity extends BaseActivity {
                     }
                 }
         );
-    }
-
-    //第三步，注册用户(手机号，密码，用户名)
-    private void registerUserAndUploadProfile() {
-        Log.d(TAG, "registerUserAndUploadProfile: step 4");
-        final User user = new User();
-        user.setUsername(mUserNameEditor.getText().toString());
-        user.setMobilePhoneNumber(mSmsCodeEntity.getMobilePhoneNumber());
-        user.setSmsCode(mVerifyCodeEditor.getText().toString());
-        user.setPassword(mPassword);
-
-        RequestParam param = new RequestParam(JSON.toJSONString(user));
-        RemoteService.getInstance().invoke(
-                mActivity,
-                API.REGISTER,
-                param,
-                new AbstractRequestCallback(mContext) {
-                    @Override
-                    public void onSuccess(String content) {
-                        super.onSuccess(content);
-                        Log.d(TAG, "onSuccess: content = " + content);
-                        User resultUser = JSON.parseObject(content, User.class);
-                        if (resultUser != null) {
-                            //保存用户信息
-                            Log.d(TAG, "onSuccess: step 5");
-                            storeUserInfo(resultUser);
-                            //第五步，上传头像
-                            uploadProfile();
-                        } else {
-                            ToastUtils.showToast(mContext,
-                                    getString(R.string.register_failed));
-                            mDialog.dismiss();
-                        }
-                    }
-
-                    @Override
-                    public void onFail(String errorMessage) {
-                        super.onFail(errorMessage);
-                        mDialog.dismiss();
-                    }
-                }
-        );
-    }
-
-    //保存用户信息
-    private void storeUserInfo(User user) {
-        //store token
-        String token = user.getSessionToken();
-        PLog.d(TAG, token);
-        PreferencesUtils.putString(mContext,
-                BmobConstants.PREF_USER, BmobConstants.PREF_KEY_USER, token);
-
-        //store user
-        String userString = JSON.toJSONString(user);
-        PLog.d(TAG, userString);
-        PreferencesUtils.putString(mContext,
-                BmobConstants.PREF_USER, BmobConstants.PREF_KEY_USER, userString);
-    }
-
-    //第五步，上传头像
-    //TODO 压缩用户头像，然后再上传
-    private void uploadProfile() {
-        //1、上传头像文件到服务器，并处理返回的头像json数据
-        //2、将头像实体关联到服务器对应用户的数据中
-        Log.d(TAG, "uploadProfile: step 5");
-        RequestParam param = new RequestParam(mProfilePath.substring(
-                mProfilePath.lastIndexOf('/') + 1), mProfilePath);
-        RemoteService.getInstance().invoke(
-                mActivity,
-                API.UPLOAD_JPG_IMAGE,
-                param,
-                new AbstractRequestCallback(mContext) {
-                    @Override
-                    public void onSuccess(String content) {
-                        super.onSuccess(content);
-                        Log.d(TAG, "onSuccess: content step 5 = " + content);
-                        ProfileEntity entity = JSON.parseObject(content, ProfileEntity.class);
-                        Log.d(TAG, "onSuccess: entity = " + entity);
-                    }
-
-                    @Override
-                    public void onFail(String errorMessage) {
-                        super.onFail(errorMessage);
-                        mDialog.dismiss();
-                    }
-                }
-        );
-
-    }
-
-    private void handleRegisterAlreadyClick() {
-        PLog.log("handleRegisterAlreadyClick");
-        startActivity(new Intent(this, LoginActivity.class));
-        finish();
-    }
-
-    private void chooseProfileFromGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK, null);
-        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-        startActivityForResult(intent, REQUEST_CODE_GALLERY);
     }
 }

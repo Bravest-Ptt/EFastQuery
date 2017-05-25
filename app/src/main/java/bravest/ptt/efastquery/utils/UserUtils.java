@@ -13,6 +13,8 @@ import java.io.ObjectOutputStream;
 import java.io.StreamCorruptedException;
 import java.util.UUID;
 
+import bravest.ptt.androidlib.utils.bmob.BmobConstants;
+
 /**
  * Created by pengtian on 2017/5/7.
  */
@@ -20,9 +22,9 @@ import java.util.UUID;
 public class UserUtils {
     public static final int USER_NAME_LENGTH = 10;
 
-    private final static String FILENAME = "user_data";
+    private final static String FILENAME = BmobConstants.PREF_USER;
 
-    private final static String KEY = "user";
+    private final static String KEY = BmobConstants.PREF_KEY_USER;
 
     public static String generateUserName(int length) {
         String name = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();

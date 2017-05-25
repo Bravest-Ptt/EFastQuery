@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 import bravest.ptt.efastquery.utils.UserUtils;
 
@@ -65,6 +66,8 @@ public class User implements Serializable{
 
     private ProfileEntity profile;
 
+    private Boolean sex;
+
     public User(String username, String password) {
         this.username = username;
         this.password = password;
@@ -83,6 +86,10 @@ public class User implements Serializable{
             sUser = (User) UserUtils.readObject(context);
         }
         return sUser;
+    }
+
+    public static void saveUserLocal(Context context, User user) {
+        UserUtils.saveObject(context, user);
     }
 
     public String getObjectId() {
@@ -193,6 +200,14 @@ public class User implements Serializable{
         this.profile = profile;
     }
 
+    public Boolean getSex() {
+        return sex;
+    }
+
+    public void setSex(Boolean sex) {
+        this.sex = sex;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -208,6 +223,9 @@ public class User implements Serializable{
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", counter=" + counter +
+                ", smsCode='" + smsCode + '\'' +
+                ", profile=" + profile +
+                ", sex=" + sex +
                 '}';
     }
 }

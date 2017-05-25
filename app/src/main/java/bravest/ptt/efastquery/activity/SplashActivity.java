@@ -19,7 +19,7 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
-import bravest.ptt.androidlib.activity.BaseActivity;
+import bravest.ptt.androidlib.activity.AbstractBaseActivity;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.androidlib.utils.plog.PLog;
 
@@ -51,6 +51,7 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     protected void initVariables() {
+        super.initVariables();
         mContext = this;
         mActivityActive = true;
     }
