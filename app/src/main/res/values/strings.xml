@@ -139,4 +139,5 @@
     <string name="register_failed">注册失败</string>
     
     <string name="register_success_but_profile_failed">注册成功，上传头像失败，将使用默认头像</string>
+    <string name="register_failed_unknown_error">发生未知错误</string>
 </resources>

@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -246,9 +247,7 @@ public class RegisterVerifyActivity extends BaseActivity {
         // 但是用户名被使用是不允许的。
         mDialog.show();
         if (mSmsCodeEntity == null) {
-            PLog.d(TAG, "mSmsEntity is null, error!");
-            ToastUtils.showToast(mContext, "Unknown Error Happened");
-            mDialog.dismiss();
+            registerFailedUnknownError();
             return;
         }
 
@@ -261,9 +260,7 @@ public class RegisterVerifyActivity extends BaseActivity {
                     public void onSuccess(String content) {
                         if (!TextUtils.isEmpty(content) &&
                                 content.contains(User.USERNAME)) {
-                            ToastUtils.showToast(mContext,
-                                    getString(R.string.verify_user_name_used));
-                            mDialog.dismiss();
+                            registerFailedUserHasRegistered();
                         } else {
                             //第三步，上传用户信息并验证验证码是否正确
                             registerUserAndUploadProfile();
@@ -273,7 +270,7 @@ public class RegisterVerifyActivity extends BaseActivity {
                     @Override
                     public void onFail(String errorMessage) {
                         super.onFail(errorMessage);
-                        mDialog.dismiss();
+                        registerFailed();
                     }
                 }
         );
@@ -301,25 +298,23 @@ public class RegisterVerifyActivity extends BaseActivity {
                             Log.d(TAG, "onSuccess: step 5");
                             storeUserInfo(resultUser);
                             //第四步，上传头像
-                            uploadProfile();
+                            uploadProfile(resultUser);
                         } else {
-                            ToastUtils.showToast(mContext,
-                                    getString(R.string.register_failed));
-                            mDialog.dismiss();
+                            registerFailed();
                         }
                     }
 
                     @Override
                     public void onFail(String errorMessage) {
                         super.onFail(errorMessage);
-                        mDialog.dismiss();
+                        registerFailed();
                     }
                 }
         );
     }
 
     //第四步，上传头像
-    private void uploadProfile() {
+    private void uploadProfile(final User resultUser) {
         //上传头像文件到服务器，并处理返回的头像json数据
         Log.d(TAG, "uploadProfile: step 5");
         RequestParam param = new RequestParam(mProfilePath.substring(
@@ -334,11 +329,8 @@ public class RegisterVerifyActivity extends BaseActivity {
 
                     @Override
                     public void onFail(String errorMessage) {
-                        String message = getString(
+                        registerSuccessButProfileFailed(
                                 R.string.register_success_but_profile_failed);
-                        super.onFail(message);
-                        mDialog.dismiss();
-                        registerSuccessButProfileFailed();
                     }
                 }
         );
@@ -353,8 +345,8 @@ public class RegisterVerifyActivity extends BaseActivity {
         //get object id
         User user = User.getInstance(mContext);
         if (user == null) {
-            mDialog.dismiss();
-            registerSuccessButProfileFailed();
+            registerSuccessButProfileFailed(R.string.register_success_but_profile_failed);
+            return;
         }
 
         String objectId = user.getObjectId();
@@ -376,11 +368,7 @@ public class RegisterVerifyActivity extends BaseActivity {
 
             @Override
             public void onFail(String errorMessage) {
-                String message = getString(
-                        R.string.register_success_but_profile_failed);
-                super.onFail(message);
-                mDialog.dismiss();
-                registerSuccessButProfileFailed();
+                registerSuccessButProfileFailed(R.string.register_success_but_profile_failed);
             }
         });
     }
@@ -392,11 +380,31 @@ public class RegisterVerifyActivity extends BaseActivity {
             Log.d(TAG, "registerSuccess: user = " + user);
             User.saveUserLocal(mContext, user);
         }
-        registerSuccessButProfileFailed();
+        registerSuccessButProfileFailed(R.string.register_success);
     }
 
+    private void registerFailedUnknownError() {
+        PLog.d(TAG, "mSmsEntity is null, error, fuck u");
+        ToastUtils.showToast(mContext, getString(R.string.register_failed_unknown_error));
+        mDialog.dismiss();
+    }
 
-    private void registerSuccessButProfileFailed() {
+    private void registerFailedUserHasRegistered() {
+        ToastUtils.showToast(mContext,
+                getString(R.string.verify_user_name_used));
+        mDialog.dismiss();
+    }
+
+    private void registerFailed() {
+        ToastUtils.showToast(mContext, getString(R.string.register_failed));
+        mDialog.dismiss();
+    }
+
+    private void registerSuccessButProfileFailed(@StringRes int id) {
+        mDialog.dismiss();
+
+        ToastUtils.showToast(mContext, getString(id));
+
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setAction(REGISTER_SUCCESS_PROFILE_FAILED);
         startActivity(intent);

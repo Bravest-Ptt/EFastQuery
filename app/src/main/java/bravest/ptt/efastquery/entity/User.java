@@ -1,6 +1,7 @@
 package bravest.ptt.efastquery.entity;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -11,6 +12,8 @@ import bravest.ptt.efastquery.utils.UserUtils;
 public class User implements Serializable{
 
     private static final long serialVersionUID = -2083503801443301445L;
+
+    private static final String TAG = "User";
 
     public static final String OBJECT_ID = "objectId";
 
@@ -82,6 +85,7 @@ public class User implements Serializable{
      * @return
      */
     public static User getInstance(Context context) {
+        Log.d(TAG, "getInstance: user = " + sUser);
         if (sUser == null) {
             sUser = (User) UserUtils.readObject(context);
         }
@@ -90,6 +94,7 @@ public class User implements Serializable{
 
     public static void saveUserLocal(Context context, User user) {
         UserUtils.saveObject(context, user);
+        sUser = (User) UserUtils.readObject(context);
     }
 
     public String getObjectId() {

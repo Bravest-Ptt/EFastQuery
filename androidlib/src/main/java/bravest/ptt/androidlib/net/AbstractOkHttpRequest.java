@@ -86,6 +86,8 @@ public abstract class AbstractOkHttpRequest implements Runnable {
 
     private MediaType mediaType;
 
+    private long timeout = 10000;
+
     /**
      * get new url base on parameter
      *
@@ -138,12 +140,16 @@ public abstract class AbstractOkHttpRequest implements Runnable {
             mediaType = TYPE_IMAGE_JPEG;
             File file = new File(param.getBody());
             body = RequestBody.create(mediaType, file);
+            //set time out 30s
+            timeout = 30000;
         } else if (getMediaTypeString(TYPE_JSON).contains(contentType)){
             mediaType = TYPE_JSON;
             body = RequestBody.create(mediaType, param.getBody());
+            timeout = 10000;
         } else {
             mediaType = TYPE_JSON;
             body = RequestBody.create(mediaType, param.getBody());
+            timeout = 10000;
         }
         return body;
     }
@@ -185,9 +191,9 @@ public abstract class AbstractOkHttpRequest implements Runnable {
                 break;
         }
 
-        okBuilder.connectTimeout(4000, TimeUnit.MILLISECONDS)
-                .readTimeout(4000, TimeUnit.MILLISECONDS)
-                .writeTimeout(4000, TimeUnit.MILLISECONDS);
+        okBuilder.connectTimeout(timeout, TimeUnit.MILLISECONDS)
+                .readTimeout(timeout, TimeUnit.MILLISECONDS)
+                .writeTimeout(timeout, TimeUnit.MILLISECONDS);
 
         //添加必要的头部信息
         setHttpHeaders(okBuilder, urlData);
