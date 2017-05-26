@@ -121,6 +121,7 @@ public class LoginActivity extends BaseActivity {
 
         Intent intent = new Intent(mContext, HomeActivity.class);
         startActivity(intent);
+        finish();
     }
 
     private void loginFailed(String errorMessage) {

@@ -9,13 +9,14 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         ndk {
             moduleName "androidLib"
             ldLibs "log", "z", "m", "android"
-            abiFilters "armeabi", "armeabi-v7a", "x86"
+            abiFilters "armeabi",'x86'
         }
     }
 

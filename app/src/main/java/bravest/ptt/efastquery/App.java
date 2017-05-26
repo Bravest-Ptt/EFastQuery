@@ -1,13 +1,10 @@
 package bravest.ptt.efastquery;
 
 import android.app.Application;
-import android.content.Context;
 
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
 import com.zxy.tiny.Tiny;
-
-import cn.bmob.v3.Bmob;
 
 /**
  * Created by root on 3/2/17.
