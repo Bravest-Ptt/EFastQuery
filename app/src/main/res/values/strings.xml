@@ -106,6 +106,7 @@
     <string name="login">登"&#160;""&#160;""&#160;""&#160;"录</string>
     <string name="register">注"&#160;""&#160;""&#160;""&#160;"册</string>
     <string name="login_phonenumber">手机号码</string>
+    <string name="login_phone_number_or_name">手机号码/用户名</string>
     <string name="login_password">密码</string>
     <string name="login_forget_password">忘记密码？</string>
 
@@ -140,4 +141,8 @@
     
     <string name="register_success_but_profile_failed">注册成功，上传头像失败，将使用默认头像</string>
     <string name="register_failed_unknown_error">发生未知错误</string>
+
+    <string name="login_please_input_account">请输入用户名或手机号码</string>
+    <string name="login_successful">登录成功</string>
+    <string name="login_failed">登录失败</string>
 </resources>

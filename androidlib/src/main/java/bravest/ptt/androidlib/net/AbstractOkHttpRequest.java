@@ -95,7 +95,7 @@ public abstract class AbstractOkHttpRequest implements Runnable {
      * @param param
      * @return
      */
-    protected abstract String getNewUrl(String url, String method, RequestParam param);
+    protected abstract String getNewUrl(String url, final URLData data, RequestParam param);
 
     /**
      * set http headers
@@ -157,7 +157,7 @@ public abstract class AbstractOkHttpRequest implements Runnable {
     @Override
     public void run() {
         String type = urlData.getNetType().toUpperCase();
-        newUrl = getNewUrl(url, type, param);
+        newUrl = getNewUrl(url, urlData, param);
 
         RequestBody body = getMediaTypeAndBody();
         switch (type) {

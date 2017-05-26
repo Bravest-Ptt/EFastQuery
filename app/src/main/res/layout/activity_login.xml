@@ -17,18 +17,17 @@
         android:paddingLeft="@dimen/register_app_name_padding"
         android:paddingRight="@dimen/register_app_name_padding">
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/userNameContainer"
+            android:id="@+id/accountContainer"
             android:textColorHint="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:id="@+id/userName"
-                android:inputType="numberDecimal"
+                android:id="@+id/accountEditor"
                 android:textColor="@color/white"
                 android:textColorHint="#dedede"
-                android:hint="@string/login_phonenumber"/>
+                android:hint="@string/login_phone_number_or_name"/>
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -36,15 +35,15 @@
             android:textColorHint="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/userNameContainer"
+            android:layout_below="@+id/accountContainer"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             app:passwordToggleTint="@color/selector_password_visibility_toggle"
-            app:passwordToggleEnabled="true">>
+            app:passwordToggleEnabled="true">
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:id="@+id/passWord"
+                android:id="@+id/passWordEditor"
                 android:inputType="textPassword"
                 android:textColor="@color/white"
                 android:hint="@string/login_password"/>
@@ -54,7 +53,7 @@
             android:layout_marginTop="30dp"
             android:textSize="23sp"
             android:background="@drawable/login_selector"
-            android:id="@+id/MyButton"
+            android:id="@+id/login"
             android:textColor="@color/white"
             android:layout_width="match_parent"
             android:layout_height="@dimen/login_register_h"

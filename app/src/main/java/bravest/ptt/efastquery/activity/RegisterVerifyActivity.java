@@ -141,6 +141,8 @@ public class RegisterVerifyActivity extends BaseActivity {
                 handleRegisterAlreadyClick();
             }
         });
+
+        mDialog = Utils.newFullScreenProgressDialog(mContext);
     }
 
     @Override
@@ -225,7 +227,6 @@ public class RegisterVerifyActivity extends BaseActivity {
     }
 
     private void handleRegisterClick() {
-        mDialog = Utils.newFullScreenProgressDialog(mContext);
         PLog.log("handleRegisterClick");
         //第一步，验证验证码，用户名，头像是否选择
         final String code = mVerifyCodeEditor.getText().toString();

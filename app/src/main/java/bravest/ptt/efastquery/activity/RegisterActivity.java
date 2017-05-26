@@ -35,7 +35,7 @@ public class RegisterActivity extends BaseActivity {
 
     private static final int WHAT_COUNT_OVER = 2;
 
-    private static final int LENGTH_PASSWORD = 8;
+    public static final int LENGTH_PASSWORD = 8;
 
     /**
      * The delay for request sms code

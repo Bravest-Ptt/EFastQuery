@@ -20,19 +20,13 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 import bravest.ptt.efastquery.entity.word.Key;
-import bravest.ptt.efastquery.utils.S;
+import bravest.ptt.efastquery.utils.JNIUtils;
 
 /**
  * Created by root on 12/27/16.
  */
 
 class TranslateEngine {
-
-    static{
-        System.loadLibrary("EFastQuery");
-    }
-
-    private native Key getKey(AssetManager assetManager);
 
     private static final String TAG = "TranslateEngine";
     private static final String YOUDAO_ID = "phonekeeper";
@@ -62,7 +56,7 @@ class TranslateEngine {
     }
 
     public void start() throws NotSetRequestException {
-        Key key = getKey(mContext.getAssets());
+        Key key = JNIUtils.getKey(mContext.getAssets());
         if (key == null) {
             key = new Key(YOUDAO_ID, YOUDAO_SECRET);
         }
@@ -135,5 +129,15 @@ class TranslateEngine {
     }
     class NotSetRequestException extends Exception {
 
+    }
+
+    private static class S {
+        public static String s(int i) {
+            return i+"";
+        }
+
+        public static int i(String s) {
+            return Integer.valueOf(s);
+        }
     }
 }

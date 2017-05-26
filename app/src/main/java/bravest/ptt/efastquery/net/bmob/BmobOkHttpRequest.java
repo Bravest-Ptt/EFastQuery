@@ -6,6 +6,7 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.net.URLEncoder;
 
 import bravest.ptt.androidlib.net.AbstractOkHttpRequest;
@@ -16,6 +17,7 @@ import bravest.ptt.androidlib.utils.bmob.BmobConstants;
 import bravest.ptt.androidlib.utils.JNIUtils;
 import bravest.ptt.androidlib.utils.plog.PLog;
 import bravest.ptt.efastquery.entity.User;
+import bravest.ptt.efastquery.utils.API;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -44,7 +46,7 @@ public class BmobOkHttpRequest extends AbstractOkHttpRequest {
      * @param param
      * @return
      */
-    protected String getNewUrl(String url, String method, RequestParam param) {
+    protected String getNewUrl(String url, URLData data, RequestParam param) {
         try {
             if (param == null) {
                 return url;
@@ -54,6 +56,8 @@ public class BmobOkHttpRequest extends AbstractOkHttpRequest {
             final StringBuffer paramBuffer = new StringBuffer();
             paramBuffer.append(url);
 
+            String method = data.getNetType();
+
             if (param.hasId()) {
                 paramBuffer.append("/"+param.getObjectId());
             }
@@ -61,7 +65,16 @@ public class BmobOkHttpRequest extends AbstractOkHttpRequest {
             if (param.hasBody()) {
                 switch (method) {
                     case REQUEST_GET:
-                        paramBuffer.append("?where="+URLEncoder.encode(param.getBody(), "utf-8"));
+                        //for login
+                        if (data.getKey().equals(API.LOGIN)) {
+//                            paramBuffer.append("?"
+//                                    + URLEncoder.encode(param.getBody(), "utf-8"));
+                            paramBuffer.append("?" + param.getBody());
+                        } else {
+                            //for query
+                            paramBuffer.append("?where="
+                                    + URLEncoder.encode(param.getBody(), "utf-8"));
+                        }
                         break;
                     case REQUEST_POST:
                         break;

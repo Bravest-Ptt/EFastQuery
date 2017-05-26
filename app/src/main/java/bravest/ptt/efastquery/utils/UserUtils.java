@@ -11,6 +11,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.StreamCorruptedException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import bravest.ptt.androidlib.utils.bmob.BmobConstants;
@@ -20,6 +25,8 @@ import bravest.ptt.androidlib.utils.bmob.BmobConstants;
  */
 
 public class UserUtils {
+    private static final String TAG = "UserUtils";
+
     public static final int USER_NAME_LENGTH = 10;
 
     private final static String FILENAME = BmobConstants.PREF_USER;
@@ -53,6 +60,24 @@ public class UserUtils {
             src += "}";
         }
         return src;
+    }
+
+    public static String convertToUrlParams(HashMap<String, String> dataParams) {
+        String result = "";
+        Set<String> keys = dataParams.keySet();
+        Iterator<String> keyIterator = keys.iterator();
+        int i = 0;
+        while(keyIterator.hasNext()) {
+            String key = keyIterator.next();
+            if (i == 0) {
+                result += "" + key + "=" + dataParams.get(key);
+            } else {
+                result += "&"  + key + "=" + dataParams.get(key);
+            }
+            Log.d(TAG, "convertToUrlParams: ");
+            i++;
+        }
+        return result;
     }
 
     /**

@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDelegate;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -25,13 +26,21 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
+import java.net.URL;
 import java.util.HashMap;
 
 import bravest.ptt.androidlib.activity.AbstractBaseActivity;
+import bravest.ptt.efastquery.entity.ProfileEntity;
+import bravest.ptt.efastquery.entity.User;
 import bravest.ptt.efastquery.service.FloatingQueryService;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.fragment.BaseFragment;
@@ -130,6 +139,28 @@ public class HomeActivity extends BaseActivity
         mNavigationView.setCheckedItem(R.id.nav_home);
         mNavigationView.setItemTextColor(this.getResources().getColorStateList(R.color.nav_home_selector));
         mNavigationView.setItemIconTintList(null);
+        View headerView = mNavigationView.getHeaderView(0);
+
+        ImageView profileIv= (ImageView) headerView.findViewById(R.id.profile);
+        TextView userNameTv = (TextView) headerView.findViewById(R.id.username);
+        TextView mobilePhoneNumberTv = (TextView) headerView.findViewById(R.id.mobilePhoneNumber);
+
+        Log.d(TAG, "initNavigationView: profileTv = " + profileIv + ", userNameTv = " + userNameTv + ", mobilePhoneNumberTv = " + mobilePhoneNumberTv);
+
+        User user = User.getInstance(mContext);
+        if (user != null) {
+            ProfileEntity profileEntity = user.getProfile();
+            if (profileEntity != null) {
+                String profileUrl = profileEntity.getUrl();
+                if (!TextUtils.isEmpty(profileUrl)) {
+                    Glide.with(mContext).load(profileUrl).asBitmap().into(profileIv);
+                }
+            }
+            String userName = user.getUsername();
+            userNameTv.setText(userName);
+            String mobilePhoneNumber = user.getMobilePhoneNumber();
+            mobilePhoneNumberTv.setText(mobilePhoneNumber);
+        }
     }
 
     private void initFragments() {

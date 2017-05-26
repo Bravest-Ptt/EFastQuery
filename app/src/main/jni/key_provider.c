@@ -15,11 +15,15 @@
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
 #endif
 
-#ifndef _Included_bravest_ptt_efastquery_data_TranslateEngine
-#define _Included_bravest_ptt_efastquery_data_TranslateEngine
+#ifndef _Included_bravest_ptt_efastquery_utils_JNIUtils
+#define _Included_bravest_ptt_efastquery_utils_JNIUtils
 
 #ifndef KEY_FILENAME
 #define KEY_FILENAME "key.pro"
+#endif
+
+#ifndef KEY_CLASS
+#define KEY_CLASS "bravest/ptt/efastquery/entity/word/Key"
 #endif
 
 jobject asset_key_decrypter(JNIEnv* env, jobject asset_manager);
@@ -28,8 +32,13 @@ jobject asset_key_decrypter(JNIEnv* env, jobject asset_manager);
 
 extern "C" {
 #endif
-JNIEXPORT jobject JNICALL Java_bravest_ptt_efastquery_data_TranslateEngine_getKey
-        (JNIEnv* env, jobject thiz, jobject asset_manager)
+/*
+ * Class:     bravest_ptt_efastquery_utils_JNIUtils
+ * Method:    getKey
+ * Signature: (Landroid/content/res/AssetManager;)Lbravest/ptt/efastquery/entity/word/Key;
+ */
+JNIEXPORT jobject JNICALL Java_bravest_ptt_efastquery_utils_JNIUtils_getKey
+        (JNIEnv *env, jclass thiz, jobject asset_manager)
 {
     LOGD("get key id from native");
     return asset_key_decrypter(env, asset_manager);
@@ -97,7 +106,7 @@ jobject asset_key_decrypter(JNIEnv* env, jobject asset_manager)
     int result_counter = 0;
 
     //create Java Key Object
-    jclass key_class = (*env)->FindClass(env, "bravest/ptt/efastquery/data/Key");
+    jclass key_class = (*env)->FindClass(env, KEY_CLASS);
     jmethodID key_mid = (*env)->GetMethodID(env, key_class, "<init>", "()V");
     jobject key_obj = (*env)->NewObject(env, key_class, key_mid);
 
