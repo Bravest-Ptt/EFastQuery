@@ -53,27 +53,26 @@ public class BmobOkHttpRequest extends AbstractOkHttpRequest {
             }
 
             // 添加参数
-            final StringBuffer paramBuffer = new StringBuffer();
-            paramBuffer.append(url);
+            final StringBuilder builder = new StringBuilder();
+            builder.append(url);
 
-            String method = data.getNetType();
+            final String method = data.getNetType().toUpperCase();
 
             if (param.hasId()) {
-                paramBuffer.append("/"+param.getObjectId());
+                builder.append("/").append(param.getObjectId());
             }
 
             if (param.hasBody()) {
                 switch (method) {
                     case REQUEST_GET:
                         //for login
-                        if (data.getKey().equals(API.LOGIN)) {
-//                            paramBuffer.append("?"
-//                                    + URLEncoder.encode(param.getBody(), "utf-8"));
-                            paramBuffer.append("?" + param.getBody());
+                        Log.d(TAG, "getNewUrl: data getkey = " +data.getKey());
+                        if (TextUtils.equals(data.getKey(), API.LOGIN)) {
+                            builder.append("?").append(param.getBody());
                         } else {
                             //for query
-                            paramBuffer.append("?where="
-                                    + URLEncoder.encode(param.getBody(), "utf-8"));
+                            builder.append("?where=")
+                                    .append(URLEncoder.encode(param.getBody(), "utf-8"));
                         }
                         break;
                     case REQUEST_POST:
@@ -87,7 +86,7 @@ public class BmobOkHttpRequest extends AbstractOkHttpRequest {
                 }
             }
 
-            url = paramBuffer.toString();
+            url = builder.toString();
             PLog.log("new url = " + url);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

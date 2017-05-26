@@ -13,38 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
+        android:visibility="visible"
         app:srcCompat="@drawable/app_name_drawable" />
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/verification_panel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:textColorHint="@color/white">
-
-        <EditText
-            android:id="@+id/verification_editor"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:hint="@string/register_verification_code"
-            android:inputType="numberDecimal"
-            android:textColor="@color/white"
-            android:textColorHint="#dedede" />
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/username_panel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColorHint="@color/white">
-
-        <EditText
-            android:id="@+id/username_editor"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:hint="@string/verify_username"
-            android:textColor="@color/white" />
-    </android.support.design.widget.TextInputLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -54,7 +24,8 @@
             android:id="@+id/sex_profile_panel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColorHint="@color/white">
+            android:textColorHint="@color/white"
+            android:visibility="gone">
 
             <EditText
                 android:id="@+id/sex_profile_editor"
@@ -96,6 +67,37 @@
                 app:civ_border_width="@dimen/verify_profile_border_width" />
         </LinearLayout>
     </RelativeLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/verification_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColorHint="@color/white">
+
+        <EditText
+            android:id="@+id/verification_editor"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="@string/register_verification_code"
+            android:inputType="numberDecimal"
+            android:textColor="@color/white"
+            android:textColorHint="#dedede" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/username_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColorHint="@color/white">
+
+        <EditText
+            android:id="@+id/username_editor"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="@string/verify_username"
+            android:textColor="@color/white" />
+    </android.support.design.widget.TextInputLayout>
 
     <TextView
         android:id="@+id/register"
