@@ -29,6 +29,7 @@ import bravest.ptt.efastquery.entity.SmsCodeEntity;
 import bravest.ptt.efastquery.entity.User;
 import bravest.ptt.efastquery.net.AbstractRequestCallback;
 import bravest.ptt.efastquery.utils.API;
+import bravest.ptt.efastquery.utils.UserUtils;
 import bravest.ptt.efastquery.utils.Utils;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -283,10 +284,17 @@ public class RegisterVerifyActivity extends BaseActivity {
         user.setUsername(mUserNameEditor.getText().toString());
         user.setMobilePhoneNumber(mSmsCodeEntity.getMobilePhoneNumber());
         user.setSmsCode(mVerifyCodeEditor.getText().toString());
-        user.setPassword(mPassword);
         user.setSex(mIsMale);
 
-        RequestParam param = new RequestParam(JSON.toJSONString(user));
+        //Due to User class don't has get method of Password, so that
+        //Json.toJSONString can't get password from user class.
+        user.setPassword(mPassword);
+        Log.d(TAG, "registerUserAndUploadProfile: pre = " + JSON.toJSONString(user));
+        String userJson = UserUtils.appendPassword(
+                JSON.toJSONString(user), User.PASSWORD, mPassword);
+        Log.d(TAG, "registerUserAndUploadProfile: after = " + userJson);
+
+        RequestParam param = new RequestParam(userJson);
         _NET(API.REGISTER, param, new InnerRequestCallback() {
                     @Override
                     public void onSuccess(String content) {
