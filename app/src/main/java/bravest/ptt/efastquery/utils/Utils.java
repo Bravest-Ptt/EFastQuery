@@ -12,6 +12,8 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -27,6 +29,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -338,5 +341,17 @@ public class Utils {
         dialog.setCancelable(false);
         dialog.setIndeterminate(true);
         return dialog;
+    }
+
+    private void calculateMemoryToken(ImageView imageView) {
+        Drawable drawable = imageView.getDrawable();
+        if (drawable instanceof BitmapDrawable) {
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            Bitmap bitmap = bitmapDrawable.getBitmap();
+            int rowBytes = bitmap.getRowBytes();
+            int height = bitmap.getHeight();
+            long memory = rowBytes * height;
+            Log.d("maopei", "calculateMemoryToken: " + memory + "B");
+        }
     }
 }
