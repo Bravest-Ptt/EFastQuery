@@ -76,6 +76,17 @@
 
     <color name="blue">#4674e7</color>
     <color name="blue_dark">#aa4674e7</color>
+
+
+    <color name="blue_200">#90caf9</color>
+    <color name="blue_300">#64b5f6</color>
+
+    <color name="green_300">#81c784</color>
+    <color name="green_400">#66bb6a</color>
+
+    <color name="red_300">#e57373</color>
+    <color name="red_400">#ef5350</color>
+    <color name="red_500">#f44336</color>
 </resources>
 
 

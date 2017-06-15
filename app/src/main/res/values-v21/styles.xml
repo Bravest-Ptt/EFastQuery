@@ -25,9 +25,9 @@
     </style>
 
     <style name="AppTheme.Splash" parent="Theme.AppCompat.Light">
-        <item name="colorPrimary">@color/splash_900</item>
-        <item name="colorPrimaryDark">@color/splash_1000</item>
-        <item name="colorAccent">@color/splash_800</item>
+        <item name="colorPrimary">@color/red_300</item>
+        <item name="colorPrimaryDark">@color/red_400</item>
+        <item name="colorAccent">@color/white</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>

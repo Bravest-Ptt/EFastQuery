@@ -5,11 +5,12 @@
     android:id="@+id/activity_splash"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/splash_900"
+    android:background="@drawable/test_red"
     android:fitsSystemWindows="true"
     tools:context="bravest.ptt.efastquery.activity.SplashActivity">
 
     <ImageView
+        android:visibility="gone"
         android:id="@+id/splash_seal_start"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,7 +20,13 @@
         android:layout_marginTop="@dimen/seal_margin_top"
         app:srcCompat="@drawable/seal_out_drawable" />
 
+    <bravest.ptt.efastquery.ui.CanvasView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
+
     <TextView
+        android:visibility="gone"
         android:id="@+id/splash_forget_password"
         android:layout_width="match_parent"
         android:gravity="center"
