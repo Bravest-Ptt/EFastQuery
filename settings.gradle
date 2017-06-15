@@ -1,1 +1,1 @@
-include ':app', ':androidlib', ':canvasdemo'
+include ':app', ':androidlib', ':canvasdemo', ':singmetosleep', ':materialdesignresources'

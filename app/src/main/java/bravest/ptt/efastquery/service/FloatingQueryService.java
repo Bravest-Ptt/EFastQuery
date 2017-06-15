@@ -95,6 +95,14 @@ public class FloatingQueryService extends Service {
         mView = null;
     }
 
+    public boolean isFloatingWindowShowing() {
+        if (mView == null) {
+            return false;
+        }
+        return mView.isFloatingButtonShowing();
+    }
+
+
     @Override
     public void onDestroy() {
         stopForeground(true);

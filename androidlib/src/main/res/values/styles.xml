@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--<style name="BaseActivityTheme" parent="Theme.AppCompat.DayNight">-->
+        <!--<item name="android:windowAnimationStyle">@style/RightInRightOutAnimation</item>-->
+    <!--</style>-->
+    
+    <style name="RightInRightOutAnimation" parent="@android:style/Animation.Activity" mce_bogus="1">
+        <item name="android:activityOpenEnterAnimation">@anim/activity_right_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/activity_left_out</item>
+        <item name="android:activityCloseEnterAnimation">@anim/activity_left_in</item>
+        <item name="android:activityCloseExitAnimation">@anim/activity_right_out</item>
+    </style>
+</resources>

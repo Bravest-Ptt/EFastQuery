@@ -228,7 +228,9 @@ public class Utils {
         return ((ParameterizedType) superClass).getActualTypeArguments()[0];
     }
 
-    public static void showOverlayConfirmDialog(final Context context) {
+    public static final int DRAW_OVERLAY_REQUEST_CODE = 0x1111;
+
+    public static void showOverlayConfirmDialog(final Activity context) {
         if (Build.VERSION.SDK_INT >= 23) {
             if (!Settings.canDrawOverlays(context)) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -241,7 +243,7 @@ public class Utils {
                                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
                                 intent.setData(Uri.parse("package:bravest.ptt.efastquery"));
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                context.startActivity(intent);
+                                context.startActivityForResult(intent, DRAW_OVERLAY_REQUEST_CODE);
                             }
                         });
                 builder.setCancelable(false);

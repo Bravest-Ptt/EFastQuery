@@ -162,6 +162,10 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
         }
     }
 
+    public boolean isFloatingButtonShowing() {
+        return mIsShowing;
+    }
+
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         switch (motionEvent.getAction()) {

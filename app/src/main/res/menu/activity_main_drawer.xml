@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/nav_group_1"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
             android:icon="@mipmap/home_nav"
@@ -20,22 +22,22 @@
             android:title="@string/favorite_book" />
     </group>
 
-    <item android:title="Settings">
-        <menu>
-            <item
-                android:id="@+id/nav_open"
-                android:icon="@mipmap/search_button"
-                android:title="@string/open_search_view" />
-            <item
-                android:id="@+id/nav_close"
-                android:icon="@mipmap/delete_input"
-                android:title="@string/close_search_view" />
-            <item
-                android:id="@+id/nav_night_mode"
-                android:icon="@mipmap/speak"
-                android:title="@string/nav_toggle_night_mode"
-                />
-        </menu>
-    </item>
+    <group
+        android:id="@+id/nav_group_2">
+        <item
+            android:id="@+id/nav_open"
+            android:icon="@drawable/ic_search_black_24dp"
+            android:title="@string/open_search_view" />
+        <item
+            android:id="@+id/nav_night_mode"
+            android:icon="@drawable/ic_daynight_black_24dp"
+            android:title="@string/nav_toggle_night_mode" />
+    </group>
 
+    <group android:id="@+id/nav_group_3">
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:title="@string/settings" />
+    </group>
 </menu>

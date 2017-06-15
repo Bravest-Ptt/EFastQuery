@@ -212,6 +212,17 @@ public class HomeActivity extends BaseActivity
     protected void onResume() {
         super.onResume();
         Utils.getHexagonPoints(163.25f, 37f, 126.25f);
+        syncShowFloatingButtonMenuItemText();
+    }
+
+    private void syncShowFloatingButtonMenuItemText() {
+        if (mNavigationView != null) {
+            MenuItem showItem = mNavigationView.getMenu().findItem(R.id.nav_open);
+            if (mFloatingQueryService != null) {
+                boolean isShowing = mFloatingQueryService.isFloatingWindowShowing();
+                showItem.setTitle(isShowing ?  R.string.close_search_view : R.string.open_search_view);
+            }
+        }
     }
 
     private void bindService() {
@@ -378,14 +389,16 @@ public class HomeActivity extends BaseActivity
         invalidateOptionsMenu();
         switch (id) {
             case R.id.nav_open:
-                showFloatingWindow();
-                break;
-            case R.id.nav_close:
-                hideFloatingWindow();
+                boolean isShowing = toggleFloatingWindow();
+                item.setTitle(isShowing ?
+                        R.string.open_search_view : R.string.close_search_view);
                 break;
             case R.id.nav_night_mode:
                 getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 recreate();
+                break;
+            case R.id.nav_settings:
+                startSettingsActivity();
                 break;
             case R.id.nav_home:
                 setStatusBarToolBarHeader(
@@ -432,6 +445,11 @@ public class HomeActivity extends BaseActivity
         return true;
     }
 
+    private void startSettingsActivity() {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
     private void back2Home() {
         mNavigationView.setCheckedItem(R.id.nav_home);
         setFragment(R.id.nav_home);
@@ -460,6 +478,23 @@ public class HomeActivity extends BaseActivity
         } else {
             mNavigationView.setItemTextColor(this.getResources().getColorStateList(itemColor, null));
         }
+    }
+
+    /**
+     * Toggle the floating window state, and return the previous floating button state.
+     * @return false is close, and true is open.
+     */
+    private boolean toggleFloatingWindow() {
+        if (mFloatingQueryService != null) {
+            boolean isShowing = mFloatingQueryService.isFloatingWindowShowing();
+            if(isShowing) {
+                hideFloatingWindow();
+            } else {
+                showFloatingWindow();
+            }
+            return isShowing;
+        }
+        return false;
     }
 
     private void showFloatingWindow() {

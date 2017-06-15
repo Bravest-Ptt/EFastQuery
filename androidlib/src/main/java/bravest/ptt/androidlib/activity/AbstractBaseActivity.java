@@ -1,10 +1,12 @@
 package bravest.ptt.androidlib.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
+import bravest.ptt.androidlib.R;
 import bravest.ptt.androidlib.net.AbstractRequestManager;
 import bravest.ptt.androidlib.utils.plog.PLog;
 
@@ -60,5 +62,17 @@ public abstract class AbstractBaseActivity extends AppCompatActivity {
 
     public AbstractRequestManager getAbstractRequestManager() {
         return mAbstractRequestManager;
+    }
+
+    @Override
+    public void startActivity(Intent intent) {
+        super.startActivity(intent);
+        overridePendingTransition(R.anim.activity_right_in, R.anim.activity_left_out);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.activity_left_in, R.anim.activity_right_out);
     }
 }
