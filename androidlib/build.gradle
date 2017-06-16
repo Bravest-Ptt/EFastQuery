@@ -37,4 +37,5 @@ dependencies {
     compile 'com.alibaba:fastjson:1.1.57.android'
     compile 'com.squareup.okhttp3:okhttp:3.7.0'
     testCompile 'junit:junit:4.12'
+    compile 'com.android.support:design:25.0.0'
 }

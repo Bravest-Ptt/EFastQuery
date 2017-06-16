@@ -3,6 +3,7 @@ package bravest.ptt.androidlib.activity.toolbar;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
@@ -24,6 +25,8 @@ public abstract class AbstractToolbarActivity extends AbstractBaseActivity {
         mToolbar = mToolbarHelper.getToolbar();
         setContentView(mToolbarHelper.getContentView());
         setSupportActionBar(mToolbar);
+        onCreateCustomToolbar(mToolbar);
+        enableBackArrow(true);
     }
 
     public void onCreateCustomToolbar(Toolbar toolbar) {
@@ -37,5 +40,13 @@ public abstract class AbstractToolbarActivity extends AbstractBaseActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    protected final void enableBackArrow(boolean enable) {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(enable);
+            actionBar.setHomeButtonEnabled(enable);
+        }
     }
 }

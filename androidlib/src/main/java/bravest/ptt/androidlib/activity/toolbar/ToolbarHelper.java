@@ -18,6 +18,8 @@ public class ToolbarHelper {
 
     private Context mContext;
 
+    private View mRootView;
+
     private FrameLayout mContentView;
 
     private View mUserView;
@@ -35,23 +37,18 @@ public class ToolbarHelper {
         this.mContext = context;
         mInflater = LayoutInflater.from(mContext);
 
-        initContentView();
-        initUserView(layoutId);
+        initRootView();
         initToolbar();
+        initUserView(layoutId);
     }
 
-    private void initContentView() {
-        mContentView = new FrameLayout(mContext);
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-        );
-        mContentView.setLayoutParams(params);
+    private void initRootView() {
+        mRootView = mInflater.inflate(R.layout.toolbar, null, false);
     }
 
     private void initToolbar() {
-        View toolbar = mInflater.inflate(R.layout.toolbar, mContentView);
-        mToolbar = (Toolbar) toolbar.findViewById(R.id.toolbar);
+        mToolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
+        mContentView = (FrameLayout) mRootView.findViewById(R.id.content_view);
     }
 
     private void initUserView(int id) {
@@ -60,18 +57,18 @@ public class ToolbarHelper {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
         );
-        TypedArray typedArray = mContext.getTheme().obtainStyledAttributes(ATTRS);
-        boolean overlay = typedArray.getBoolean(0, false);
-        int toolbarSize = (int)typedArray.getDimension(1,
-                (int) mContext.getResources().getDimension(R.dimen.abc_action_bar_default_height_material));
-        typedArray.recycle();
+//        TypedArray typedArray = mContext.getTheme().obtainStyledAttributes(ATTRS);
+//        boolean overlay = typedArray.getBoolean(0, false);
+//        int toolbarSize = (int)typedArray.getDimension(1,
+//                (int) mContext.getResources().getDimension(R.dimen.abc_action_bar_default_height_material));
+//        typedArray.recycle();
 
-        params.topMargin = overlay ? 0 : toolbarSize;
+//        params.topMargin = overlay ? 0 : toolbarSize;
         mContentView.addView(mUserView, params);
     }
 
-    public FrameLayout getContentView() {
-        return mContentView;
+    public View getContentView() {
+        return mRootView;
     }
 
     public Toolbar getToolbar() {
