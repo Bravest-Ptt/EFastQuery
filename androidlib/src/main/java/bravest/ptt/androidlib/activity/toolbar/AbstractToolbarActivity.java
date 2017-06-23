@@ -36,7 +36,7 @@ public abstract class AbstractToolbarActivity extends AbstractBaseActivity {
         }
     }
 
-    public void onCreateCustomToolbar(Toolbar toolbar) {
+    protected void onCreateCustomToolbar(Toolbar toolbar) {
         //custom action
     }
 

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/toolbar_right_button"
+    android:layout_width="@dimen/toolbar_confirm_width"
+    android:layout_height="@dimen/toolbar_confirm_height"
+    android:layout_marginRight="@dimen/margin_dp_8"
+    android:background="@drawable/toolbar_button_selector"
+    android:textColor="@color/white" />

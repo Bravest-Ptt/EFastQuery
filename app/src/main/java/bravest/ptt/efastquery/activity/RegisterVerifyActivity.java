@@ -49,8 +49,6 @@ public class RegisterVerifyActivity extends BaseToolBarActivity {
 
     private EditText mVerifyCodeEditor;
 
-    private EditText mUserNameEditor;
-
     private CircleImageView mMaleImageView;
 
     private CircleImageView mFemaleImageView;
@@ -70,6 +68,8 @@ public class RegisterVerifyActivity extends BaseToolBarActivity {
 
     private String mPassword;
 
+    private String mUserName;
+
     private ProgressDialog mDialog;
 
     private String mProfilePath;
@@ -82,6 +82,8 @@ public class RegisterVerifyActivity extends BaseToolBarActivity {
             PLog.log(mSmsCodeEntity);
             mPassword = intent.getStringExtra(User.PASSWORD);
             PLog.log(mPassword);
+            mUserName = intent.getStringExtra(User.USERNAME);
+            PLog.log(mUserName);
         }
     }
 
@@ -89,7 +91,6 @@ public class RegisterVerifyActivity extends BaseToolBarActivity {
     protected void initViews(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.activity_register_verify);
         mVerifyCodeEditor = (EditText) findViewById(R.id.verification_editor);
-        mUserNameEditor = (EditText) findViewById(R.id.username_editor);
         mMaleImageView = (CircleImageView) findViewById(R.id.male_profile_image);
         mFemaleImageView = (CircleImageView) findViewById(R.id.female_profile_image);
         mRegister = (TextView) findViewById(R.id.register);
@@ -231,19 +232,15 @@ public class RegisterVerifyActivity extends BaseToolBarActivity {
         PLog.log("handleRegisterClick");
         //第一步，验证验证码，用户名，头像是否选择
         final String code = mVerifyCodeEditor.getText().toString();
-        final String name = mUserNameEditor.getText().toString();
         if (TextUtils.isEmpty(code)) {
             ToastUtils.showToast(mContext, getString(R.string.verify_please_input_code));
             return;
         }
-        if (TextUtils.isEmpty(name)) {
-            ToastUtils.showToast(mContext, getString(R.string.verify_please_input_name));
-            return;
-        }
-        if (!mIsProfileDone) {
-            ToastUtils.showToast(mContext, getString(R.string.verify_please_choose_profile));
-            return;
-        }
+
+//        if (!mIsProfileDone) {
+//            ToastUtils.showToast(mContext, getString(R.string.verify_please_choose_profile));
+//            return;
+//        }
 
         //第二步，验证用户名是否被使用
         //为什么不验证验证码是否正确是因为，一旦验证正确，这时候验证码就是失效。
@@ -254,39 +251,17 @@ public class RegisterVerifyActivity extends BaseToolBarActivity {
             return;
         }
 
-        User user = new User();
-        user.setUsername(name);
-        _NET(API.IS_USER_NAME_USED,
-                new RequestParam(null, JSON.toJSONString(user)),
-                new InnerRequestCallback() {
-                    @Override
-                    public void onSuccess(String content) {
-                        if (!TextUtils.isEmpty(content) &&
-                                content.contains(User.USERNAME)) {
-                            registerFailedUserHasRegistered();
-                        } else {
-                            //第三步，上传用户信息并验证验证码是否正确
-                            registerUserAndUploadProfile();
-                        }
-                    }
-
-                    @Override
-                    public void onFail(String errorMessage) {
-                        super.onFail(errorMessage);
-                        registerFailed();
-                    }
-                }
-        );
+        registerUser();
     }
 
     //第三步，注册用户(手机号，密码，用户名)
-    private void registerUserAndUploadProfile() {
+    private void registerUser() {
         Log.d(TAG, "registerUserAndUploadProfile: step 4");
         final User user = new User();
-        user.setUsername(mUserNameEditor.getText().toString());
+        user.setUsername(mUserName);
         user.setMobilePhoneNumber(mSmsCodeEntity.getMobilePhoneNumber());
         user.setSmsCode(mVerifyCodeEditor.getText().toString());
-        user.setSex(mIsMale);
+        //user.setSex(mIsMale);
 
         //Due to User class don't has get method of Password, so that
         //Json.toJSONString can't get password from user class.
@@ -307,8 +282,9 @@ public class RegisterVerifyActivity extends BaseToolBarActivity {
                             //保存用户信息
                             Log.d(TAG, "onSuccess: step 5");
                             storeUserInfo(resultUser);
+                            registerSuccessButProfileFailed(R.string.register_success);
                             //第四步，上传头像
-                            uploadProfile(resultUser);
+                            //uploadProfile(resultUser);
                         } else {
                             registerFailed();
                         }
@@ -399,12 +375,6 @@ public class RegisterVerifyActivity extends BaseToolBarActivity {
         mDialog.dismiss();
     }
 
-    private void registerFailedUserHasRegistered() {
-        ToastUtils.showToast(mContext,
-                getString(R.string.verify_user_name_used));
-        mDialog.dismiss();
-    }
-
     private void registerFailed() {
         ToastUtils.showToast(mContext, getString(R.string.register_failed));
         mDialog.dismiss();
@@ -454,7 +424,7 @@ public class RegisterVerifyActivity extends BaseToolBarActivity {
                         SmsCodeEntity entity = JSON.parseObject(content, SmsCodeEntity.class);
                         if (entity != null && TextUtils.equals(BmobConstants.OK, entity.getMsg())) {
                             //第四步，注册用户到系统中
-                            registerUserAndUploadProfile();
+                            //registerUserAndUploadProfile();
                         } else {
                             PLog.log("verify sms code error, onsuccess but body is not ok");
                             mDialog.dismiss();
