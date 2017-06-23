@@ -72,21 +72,21 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.LoginActivity"
-            android:label="@string/app_name"
+            android:label="@string/login_text"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Login" />
         <activity
             android:name=".activity.RegisterActivity"
-            android:label="@string/app_name"
+            android:label="@string/register_text"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Login" />
         <activity
             android:name=".activity.RegisterVerifyActivity"
-            android:label="@string/app_name"
+            android:label="@string/register_verification_text"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Login" />
         <activity android:name=".activity.ClipImageActivity"
-            android:label="@string/app_name"
+            android:label="@string/clip_image_text"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Login" />
         <activity android:name=".activity.SettingsActivity"

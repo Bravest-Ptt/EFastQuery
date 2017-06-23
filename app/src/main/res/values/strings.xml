@@ -103,6 +103,7 @@
     <string name="overlay_confirm_positive"><font color="#f44336"><b>去开启</b></font></string>
 
     <!--login-->
+    <string name="login_text">登录</string>
     <string name="login">登"&#160;""&#160;""&#160;""&#160;"录</string>
     <string name="register">注"&#160;""&#160;""&#160;""&#160;"册</string>
     <string name="login_phonenumber">手机号码</string>
@@ -111,6 +112,8 @@
     <string name="login_forget_password">忘记密码？</string>
 
     <!--register-->
+    <string name="register_text">注册</string>
+    <string name="register_verification_text">确认验证码</string>
     <string name="register_verification_code">验证码</string>
     <string name="register_verification_wait">请稍候~</string>
     <string name="register_already">已经注册？点此登录</string>
@@ -145,6 +148,9 @@
     <string name="login_please_input_account">请输入用户名或手机号码</string>
     <string name="login_successful">登录成功</string>
     <string name="login_failed">登录失败</string>
+
+    <!--clip image-->
+    <string name="clip_image_text">裁剪头像</string>
 
     <!--settings-->
     <string name="settings">设置</string>

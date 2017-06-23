@@ -29,6 +29,7 @@ import bravest.ptt.androidlib.utils.ToastUtils;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.androidlib.utils.plog.PLog;
 import bravest.ptt.efastquery.activity.base.BaseActivity;
+import bravest.ptt.efastquery.activity.base.BaseToolBarActivity;
 import bravest.ptt.efastquery.entity.User;
 import bravest.ptt.efastquery.utils.API;
 import bravest.ptt.efastquery.utils.Utils;
@@ -61,7 +62,6 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     protected void initVariables() {
-        super.initVariables();
         mContext = this;
         mActivityActive = true;
 

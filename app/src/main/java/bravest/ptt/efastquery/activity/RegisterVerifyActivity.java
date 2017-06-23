@@ -25,6 +25,7 @@ import bravest.ptt.androidlib.utils.bmob.BmobConstants;
 import bravest.ptt.androidlib.utils.plog.PLog;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.activity.base.BaseActivity;
+import bravest.ptt.efastquery.activity.base.BaseToolBarActivity;
 import bravest.ptt.efastquery.entity.ProfileEntity;
 import bravest.ptt.efastquery.entity.SmsCodeEntity;
 import bravest.ptt.efastquery.entity.User;
@@ -36,7 +37,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static bravest.ptt.efastquery.activity.LoginActivity.REGISTER_SUCCESS_PROFILE_FAILED;
 
-public class RegisterVerifyActivity extends BaseActivity {
+public class RegisterVerifyActivity extends BaseToolBarActivity {
 
     private static final String TAG = "RegisterVerifyActivity";
 
@@ -75,7 +76,6 @@ public class RegisterVerifyActivity extends BaseActivity {
 
     @Override
     protected void initVariables() {
-        super.initVariables();
         Intent intent = getIntent();
         if (intent != null) {
             mSmsCodeEntity = (SmsCodeEntity) intent.getExtras().get(SmsCodeEntity.getName());

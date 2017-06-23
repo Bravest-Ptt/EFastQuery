@@ -28,12 +28,13 @@ import bravest.ptt.androidlib.utils.ToastUtils;
 import bravest.ptt.androidlib.utils.plog.PLog;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.activity.base.BaseActivity;
+import bravest.ptt.efastquery.activity.base.BaseToolBarActivity;
 import bravest.ptt.efastquery.ui.ClipView;
 import bravest.ptt.efastquery.utils.Utils;
 
 import static bravest.ptt.efastquery.activity.RegisterVerifyActivity.PROFILE_URL;
 
-public class ClipImageActivity extends BaseActivity implements View.OnTouchListener {
+public class ClipImageActivity extends BaseToolBarActivity implements View.OnTouchListener {
 
     private static final String TAG = "ClipImageActivity";
 
@@ -80,7 +81,6 @@ public class ClipImageActivity extends BaseActivity implements View.OnTouchListe
 
     @Override
     protected void initVariables() {
-        super.initVariables();
         Intent intent = getIntent();
         if (intent != null) {
             mUrl = intent.getStringExtra(PROFILE_URL);

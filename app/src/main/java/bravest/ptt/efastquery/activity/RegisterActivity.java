@@ -21,6 +21,7 @@ import bravest.ptt.androidlib.utils.ToastUtils;
 import bravest.ptt.androidlib.utils.plog.PLog;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.activity.base.BaseActivity;
+import bravest.ptt.efastquery.activity.base.BaseToolBarActivity;
 import bravest.ptt.efastquery.entity.SmsCodeEntity;
 import bravest.ptt.efastquery.entity.User;
 import bravest.ptt.efastquery.net.AbstractRequestCallback;
@@ -28,7 +29,7 @@ import bravest.ptt.efastquery.utils.API;
 import bravest.ptt.efastquery.utils.UserUtils;
 import bravest.ptt.efastquery.utils.Utils;
 
-public class RegisterActivity extends BaseActivity {
+public class RegisterActivity extends BaseToolBarActivity {
 
     private static final String TAG = "RegisterActivity";
 
@@ -81,7 +82,6 @@ public class RegisterActivity extends BaseActivity {
 
     @Override
     protected void initVariables() {
-        super.initVariables();
         mWaitingDialog = Utils.newFullScreenProgressDialog(this);
     }
 
@@ -100,8 +100,8 @@ public class RegisterActivity extends BaseActivity {
         mRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handleRequestSmsCode();
-                //startVerifyActivity(null);
+                //handleRequestSmsCode();
+                startVerifyActivity(null);
             }
         });
 

@@ -98,7 +98,6 @@ public class HomeActivity extends BaseActivity
 
     @Override
     protected void initVariables() {
-        super.initVariables();
         mContext = this;
         bindService();
         checkPermissions();

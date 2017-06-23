@@ -18,6 +18,7 @@ import bravest.ptt.androidlib.net.RequestParam;
 import bravest.ptt.androidlib.utils.ToastUtils;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.activity.base.BaseActivity;
+import bravest.ptt.efastquery.activity.base.BaseToolBarActivity;
 import bravest.ptt.efastquery.entity.User;
 import bravest.ptt.efastquery.utils.API;
 import bravest.ptt.efastquery.utils.UserUtils;
@@ -25,7 +26,7 @@ import bravest.ptt.efastquery.utils.Utils;
 
 import static bravest.ptt.efastquery.activity.RegisterActivity.LENGTH_PASSWORD;
 
-public class LoginActivity extends BaseActivity {
+public class LoginActivity extends BaseToolBarActivity {
 
     private static final String TAG = "LoginActivity";
 
@@ -42,7 +43,6 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void initVariables() {
-        super.initVariables();
         Intent intent = getIntent();
         if (intent != null
                 && TextUtils.equals(intent.getAction(), REGISTER_SUCCESS_PROFILE_FAILED)) {

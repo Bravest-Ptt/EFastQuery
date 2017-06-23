@@ -6,12 +6,13 @@ import android.support.annotation.Nullable;
 
 import bravest.ptt.androidlib.activity.toolbar.AbstractToolbarActivity;
 import bravest.ptt.efastquery.R;
+import bravest.ptt.efastquery.activity.base.BaseToolBarActivity;
 
 /**
  * Created by root on 6/6/17.
  */
 
-public class SettingsActivity extends AbstractToolbarActivity {
+public class SettingsActivity extends BaseToolBarActivity {
 
     @Override
     protected void initVariables() {

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/splash_900"
+    android:background="@color/white"
     android:orientation="vertical"
     android:paddingLeft="@dimen/register_app_name_padding"
     android:paddingRight="@dimen/register_app_name_padding">
@@ -13,10 +13,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:srcCompat="@drawable/app_name_drawable" />
 
     <RelativeLayout
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -72,43 +73,36 @@
         android:id="@+id/verification_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:textColorHint="@color/white">
+        android:layout_marginTop="@dimen/margin_dp_16">
 
         <EditText
             android:id="@+id/verification_editor"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:hint="@string/register_verification_code"
-            android:inputType="numberDecimal"
-            android:textColor="@color/white"
-            android:textColorHint="#dedede" />
+            android:inputType="numberDecimal" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/username_panel"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColorHint="@color/white">
+        android:layout_height="wrap_content">
 
         <EditText
             android:id="@+id/username_editor"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:hint="@string/verify_username"
-            android:textColor="@color/white" />
+            android:hint="@string/verify_username" />
     </android.support.design.widget.TextInputLayout>
 
-    <TextView
+    <Button
         android:id="@+id/register"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:clickable="true"
-        android:gravity="center_horizontal"
+        android:layout_height="@dimen/login_register_h"
+        android:layout_marginTop="@dimen/margin_dp_16"
+        android:background="@drawable/login_selector"
         android:text="@string/register"
-        android:textColor="@color/selector_send_code"
-        android:textSize="24sp" />
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/register_already"
