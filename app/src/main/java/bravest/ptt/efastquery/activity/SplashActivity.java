@@ -24,11 +24,11 @@ import android.widget.ImageView;
 
 import com.alibaba.fastjson.JSON;
 
-import bravest.ptt.androidlib.activity.AbstractBaseActivity;
 import bravest.ptt.androidlib.net.RequestParam;
 import bravest.ptt.androidlib.utils.ToastUtils;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.androidlib.utils.plog.PLog;
+import bravest.ptt.efastquery.activity.base.BaseActivity;
 import bravest.ptt.efastquery.entity.User;
 import bravest.ptt.efastquery.utils.API;
 import bravest.ptt.efastquery.utils.Utils;

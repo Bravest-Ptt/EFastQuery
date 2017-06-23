@@ -588,14 +588,15 @@ class ESearchMainPanel implements View.OnClickListener, OnTranslateListener<Resu
     //Voice speak
     private void startTTS(String result) {
         PLog.log("result = " + result);
-        if (NetworkUtils.isConnectedByState(mContext)) {
+        if (false/*NetworkUtils.isConnectedByState(mContext)*/) {
             //When the net work connected, we usw msc voice engine
             setMscParams();
             result += "\n";
             mTts.startSpeaking(result, mTtsListener);
         } else {
             if (mTTS != null && !mTTS.isSpeaking()) {
-                mTTS.setPitch(1.4f);
+                mTTS.setPitch(1.5f);
+                mTTS.setSpeechRate(0.8f);
                 if (TextUtils.isEmpty(result)) {
                     result = "No result";
                 }

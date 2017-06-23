@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 
@@ -18,6 +17,7 @@ import java.util.HashMap;
 import bravest.ptt.androidlib.net.RequestParam;
 import bravest.ptt.androidlib.utils.ToastUtils;
 import bravest.ptt.efastquery.R;
+import bravest.ptt.efastquery.activity.base.BaseActivity;
 import bravest.ptt.efastquery.entity.User;
 import bravest.ptt.efastquery.utils.API;
 import bravest.ptt.efastquery.utils.UserUtils;

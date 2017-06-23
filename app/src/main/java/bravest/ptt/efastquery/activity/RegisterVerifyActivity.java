@@ -24,6 +24,7 @@ import bravest.ptt.androidlib.utils.ToastUtils;
 import bravest.ptt.androidlib.utils.bmob.BmobConstants;
 import bravest.ptt.androidlib.utils.plog.PLog;
 import bravest.ptt.efastquery.R;
+import bravest.ptt.efastquery.activity.base.BaseActivity;
 import bravest.ptt.efastquery.entity.ProfileEntity;
 import bravest.ptt.efastquery.entity.SmsCodeEntity;
 import bravest.ptt.efastquery.entity.User;

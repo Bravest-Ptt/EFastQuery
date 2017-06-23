@@ -20,6 +20,7 @@ import bravest.ptt.androidlib.utils.RegularUtils;
 import bravest.ptt.androidlib.utils.ToastUtils;
 import bravest.ptt.androidlib.utils.plog.PLog;
 import bravest.ptt.efastquery.R;
+import bravest.ptt.efastquery.activity.base.BaseActivity;
 import bravest.ptt.efastquery.entity.SmsCodeEntity;
 import bravest.ptt.efastquery.entity.User;
 import bravest.ptt.efastquery.net.AbstractRequestCallback;

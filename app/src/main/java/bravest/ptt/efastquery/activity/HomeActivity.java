@@ -35,10 +35,9 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
-import java.net.URL;
 import java.util.HashMap;
 
-import bravest.ptt.androidlib.activity.AbstractBaseActivity;
+import bravest.ptt.efastquery.activity.base.BaseActivity;
 import bravest.ptt.efastquery.entity.ProfileEntity;
 import bravest.ptt.efastquery.entity.User;
 import bravest.ptt.efastquery.service.FloatingQueryService;

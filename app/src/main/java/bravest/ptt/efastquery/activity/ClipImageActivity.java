@@ -24,10 +24,10 @@ import android.widget.LinearLayout;
 import com.zxy.tiny.Tiny;
 import com.zxy.tiny.callback.FileCallback;
 
-import bravest.ptt.androidlib.activity.AbstractBaseActivity;
 import bravest.ptt.androidlib.utils.ToastUtils;
 import bravest.ptt.androidlib.utils.plog.PLog;
 import bravest.ptt.efastquery.R;
+import bravest.ptt.efastquery.activity.base.BaseActivity;
 import bravest.ptt.efastquery.ui.ClipView;
 import bravest.ptt.efastquery.utils.Utils;
 

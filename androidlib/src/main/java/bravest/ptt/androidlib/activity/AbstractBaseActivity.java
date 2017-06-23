@@ -8,6 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 
 import bravest.ptt.androidlib.R;
 import bravest.ptt.androidlib.net.AbstractRequestManager;
+import bravest.ptt.androidlib.net.RemoteService;
+import bravest.ptt.androidlib.net.RequestCallback;
+import bravest.ptt.androidlib.net.RequestParam;
 import bravest.ptt.androidlib.utils.plog.PLog;
 
 /**
@@ -24,18 +27,25 @@ public abstract class AbstractBaseActivity extends AppCompatActivity {
 
     protected AbstractBaseActivity mActivity;
 
+    private boolean mHasTransitionAnimation = true;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = this;
         mActivity = this;
+        initRequestManager();
         initVariables();
         initViews(savedInstanceState);
         initData();
     }
 
+    protected abstract void initRequestManager();
+
     protected abstract void initVariables();
+
     protected abstract void initViews(@Nullable Bundle savedInstanceState);
+
     protected abstract void initData();
 
     protected void onDestroy() {
@@ -67,12 +77,24 @@ public abstract class AbstractBaseActivity extends AppCompatActivity {
     @Override
     public void startActivity(Intent intent) {
         super.startActivity(intent);
-        overridePendingTransition(R.anim.activity_right_in, R.anim.activity_left_out);
+        if (mHasTransitionAnimation) {
+            overridePendingTransition(R.anim.activity_right_in, R.anim.activity_left_out);
+        }
     }
 
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(R.anim.activity_left_in, R.anim.activity_right_out);
+        if (mHasTransitionAnimation) {
+            overridePendingTransition(R.anim.activity_left_in, R.anim.activity_right_out);
+        }
+    }
+
+    public void setHasTransitionAnimation(boolean hasTransitionAnimation) {
+        this.mHasTransitionAnimation = hasTransitionAnimation;
+    }
+
+    protected void _NET(String apiKey, RequestParam param, RequestCallback callback) {
+        RemoteService.getInstance().invoke(mActivity, apiKey, param, callback);
     }
 }

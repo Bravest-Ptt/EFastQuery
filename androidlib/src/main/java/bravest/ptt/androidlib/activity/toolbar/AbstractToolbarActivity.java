@@ -19,6 +19,8 @@ public abstract class AbstractToolbarActivity extends AbstractBaseActivity {
 
     protected Toolbar mToolbar;
 
+    private boolean mEnableBackArrow = true;
+
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         mToolbarHelper = new ToolbarHelper(mContext, layoutResID);
@@ -26,7 +28,12 @@ public abstract class AbstractToolbarActivity extends AbstractBaseActivity {
         setContentView(mToolbarHelper.getContentView());
         setSupportActionBar(mToolbar);
         onCreateCustomToolbar(mToolbar);
-        enableBackArrow(true);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(mEnableBackArrow);
+            actionBar.setHomeButtonEnabled(mEnableBackArrow);
+        }
     }
 
     public void onCreateCustomToolbar(Toolbar toolbar) {
@@ -43,10 +50,6 @@ public abstract class AbstractToolbarActivity extends AbstractBaseActivity {
     }
 
     protected final void enableBackArrow(boolean enable) {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(enable);
-            actionBar.setHomeButtonEnabled(enable);
-        }
+        this.mEnableBackArrow = enable;
     }
 }
