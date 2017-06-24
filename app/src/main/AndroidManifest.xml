@@ -32,7 +32,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme.NoActionBar">
         <activity
             android:name=".activity.HomeActivity"
             android:label="@string/app_name"
@@ -85,14 +85,20 @@
             android:label="@string/register_verification_text"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Login" />
-        <activity android:name=".activity.ClipImageActivity"
+        <activity
+            android:name=".activity.ClipImageActivity"
             android:label="@string/clip_image_text"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Login" />
-        <activity android:name=".activity.SettingsActivity"
+        <activity
+            android:name=".activity.SettingsActivity"
             android:label="@string/settings"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activity.FindPasswordActivity"
+            android:label="@string/find_password"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Login" />
     </application>
 
 </manifest>

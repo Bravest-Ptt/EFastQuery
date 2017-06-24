@@ -44,7 +44,7 @@ public class RegisterActivity extends BaseToolBarActivity {
 
     private static final int WHAT_COUNT_OVER = 2;
 
-    public static final int LENGTH_PASSWORD = 8;
+    public static final int LENGTH_PASSWORD = 6;
 
     /**
      * The delay for request sms code
@@ -61,7 +61,7 @@ public class RegisterActivity extends BaseToolBarActivity {
 
     private EditText mUserNameEditor;
 
-    private View mRegister;
+   // private View mRegister;
 
     private TextView mRegisterAlready;
 
@@ -99,17 +99,17 @@ public class RegisterActivity extends BaseToolBarActivity {
         mPhoneNumberEditor = (EditText) findViewById(R.id.phoneNumber);
         mUserNameEditor = (EditText) findViewById(R.id.username_editor);
         mPasswordEditor = (EditText) findViewById(R.id.passWord);
-        mRegister = findViewById(R.id.register);
+        //mRegister = findViewById(R.id.register);
         mRegisterAlready = (TextView) findViewById(R.id.register_already);
         mWaitingView = findViewById(R.id.register_progress);
 
-        mRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleRequestSmsCode();
-                //startVerifyActivity(null);
-            }
-        });
+//        mRegister.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                handleRequestSmsCode();
+//                //startVerifyActivity(null);
+//            }
+//        });
 
         mRegisterAlready.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,9 +126,15 @@ public class RegisterActivity extends BaseToolBarActivity {
         View view = LayoutInflater.from(mContext).inflate(R.layout.toolbar_right_button, null);
         Button registerButton = (Button) view.findViewById(R.id.toolbar_right_button);
         registerButton.setText(R.string.register_get_sms_code);
-        int width = (int) getResources().getDimension(R.dimen.toolbar_confirm_width);
-        int height = (int) getResources().getDimension(R.dimen.toolbar_confirm_height);
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleRequestSmsCode();
+                //startVerifyActivity(null);
+            }
+        });
 
+        int height = (int) getResources().getDimension(R.dimen.toolbar_confirm_height);
         Toolbar.LayoutParams params = new Toolbar.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, height);
         params.gravity = Gravity.END;
         params.rightMargin = Utils.dp2px(10);

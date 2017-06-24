@@ -34,9 +34,9 @@
             app:srcCompat="@drawable/app_name_drawable" />
 
         <RelativeLayout
-            android:layout_marginTop="@dimen/margin_dp_32"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_dp_32"
             android:paddingLeft="@dimen/register_app_name_padding"
             android:paddingRight="@dimen/register_app_name_padding">
 
@@ -54,28 +54,30 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:hint="@string/login_phonenumber"
-                    android:inputType="numberDecimal" />
+                    android:inputType="numberDecimal"
+                    android:singleLine="true"
+                    android:textSize="16dp" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/username_panel"
-                android:layout_below="@+id/phoneNumberContainer"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/phoneNumberContainer">
 
                 <EditText
                     android:id="@+id/username_editor"
                     android:layout_width="match_parent"
-                    android:singleLine="true"
                     android:layout_height="50dp"
-                    android:hint="@string/verify_username" />
+                    android:hint="@string/verify_username"
+                    android:singleLine="true"
+                    android:textSize="16dp" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/passWordContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/username_panel"
                 app:passwordToggleEnabled="true"
@@ -86,25 +88,27 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:hint="@string/register_password_hint"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:singleLine="true"
+                    android:textSize="16dp" />
             </android.support.design.widget.TextInputLayout>
 
-            <Button
-                android:id="@+id/register"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/login_register_h"
-                android:layout_below="@id/passWordContainer"
-                android:layout_marginTop="@dimen/margin_dp_16"
-                android:background="@drawable/login_selector"
-                android:text="@string/register_get_sms_code"
-                android:textSize="18sp" />
+            <!--<Button-->
+            <!--android:id="@+id/register"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="@dimen/login_register_h"-->
+            <!--android:layout_below="@id/passWordContainer"-->
+            <!--android:layout_marginTop="@dimen/margin_dp_16"-->
+            <!--android:background="@drawable/login_selector"-->
+            <!--android:text="@string/register_get_sms_code"-->
+            <!--android:textSize="18sp" />-->
 
             <TextView
                 android:id="@+id/register_already"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/register"
-                android:layout_marginTop="12dp"
+                android:layout_below="@id/passWordContainer"
+                android:layout_marginTop="@dimen/margin_dp_48"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"

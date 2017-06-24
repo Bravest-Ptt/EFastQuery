@@ -4,9 +4,13 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -56,6 +60,7 @@ public class LoginActivity extends BaseToolBarActivity {
     @Override
     protected void initViews(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.activity_login);
+        initToolbar();
         mAccountEditor = (EditText) findViewById(R.id.accountEditor);
         mPasswordEditor = (EditText) findViewById(R.id.passWordEditor);
         mLoginButton = (Button) findViewById(R.id.login);
@@ -71,6 +76,29 @@ public class LoginActivity extends BaseToolBarActivity {
 
     @Override
     protected void initData() {
+        Utils.popSoftInput(mContext, mAccountEditor);
+    }
+
+    private void initToolbar() {
+        View view = LayoutInflater.from(mContext).inflate(R.layout.toolbar_right_button, null);
+        Button findPasswordButton = (Button) view.findViewById(R.id.toolbar_right_button);
+        findPasswordButton.setText(R.string.login_forget_password);
+        findPasswordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startFindPasswordActivity();
+            }
+        });
+
+        int height = (int) getResources().getDimension(R.dimen.toolbar_confirm_height);
+        Toolbar.LayoutParams params = new Toolbar.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, height);
+        params.gravity = Gravity.END;
+        params.rightMargin = Utils.dp2px(10);
+        mToolbar.addView(view, params);
+    }
+
+    private void startFindPasswordActivity() {
+        startActivity(new Intent(this, FindPasswordActivity.class));
     }
 
     private void handleLoginClick() {

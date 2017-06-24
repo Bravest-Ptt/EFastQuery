@@ -55,7 +55,7 @@ public class RegisterVerifyActivity extends BaseToolBarActivity {
 
     private TextView mRegister;
 
-    private TextView mRegisterAlready;
+    //private TextView mRegisterAlready;
 
     private EditText mSexProfileEditor;
 
@@ -94,7 +94,7 @@ public class RegisterVerifyActivity extends BaseToolBarActivity {
         mMaleImageView = (CircleImageView) findViewById(R.id.male_profile_image);
         mFemaleImageView = (CircleImageView) findViewById(R.id.female_profile_image);
         mRegister = (TextView) findViewById(R.id.register);
-        mRegisterAlready = (TextView) findViewById(R.id.register_already);
+        //mRegisterAlready = (TextView) findViewById(R.id.register_already);
         mSexProfileEditor = (EditText) findViewById(R.id.sex_profile_editor);
 
         Utils.popSoftInput(mContext, mVerifyCodeEditor);
@@ -137,12 +137,12 @@ public class RegisterVerifyActivity extends BaseToolBarActivity {
             }
         });
 
-        mRegisterAlready.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleRegisterAlreadyClick();
-            }
-        });
+//        mRegisterAlready.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                handleRegisterAlreadyClick();
+//            }
+//        });
 
         mDialog = Utils.newFullScreenProgressDialog(mContext);
     }
@@ -385,8 +385,8 @@ public class RegisterVerifyActivity extends BaseToolBarActivity {
 
         ToastUtils.showToast(mContext, getString(id));
 
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.setAction(REGISTER_SUCCESS_PROFILE_FAILED);
+        Intent intent = new Intent(this, HomeActivity.class);
+        //intent.setAction(REGISTER_SUCCESS_PROFILE_FAILED);
         startActivity(intent);
         finish();
     }

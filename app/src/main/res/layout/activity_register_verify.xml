@@ -17,9 +17,9 @@
         app:srcCompat="@drawable/app_name_drawable" />
 
     <RelativeLayout
-        android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone">
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/sex_profile_panel"
@@ -52,9 +52,9 @@
                 android:layout_width="@dimen/verify_profile_width"
                 android:layout_height="@dimen/verify_profile_width"
                 android:layout_gravity="center"
+                android:padding="@dimen/margin_dp_4"
                 android:src="@mipmap/male"
                 app:civ_border_color="@color/splash_1000"
-                android:padding="@dimen/margin_dp_4"
                 app:civ_border_width="@dimen/verify_profile_border_width" />
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -62,8 +62,8 @@
                 android:layout_width="@dimen/verify_profile_width"
                 android:layout_height="@dimen/verify_profile_width"
                 android:layout_gravity="center_horizontal"
-                android:src="@mipmap/female"
                 android:padding="@dimen/margin_dp_4"
+                android:src="@mipmap/female"
                 app:civ_border_color="@color/splash_1000"
                 app:civ_border_width="@dimen/verify_profile_border_width" />
         </LinearLayout>
@@ -73,14 +73,15 @@
         android:id="@+id/verification_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_dp_16">
+        android:layout_marginTop="@dimen/margin_dp_32">
 
         <EditText
             android:id="@+id/verification_editor"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:hint="@string/register_verification_code"
-            android:inputType="numberDecimal" />
+            android:inputType="numberDecimal"
+            android:singleLine="true" />
     </android.support.design.widget.TextInputLayout>
 
     <Button
@@ -92,14 +93,14 @@
         android:text="@string/register"
         android:textSize="18sp" />
 
-    <TextView
-        android:id="@+id/register_already"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:text="@string/register_already"
-        android:textColor="@color/selector_forget_password" />
+    <!--<TextView-->
+    <!--android:id="@+id/register_already"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="12dp"-->
+    <!--android:clickable="true"-->
+    <!--android:focusable="true"-->
+    <!--android:gravity="center"-->
+    <!--android:text="@string/register_already"-->
+    <!--android:textColor="@color/selector_forget_password" />-->
 </LinearLayout>
