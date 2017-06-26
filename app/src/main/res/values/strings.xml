@@ -104,7 +104,7 @@
 
     <!--login-->
     <string name="login_text">登录</string>
-    <string name="login">登"&#160;""&#160;""&#160;""&#160;"录</string>
+    <string name="login">登"&#160;"录</string>
     <string name="register">注"&#160;""&#160;""&#160;""&#160;"册</string>
     <string name="login_phonenumber">手机号码</string>
     <string name="login_phone_number_or_name">手机号码/用户名</string>
@@ -161,4 +161,7 @@
     <string name="old_password">旧密码</string>
     <string name="confirm_password">确认密码</string>
     <string name="reset_password_successful">重置密码成功</string>
+    
+    <string name="new_user">新用户</string>
+    <string name="network_unreachable">无网络连接</string>
 </resources>

@@ -12,17 +12,35 @@
     </style>
 
     <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.DayNight">
-        <item name="colorPrimary">@color/home_red_500_4_toolbar</item>
-        <item name="colorPrimaryDark">@color/home_red_600_4_status_bar</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorHint">@color/text_color</item>
+        <item name="android:textColor">@color/text_color</item>
+        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="colorControlActivated">@color/colorPrimary</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
     <style name="AppTheme.export" parent="AppTheme.NoActionBar">
         <item name="colorPrimary">@color/export_orange_500_4_toolbar</item>
         <item name="colorPrimaryDark">@color/export_orange_600_4_status_bar</item>
         <item name="colorAccent">@color/export_orange_600_4_status_bar</item>
+    </style>
+
+    <style name="AppTheme.Login" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorHint">@color/text_color</item>
+        <item name="android:textColor">@color/text_color</item>
+        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="colorControlActivated">@color/colorPrimary</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
     <style name="AppTheme.Splash" parent="Theme.AppCompat.Light">

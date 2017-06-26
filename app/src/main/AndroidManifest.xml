@@ -32,13 +32,12 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.NoActionBar">
+        android:theme="@style/AppTheme.Login">
         <activity
             android:name=".activity.HomeActivity"
             android:label="@string/app_name"
             android:launchMode="singleInstance"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:screenOrientation="portrait" />
 
         <service android:name=".service.FloatingQueryService" />
 
@@ -69,39 +68,32 @@
         </activity>
         <activity
             android:name=".msciat.settings.IatSettings"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.LoginActivity"
             android:label="@string/login_text"
             android:launchMode="singleInstance"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Login" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.RegisterActivity"
             android:label="@string/register_text"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Login" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.RegisterVerifyActivity"
             android:label="@string/register_verification_text"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Login" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.ClipImageActivity"
             android:label="@string/clip_image_text"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Login" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/settings"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.FindPasswordActivity"
             android:label="@string/find_password"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Login" />
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

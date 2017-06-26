@@ -5,89 +5,86 @@
     android:id="@+id/activity_splash"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/test_red"
-    android:fitsSystemWindows="true"
+    android:background="#fefefe"
     tools:context="bravest.ptt.efastquery.activity.SplashActivity">
 
     <ImageView
-        android:visibility="gone"
-        android:id="@+id/splash_seal_start"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginLeft="@dimen/seal_padding"
-        android:layout_marginRight="@dimen/seal_padding"
-        android:layout_marginTop="@dimen/seal_margin_top"
-        app:srcCompat="@drawable/seal_out_drawable" />
-
-    <bravest.ptt.efastquery.ui.CanvasView
+        android:id="@+id/splash_logo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:layout_marginBottom="150dp"
+        app:srcCompat="@drawable/ic_playstore_icon" />
+
+    <!--<TextView-->
+    <!--android:id="@+id/splash_logo_text"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:layout_centerHorizontal="true"-->
+    <!--android:layout_marginBottom="30dp"-->
+    <!--android:text="英语，快查"-->
+    <!--android:textSize="26sp"-->
+    <!--android:visibility="visible" />-->
 
     <TextView
-        android:visibility="gone"
-        android:id="@+id/splash_forget_password"
-        android:layout_width="match_parent"
-        android:gravity="center"
-        android:padding="10dp"
+        android:id="@+id/splash_logo_text"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
-        android:text="@string/login_forget_password"
-        android:textColor="@color/selector_forget_password"
-        android:layout_below="@+id/splash_seal_start"
-        android:layout_toRightOf="@+id/splash_app_name"
-        android:layout_toEndOf="@+id/splash_app_name"
-        android:layout_marginTop="10dp" />
+        android:layout_alignBottom="@+id/splash_logo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="75dp"
+        android:text="英语，快查"
+        android:textColor="#999999"
+        android:textSize="26sp"
+        android:visibility="visible" />
 
-    <ImageView
-        android:id="@+id/splash_app_name"
+
+    <ViewSwitcher
+        android:id="@+id/splash_switcher"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_gravity="center_horizontal"
-        android:paddingBottom="48dp"
-        android:paddingLeft="48dp"
-        android:paddingRight="48dp"
-        android:visibility="gone"
-        app:srcCompat="@drawable/app_name_drawable" />
+        android:layout_marginBottom="@dimen/login_margin_bottom">
 
-    <LinearLayout
-        android:id="@+id/login_panel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/login_margin_bottom"
-        android:layout_marginLeft="@dimen/login_margin_side"
-        android:layout_marginRight="@dimen/login_margin_side"
-        android:orientation="vertical">
+        <ProgressBar
+            android:id="@+id/splash_loading_progressbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true" />
 
-        <Button
-            android:id="@+id/login"
+        <LinearLayout
+            android:id="@+id/login_panel"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/login_register_h"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/login_margin_side"
             android:layout_marginRight="@dimen/login_margin_side"
-            android:layout_weight="1"
-            android:background="@drawable/login_selector"
-            android:clickable="true"
-            android:text="@string/login"
-            android:textColor="@color/white"
-            android:textSize="23sp" />
+            android:orientation="horizontal"
+            android:visibility="visible">
 
-        <Button
-            android:id="@+id/register"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/login_register_h"
-            android:layout_marginLeft="@dimen/login_margin_side"
-            android:layout_marginRight="@dimen/login_margin_side"
-            android:layout_marginTop="@dimen/login_button_margin"
-            android:layout_weight="1"
-            android:background="@drawable/login_selector"
-            android:clickable="true"
-            android:text="@string/register"
-            android:textColor="@color/white"
-            android:textSize="23sp" />
-    </LinearLayout>
+            <Button
+                android:id="@+id/login"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/login_register_h"
+                android:layout_weight="1"
+                android:background="@color/button_white_normal"
+                android:text="@string/login"
+                android:textSize="21sp" />
+
+            <View
+                android:layout_width="30dp"
+                android:layout_height="1dp" />
+
+            <Button
+                android:id="@+id/register"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/login_register_h"
+                android:layout_weight="1"
+                android:background="@color/button_color_primary_normal"
+                android:text="@string/new_user"
+                android:textColor="#ffffff"
+                android:textSize="21sp" />
+        </LinearLayout>
+    </ViewSwitcher>
 </RelativeLayout>

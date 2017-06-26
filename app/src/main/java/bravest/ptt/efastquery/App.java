@@ -1,6 +1,7 @@
 package bravest.ptt.efastquery;
 
 import android.app.Application;
+import android.view.WindowManager;
 
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;

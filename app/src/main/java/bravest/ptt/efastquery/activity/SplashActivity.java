@@ -12,25 +12,33 @@ import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
+import android.widget.ViewSwitcher;
 
 import com.alibaba.fastjson.JSON;
 
 import bravest.ptt.androidlib.net.RequestParam;
+import bravest.ptt.androidlib.utils.NetworkUtils;
 import bravest.ptt.androidlib.utils.ToastUtils;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.androidlib.utils.plog.PLog;
 import bravest.ptt.efastquery.activity.base.BaseActivity;
 import bravest.ptt.efastquery.activity.base.BaseToolBarActivity;
 import bravest.ptt.efastquery.entity.User;
+import bravest.ptt.efastquery.listeners.OnBackgroundToggleListener;
 import bravest.ptt.efastquery.utils.API;
 import bravest.ptt.efastquery.utils.Utils;
 
@@ -40,7 +48,7 @@ public class SplashActivity extends BaseActivity {
 
     private static final int FINISH = 1;
 
-    private Context mContext;
+    private ViewSwitcher mViewSwitcher;
 
     /**
      *  oncreate and onresume is true
@@ -60,19 +68,64 @@ public class SplashActivity extends BaseActivity {
         }
     };
 
+    private Animation mSlideInLeft;
+    private Animation mSlideOutRight;
+
     @Override
     protected void initVariables() {
-        mContext = this;
         mActivityActive = true;
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        mSlideInLeft = AnimationUtils.loadAnimation(mContext, android.R.anim.slide_in_left);
+        mSlideOutRight = AnimationUtils.loadAnimation(mContext, android.R.anim.slide_out_right);
+    }
 
+    @Override
+    protected void initViews(@Nullable Bundle savedInstanceState) {
+        setContentView(R.layout.activity_splash);
+        View login = findViewById(R.id.login);
+        login.setOnTouchListener(new OnBackgroundToggleListener(
+                R.color.button_white_normal,
+                R.color.button_white_pressed
+        ) {
+            @Override
+            protected void handleClick() {
+                handleLogin();
+            }
+        });
+
+        View register = findViewById(R.id.register);
+        register.setOnTouchListener(new OnBackgroundToggleListener(
+                R.color.button_color_primary_normal,
+                R.color.button_color_primary_pressed
+        ) {
+            @Override
+            protected void handleClick() {
+                handleRegister();
+            }
+        });
+
+        mViewSwitcher = (ViewSwitcher) findViewById(R.id.splash_switcher);
+        mViewSwitcher.setInAnimation(mSlideInLeft);
+        mViewSwitcher.setOutAnimation(mSlideOutRight);
+    }
+
+    @Override
+    protected void initData() {
         User user = User.getInstance(mContext);
         if (user != null) {
-            verifyIsExpired(user);
+            if (NetworkUtils.isConnectedByState(mContext)) {
+                verifyIsExpired(user);
+            } else {
+                ToastUtils.showToast(mContext, R.string.network_unreachable);
+            }
+        } else {
+            switchViewToNext();
         }
     }
 
+
     private void verifyIsExpired(User user) {
-        final ProgressDialog dialog = Utils.newFullScreenProgressDialog(mContext);
         final String objectId = user.getObjectId();
         final String token = user.getSessionToken();
         if (TextUtils.isEmpty(objectId) || TextUtils.isEmpty(token)) {
@@ -85,13 +138,11 @@ public class SplashActivity extends BaseActivity {
         String jsonBody = JSON.toJSONString(tmp);
         RequestParam param = new RequestParam(objectId, jsonBody);
 
-        dialog.show();
         _NET(API.UPDATE_USER_INFO, param, new InnerRequestCallback() {
             @Override
             public void onSuccess(String content) {
                 super.onSuccess(content);
                 Log.d(TAG, "onSuccess: content = " + content);
-                dialog.dismiss();
                 goHome();
             }
 
@@ -99,7 +150,7 @@ public class SplashActivity extends BaseActivity {
             public void onFail(String errorMessage) {
                 super.onFail(errorMessage);
                 Log.d(TAG, "onFail:  = " + errorMessage);
-                dialog.dismiss();
+                switchViewToNext();
             }
         });
     }
@@ -110,31 +161,10 @@ public class SplashActivity extends BaseActivity {
         finish();
     }
 
-    @Override
-    protected void initViews(@Nullable Bundle savedInstanceState) {
-        setContentView(R.layout.activity_splash);
-        View login = findViewById(R.id.login);
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleLogin();
-            }
-        });
-
-        View register = findViewById(R.id.register);
-        register.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleRegister();
-            }
-        });
-
-        initSealAnimation();
-    }
-
-    @Override
-    protected void initData() {
-
+    private void switchViewToNext() {
+        if (mViewSwitcher != null) {
+            mViewSwitcher.showNext();
+        }
     }
 
     private void handleLogin() {
@@ -147,6 +177,7 @@ public class SplashActivity extends BaseActivity {
         startActivity(new Intent(this,RegisterActivity.class));
     }
 
+    /*
     private void initSealAnimation() {
         final ImageView imageView = (ImageView) findViewById(R.id.splash_seal_start);
 
@@ -180,6 +211,7 @@ public class SplashActivity extends BaseActivity {
         } else {
         }
     }
+    */
 
     @Override
     protected void onResume() {
@@ -188,18 +220,6 @@ public class SplashActivity extends BaseActivity {
     }
 
     private boolean hasLogin = false;
-
-    private void startMainActivity() {
-        if (hasLogin) {
-            mHandler.sendEmptyMessage(FINISH);
-            Intent intent = new Intent(mContext, HomeActivity.class);
-            startActivity(intent);
-            finish();
-        } else {
-            ImageView nameView = (ImageView) findViewById(R.id.splash_app_name);
-            nameView.setVisibility(View.GONE);
-        }
-    }
 
     private AnimatorSet mSet;
     private void doAnimation(final ImageView imageView) {
@@ -214,8 +234,8 @@ public class SplashActivity extends BaseActivity {
         mSet.play(anim);
         mSet.start();
 
-        ImageView nameView = (ImageView) findViewById(R.id.splash_app_name);
-        nameView.setVisibility(View.GONE);
+       // ImageView nameView = (ImageView) findViewById(R.id.splash_app_name);
+       // nameView.setVisibility(View.GONE);
     }
 
     @Override
@@ -236,5 +256,19 @@ public class SplashActivity extends BaseActivity {
     protected void onDestroy() {
         mActivityActive = false;
         super.onDestroy();
+    }
+
+    @Override
+    public void startActivity(Intent intent) {
+        super.startActivity(intent);
+        overridePendingTransition(bravest.ptt.androidlib.R.anim.activity_scale_start,
+                bravest.ptt.androidlib.R.anim.activity_scale_leave);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(bravest.ptt.androidlib.R.anim.activity_scale_start,
+                bravest.ptt.androidlib.R.anim.activity_scale_leave);
     }
 }

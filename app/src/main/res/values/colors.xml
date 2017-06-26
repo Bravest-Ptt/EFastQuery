@@ -23,6 +23,11 @@
     <color name="teal_a400">#1de9b6</color>
     <color name="teal_a700">#00bfa5</color>
 
+    <color name="button_white_normal">#14000000</color>
+    <color name="button_white_pressed">#0a000000</color>
+    <color name="button_color_primary_normal">@color/teal_500</color>
+    <color name="button_color_primary_pressed">@color/teal_300</color>
+
     <color name="cardview_dark_background">#FF424242</color>
     <color name="cardview_light_background">#FFFFFFFF</color>
     <color name="cardview_shadow_end_color">#03000000</color>

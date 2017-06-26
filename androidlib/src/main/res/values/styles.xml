@@ -3,7 +3,20 @@
     <!--<style name="BaseActivityTheme" parent="Theme.AppCompat.DayNight">-->
         <!--<item name="android:windowAnimationStyle">@style/RightInRightOutAnimation</item>-->
     <!--</style>-->
-    
+
+    <style name="AppTheme.Login" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorHint">@color/text_color</item>
+        <item name="android:textColor">@color/text_color</item>
+        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="colorControlActivated">@color/colorPrimary</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    </style>
+
     <style name="RightInRightOutAnimation" parent="@android:style/Animation.Activity" mce_bogus="1">
         <item name="android:activityOpenEnterAnimation">@anim/activity_right_in</item>
         <item name="android:activityOpenExitAnimation">@anim/activity_left_out</item>
