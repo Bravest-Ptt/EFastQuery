@@ -68,7 +68,6 @@ public class ImportFragment extends FileManagerFragment {
     protected void refreshData() {
         ArrayList<File> ret = FileUtils.getPathContent(mCurrentFile.getAbsolutePath(), FileUtils.MODE_NORMAL_IMPORT);
         if (ret != null) {
-            super.refreshData();
             mData.clear();
             mData.addAll(ret);
             notifyDataSetChanged();

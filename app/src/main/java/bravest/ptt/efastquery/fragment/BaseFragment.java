@@ -64,10 +64,5 @@ public abstract class BaseFragment extends Fragment {
         });
     }
 
-    protected void refreshData() {
-        onDataRefresh();
-    }
-
-    protected void onDataRefresh() {
-    }
+    protected abstract void refreshData();
 }

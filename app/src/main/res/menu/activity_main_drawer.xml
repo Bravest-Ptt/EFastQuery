@@ -9,21 +9,24 @@
             android:icon="@mipmap/home_nav"
             android:title="@string/home" />
         <item
-            android:id="@+id/nav_export"
-            android:icon="@mipmap/export_nav"
-            android:title="@string/export_file" />
-        <item
             android:id="@+id/nav_import"
             android:icon="@mipmap/import_nav"
             android:title="@string/import_file" />
         <item
             android:id="@+id/nav_favorite_book"
             android:icon="@mipmap/favorite_nav"
-            android:title="@string/favorite_book" />
+            android:title="@string/favorite" />
+        <item
+            android:id="@+id/nav_listen_write"
+            android:icon="@mipmap/ic_launcher"
+            android:title="@string/listen_translate" />
+        <item
+            android:id="@+id/nav_export"
+            android:icon="@mipmap/export_nav"
+            android:title="@string/export_import" />
     </group>
 
-    <group
-        android:id="@+id/nav_group_2">
+    <group android:id="@+id/nav_group_2">
         <item
             android:id="@+id/nav_open"
             android:icon="@drawable/ic_search_black_24dp"

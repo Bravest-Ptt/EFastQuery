@@ -217,6 +217,10 @@ public class FileManagerFragment extends BaseFragment implements OnItemClickList
         return false;
     }
 
+    @Override
+    protected void refreshData() {
+    }
+
     private void addViewToIndicator() {
         if (mCurrentFile.isFile()) {
             return;

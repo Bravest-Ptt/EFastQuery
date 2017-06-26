@@ -83,7 +83,7 @@ public class FavoriteFragment extends BaseFragment implements OnItemClickListene
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setAutoMeasureEnabled(true);
         mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.hasFixedSize();
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -114,13 +114,7 @@ public class FavoriteFragment extends BaseFragment implements OnItemClickListene
 
     @Override
     protected void refreshData() {
-        super.refreshData();
         checkoutGroup(mCurrentGroup);
-    }
-
-    @Override
-    protected void onDataRefresh() {
-        super.onDataRefresh();
     }
 
     @Override

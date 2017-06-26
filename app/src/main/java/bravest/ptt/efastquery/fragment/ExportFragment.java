@@ -64,10 +64,6 @@ public class ExportFragment extends FileManagerFragment implements AdapterView.O
     }
 
     @Override
-    protected void onDataRefresh() {
-    }
-
-    @Override
     protected void refreshData() {
         ArrayList<File> ret = FileUtils.getPathContent(mCurrentFile.getAbsolutePath(), FileUtils.MODE_NORMAL_EXPORT);
         if (ret != null) {
