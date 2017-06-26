@@ -19,6 +19,9 @@ public class ToastUtils {
     private static Toast toast = null; //Toast的对象！
 
     public static void showToast(Context mContext, String id) {
+        if (mContext == null) {
+            throw new NullPointerException();
+        }
         if (TextUtils.isEmpty(id)) {
             return;
         }
@@ -29,5 +32,12 @@ public class ToastUtils {
             toast.setText(id);
         }
         toast.show();
+    }
+
+    public static void showToast(Context mContext, int id) {
+        if (mContext == null) {
+            throw new NullPointerException();
+        }
+        showToast(mContext, mContext.getString(id));
     }
 }

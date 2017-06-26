@@ -49,4 +49,9 @@ public interface API {
      * 上传JPG格式图片
      */
     String UPLOAD_JPG_IMAGE = "uploadJPGImage";
+
+    /**
+     *  Reset password by sms
+     */
+    String RESET_PASSWORD_BY_SMS = "resetPasswordBySms";
 }

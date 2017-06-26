@@ -62,6 +62,19 @@ public class UserUtils {
         return src;
     }
 
+    public static String formatValuesToJson(String key, String value) {
+        if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) {
+            throw new NullPointerException("Key is null | value is null");
+        }
+
+        String src = "{";
+        src += "\"" + key + "\"";
+        src += ":";
+        src += "\"" + value + "\"";
+        src += "}";
+        return src;
+    }
+
     public static String convertToUrlParams(HashMap<String, String> dataParams) {
         String result = "";
         Set<String> keys = dataParams.keySet();

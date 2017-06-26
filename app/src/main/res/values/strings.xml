@@ -160,4 +160,5 @@
     <string name="new_password">新密码</string>
     <string name="old_password">旧密码</string>
     <string name="confirm_password">确认密码</string>
+    <string name="reset_password_successful">重置密码成功</string>
 </resources>

@@ -12,6 +12,12 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Objects;
 
+
+/**
+ * How to use the RequestParam
+ * if you have a parameter need append to the url, if the original url is https://a.pengtian.com/user, append objectId, the url will look like https://a.pengtian.com/user/objectid
+ * if you have a body to update, so give me a JSON string which contains your body data.
+ */
 public class RequestParam implements java.io.Serializable {
 
     private static final long serialVersionUID = 1274906854152052510L;

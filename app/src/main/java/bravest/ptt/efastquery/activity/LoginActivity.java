@@ -21,7 +21,6 @@ import java.util.HashMap;
 import bravest.ptt.androidlib.net.RequestParam;
 import bravest.ptt.androidlib.utils.ToastUtils;
 import bravest.ptt.efastquery.R;
-import bravest.ptt.efastquery.activity.base.BaseActivity;
 import bravest.ptt.efastquery.activity.base.BaseToolBarActivity;
 import bravest.ptt.efastquery.entity.User;
 import bravest.ptt.efastquery.utils.API;
@@ -36,6 +35,8 @@ public class LoginActivity extends BaseToolBarActivity {
 
     public static final String REGISTER_SUCCESS_PROFILE_FAILED
             = "register_success_profile_failed";
+
+    public static final String ACTION_FIND_PASSWORD_SUCCESSFUL = "find_password_successful";
 
     private EditText mAccountEditor;
 
@@ -72,6 +73,17 @@ public class LoginActivity extends BaseToolBarActivity {
         });
 
         mDialog = Utils.newFullScreenProgressDialog(mContext);
+
+
+        Intent intent = getIntent();
+        if (intent != null
+                && TextUtils.equals(intent.getAction(), ACTION_FIND_PASSWORD_SUCCESSFUL)) {
+            String phoneNumber = intent.getExtras().getString(User.MOBILE_PHONE_NUMBER);
+            Log.d(TAG, "initViews: phoneNumber = " + phoneNumber);
+            if (phoneNumber != null) {
+                mAccountEditor.setText(phoneNumber);
+            }
+        }
     }
 
     @Override

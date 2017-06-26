@@ -95,4 +95,12 @@
         Key="login"
         NetType="GET"
         Url="https://api.bmob.cn/1/login" />
+
+    <!--Reset password by sms code-->
+    <Node
+        ContentType="application/json"
+        Expires="0"
+        Key="resetPasswordBySms"
+        NetType="PUT"
+        Url="https://api.bmob.cn/1/resetPasswordBySmsCode" />
 </url>
