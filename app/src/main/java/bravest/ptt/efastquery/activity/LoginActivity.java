@@ -161,6 +161,7 @@ public class LoginActivity extends BaseToolBarActivity {
 
         Intent intent = new Intent(mContext, HomeActivity.class);
         startActivity(intent);
+        setResult(RESULT_OK);
         finish();
     }
 

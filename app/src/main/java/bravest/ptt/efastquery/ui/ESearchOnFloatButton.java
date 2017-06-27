@@ -111,8 +111,66 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
         mState = STATE_NORMAL;
     }
 
+    /**
+     *  六种展开形态
+     *  定义一级菜单半径为R1, 一个二级菜单的直径为R2, 与一级圆球距离为L1. DISTANCE为二级菜单与屏幕边界间距。
+     *  二级菜单分别定义为：M1, M2, M3
+     *
+     *  （0,0）
+     *  | 一 一 一 一 一 → X坐标 0°
+     *  |
+     *  |
+     *  |
+     *  ↓Y坐标, 90°
+     *
+     *  左上角形态：条件： x = 0, y <  R1 + R2 + L1 + DISTANCE  弹射角度：M1 → 0° M2 → 45°M3 → 90°
+     *  | 一 一 → M1
+     *  |  ↘
+     *  ↓    ↘ M2
+     *  M3
+     *
+     *  右上角形态：条件： x = width, y < R1 + R2 + L1 + DISTANCE  弹射角度：M1 → 180° M2 → 135°M3 → 90°
+     *   M1 ← 一 一|
+     *           ↙ |
+     *     M2 ↙    ↓
+     *              M3
+     *
+     *
+     *  右中角形态：条件： x = width, R1 + R2 + L1 + DISTANCE <= y <=  height - (R1 +R2 + L1 + DISTANCE)
+     *  弹射角度：M1 → 270° M2 → 180°M3 → 90°
+     *
+     *          M1
+     *          ↑
+     *  M2 ← 一|
+     *          ↓
+     *          M3
+     *
+     *  右下角形态：条件：x = width, y > height - (R1 +R2 + L1 + DISTANCE)  弹射角度：M1 → 270° M2 → 225°M3 → 180°
+     *
+     *              M1
+     *    M2 ↖    ↑
+     *          ↖ |
+     *  M3 ← 一 一|
+     *
+     *  左下角形态：条件：x = 0, y > height - (R1 +R2 + L1 + DISTANCE)  弹射角度：M1 → 270° M2 → 315°M3 → 0°
+     *
+     *   M1
+     *  ↑    ↗ M2
+     *  |  ↗
+     *  | 一 一 → M3
+     *
+     *  左中角形态：条件： x = 0, R1 + R2 + L1 + DISTANCE <= y <=  height - (R1 +R2 + L1 + DISTANCE)
+     *  弹射角度：M1 → 270° M2 → 0°M3 → 90°
+     *
+     *  M1
+     *  ↑
+     *  | 一 → M2
+     *  ↓
+     *  M3
+     */
     private void expandFloatButton() {
         mState = STATE_EXPANDED;
+
     }
 
     private void initView() throws InflaterNotReadyException {

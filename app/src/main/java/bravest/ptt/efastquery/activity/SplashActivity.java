@@ -48,6 +48,10 @@ public class SplashActivity extends BaseActivity {
 
     private static final int FINISH = 1;
 
+    public static final int LOGIN = 2;
+
+    public static final int REGISTER = 3;
+
     private ViewSwitcher mViewSwitcher;
 
     /**
@@ -169,12 +173,29 @@ public class SplashActivity extends BaseActivity {
 
     private void handleLogin() {
         PLog.d(TAG, "handle login");
-        startActivity(new Intent(this, LoginActivity.class));
+        startActivityForResult(new Intent(this, LoginActivity.class), LOGIN);
     }
 
     private void handleRegister() {
         PLog.d(TAG, "handle register");
-        startActivity(new Intent(this,RegisterActivity.class));
+        startActivityForResult(new Intent(this,RegisterActivity.class), REGISTER);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case LOGIN:
+                    finish();
+                    break;
+                case REGISTER:
+                    finish();
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     /*
@@ -261,6 +282,13 @@ public class SplashActivity extends BaseActivity {
     @Override
     public void startActivity(Intent intent) {
         super.startActivity(intent);
+        overridePendingTransition(bravest.ptt.androidlib.R.anim.activity_scale_start,
+                bravest.ptt.androidlib.R.anim.activity_scale_leave);
+    }
+
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        super.startActivityForResult(intent, requestCode);
         overridePendingTransition(bravest.ptt.androidlib.R.anim.activity_scale_start,
                 bravest.ptt.androidlib.R.anim.activity_scale_leave);
     }
