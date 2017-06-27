@@ -5,6 +5,9 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.os.Handler;
+import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,11 +21,18 @@ import bravest.ptt.efastquery.utils.Utils;
 
 public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTouchListener, OnFloatPanelVisibleListener {
 
+    public static final int STATE_COLLAPSED = 0;
+    public static final int STATE_NORMAL = 1;
+    public static final int STATE_EXPANDED = 2;
+
+    public static final int WHAT_CHECK_UNTOUCHED_TIME = 0;
+
     private static final String TAG = "ESearchOnFloatButton";
     private static final float DISTANCE = 15.0f;
 
     private Context mContext;
     private WindowManager mWm;
+    private LayoutInflater mInflater;
     private WindowManager.LayoutParams mLayoutParams;
     private View mSearchView;
     private ESearchMainPanel mMainPanel;
@@ -32,6 +42,29 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
     private float mDownX, mDownY;
     private long mDownTimeMillis;
 
+    private int mState = STATE_NORMAL;
+    private long mUpTimeMillis = System.currentTimeMillis();
+    private boolean mInRight = true;
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case WHAT_CHECK_UNTOUCHED_TIME:
+                    Log.d(TAG, "handleMessage: ");
+                    if (System.currentTimeMillis() - mUpTimeMillis > 4000
+                            && mState == STATE_NORMAL) {
+                        collapseFloatButton();
+                    }
+                    mHandler.sendEmptyMessageDelayed(WHAT_CHECK_UNTOUCHED_TIME, 2000);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
     public ESearchOnFloatButton(Context context) throws InflaterNotReadyException {
         mContext = context;
         mWm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
@@ -39,14 +72,55 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
         initView();
         initLayoutParams();
         initMainPanel();
+        initCheckUnTouchedHandler();
+    }
+
+    private void initCheckUnTouchedHandler() {
+        mUpTimeMillis = System.currentTimeMillis();
+        mHandler.sendEmptyMessageDelayed(WHAT_CHECK_UNTOUCHED_TIME, 1000);
+    }
+
+    private void collapseFloatButton() {
+        mState = STATE_COLLAPSED;
+        Log.d(TAG, "collapseFloatButton: ");
+        //get normal button position.
+        final int[] locations = new int[2];
+        final int normalSize = mSearchView.getMeasuredWidth();
+        mSearchView.getLocationOnScreen(locations);
+        mWm.removeView(mSearchView);
+
+        if (mInRight) {
+            mSearchView = mInflater.inflate(R.layout.layout_floating_button_collapsed_right, null);
+        } else {
+            mSearchView = mInflater.inflate(R.layout.layout_floating_button_collapsed_left, null);
+        }
+        mSearchView.setOnTouchListener(this);
+        mWm.addView(mSearchView, mLayoutParams);
+
+        float x;
+        if (mInRight) {
+            x = locations[0] + (normalSize / 2);
+        } else {
+            x = locations[0] - (normalSize / 2);
+        }
+        ValueAnimator animator = alignAnimator(x, locations[1]);
+        animator.start();
+    }
+
+    private void normalFloatButton() {
+        mState = STATE_NORMAL;
+    }
+
+    private void expandFloatButton() {
+        mState = STATE_EXPANDED;
     }
 
     private void initView() throws InflaterNotReadyException {
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-        if (inflater == null) {
+        mInflater = LayoutInflater.from(mContext);
+        if (mInflater == null) {
             throw new InflaterNotReadyException();
         }
-        mSearchView = inflater.inflate(R.layout.layout_floating_button, null);
+        mSearchView = mInflater.inflate(R.layout.layout_floating_button, null);
         mSearchView.setOnTouchListener(this);
     }
 
@@ -78,9 +152,11 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
     private ValueAnimator alignAnimator(float x, float y) {
         ValueAnimator animator;
         if (x <= Utils.getScreenWidth(mContext) / 2) {
+            mInRight = false;
             animator = ValueAnimator.ofObject(new PointEvaluator()
                     , new Point((int)x, (int)y), new Point(0, (int)y));
         }else {
+            mInRight = true;
             animator = ValueAnimator.ofObject(new PointEvaluator(),
                     new Point((int)x, (int)y), new Point(Utils.getScreenWidth(mContext), (int)y));
         }
@@ -195,6 +271,7 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
     private void up(MotionEvent event) {
         float x = event.getRawX();
         float y = event.getRawY();
+        mUpTimeMillis = System.currentTimeMillis();
         if (x >= mDownX - DISTANCE && x <= mDownX + DISTANCE
                 && y >= mDownY - DISTANCE && y <= mDownY + DISTANCE) {
             if (System.currentTimeMillis() - mDownTimeMillis > 1200) {
@@ -205,7 +282,16 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
                 if (mMainPanel.isShowing()) {
                     mMainPanel.hideSearchPanel();
                 } else {
-                    mMainPanel.showSearchPanel();
+                    switch (mState) {
+                        case STATE_COLLAPSED:
+                            expandFloatButton();
+                            break;
+                        case STATE_NORMAL:
+                            expandFloatButton();
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         } else {
