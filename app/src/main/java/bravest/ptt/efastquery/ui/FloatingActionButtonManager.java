@@ -20,7 +20,7 @@ import bravest.ptt.efastquery.utils.Utils;
  */
 
 public class FloatingActionButtonManager {
-    private static final String TAG = "FloatingActionButtonManager";
+    private static final String TAG = "FABManager";
     private static final int ANIMATION_DELAY = 250;
 
     static final int ACTION_INPUT_NULL = 0;

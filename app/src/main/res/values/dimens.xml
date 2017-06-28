@@ -56,6 +56,10 @@
     <dimen name="margin_dp_32">32dp</dimen>
     <dimen name="margin_dp_48">48dp</dimen>
 
-    <dimen name="search_button_size">45dp</dimen>
+    <dimen name="search_expanded_panel_size">120dp</dimen>
+    <dimen name="search_expanded_level1_size">45dp</dimen>
     <dimen name="search_collapsed">6dp</dimen>
+    <dimen name="search_expanded_level2_size">35dp</dimen>
+    <dimen name="search_expanded_length_inner">10dp</dimen>
+    <dimen name="search_expanded_distance_outer">10dp</dimen>
 </resources>

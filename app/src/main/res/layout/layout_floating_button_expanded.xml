@@ -1,39 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/float_button"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@drawable/search_floating_selector"
+    android:id="@+id/float_button_expanded"
+    android:layout_width="@dimen/search_expanded_panel_size"
+    android:layout_height="@dimen/search_expanded_panel_size"
     android:clickable="true">
 
     <ImageView
-        android:id="@+id/float_button_background"
-        android:layout_width="@dimen/float_button_size"
-        android:layout_height="@dimen/float_button_size"
-        android:src="@drawable/ic_playstore_icon"
-        android:clickable="false" />
+        android:id="@+id/center"
+        android:layout_width="@dimen/search_expanded_level1_size"
+        android:layout_height="@dimen/search_expanded_level1_size"
+        android:background="@drawable/search_floating_selector"
+        android:clickable="false"
+        android:src="@drawable/ic_playstore_icon" />
 
     <ImageView
-        android:id="@+id/float_button_exit"
-        android:layout_width="@dimen/float_button_size"
-        android:layout_height="@dimen/float_button_size"
-        android:src="@drawable/ic_arrow"
+        android:id="@+id/exit"
+        android:layout_width="@dimen/search_expanded_level2_size"
+        android:layout_height="@dimen/search_expanded_level2_size"
+        android:background="@drawable/search_floating_selector"
+        android:clickable="false"
         android:padding="10dp"
-        android:clickable="false" />
+        android:src="@drawable/ic_arrow" />
 
     <ImageView
-        android:id="@+id/float_button_choose_word"
-        android:layout_width="@dimen/float_button_size"
-        android:layout_height="@dimen/float_button_size"
-        android:src="@mipmap/folder"
+        android:id="@+id/select"
+        android:layout_width="@dimen/search_expanded_level2_size"
+        android:layout_height="@dimen/search_expanded_level2_size"
+        android:background="@drawable/search_floating_selector"
+        android:clickable="false"
         android:padding="10dp"
-        android:clickable="false" />
+        android:src="@mipmap/folder" />
 
     <ImageView
-        android:id="@+id/float_button_search"
-        android:layout_width="@dimen/float_button_size"
-        android:layout_height="@dimen/float_button_size"
-        android:src="@mipmap/search_button"
+        android:id="@+id/search"
+        android:layout_width="@dimen/search_expanded_level2_size"
+        android:layout_height="@dimen/search_expanded_level2_size"
+        android:background="@drawable/search_floating_selector"
+        android:clickable="false"
         android:padding="10dp"
-        android:clickable="false" />
+        android:src="@mipmap/search_button" />
 </RelativeLayout>

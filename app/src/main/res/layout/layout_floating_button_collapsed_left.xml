@@ -10,7 +10,7 @@
     <ImageView
         android:id="@+id/float_button_background"
         android:layout_width="@dimen/search_collapsed"
-        android:layout_height="@dimen/search_button_size"
+        android:layout_height="@dimen/search_expanded_level1_size"
         android:src="@drawable/search_floating_collapsed"
         android:clickable="false" />
 </LinearLayout>

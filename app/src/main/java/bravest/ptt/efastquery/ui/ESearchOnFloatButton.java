@@ -1,5 +1,7 @@
 package bravest.ptt.efastquery.ui;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -7,13 +9,17 @@ import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.listeners.OnFloatPanelVisibleListener;
@@ -27,7 +33,51 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
 
     public static final int WHAT_CHECK_UNTOUCHED_TIME = 0;
 
+    public static final int MODE_MENU_EXPAND = 1;
+    public static final int MODE_MENU_COLLAPSE = 2;
+
     private static final String TAG = "ESearchOnFloatButton";
+
+    /**
+     * The center button radius
+     */
+    private static int R1;
+
+    /**
+     * The menu button diameter
+     */
+    private static int D2;
+
+    /**
+     *  The distance of center button and menu button
+     */
+    private static int L1;
+
+    /**
+     * The distance of menu button and screen edge
+     */
+    private static int DISTANCE_EDGE;
+
+    /**
+     * The min expanded length
+     */
+    private static int MIN_EXPANDED_LENGTH;
+
+    /**
+     *  The length of menu should translate in animation
+     */
+    private static int TRANSLATE_LENGTH;
+
+    /**
+     *  the window size when floating button (normal) is in corner
+     */
+    private static int CORNER_WINDOW_SIZE;
+
+    /**
+     * the window size when floatin button is in the middle of screen.
+     */
+    private static int MIDDLE_WINDOW_SIZE;
+
     private static final float DISTANCE = 15.0f;
 
     private Context mContext;
@@ -38,6 +88,8 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
     private ESearchMainPanel mMainPanel;
     private OnFloatPanelVisibleListener mMainPanelVisibleListener;
     private boolean mIsShowing = false;
+
+    private Point mFloatingButtonNormalPoint = new Point() ;
 
     private float mDownX, mDownY;
     private long mDownTimeMillis;
@@ -69,10 +121,29 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
         mContext = context;
         mWm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         mLayoutParams = new WindowManager.LayoutParams();
+        initVariables();
         initView();
         initLayoutParams();
         initMainPanel();
         initCheckUnTouchedHandler();
+    }
+
+    private void initVariables() {
+        R1 = mContext.getResources().getDimensionPixelSize(R.dimen.search_expanded_level1_size) / 2;
+
+        D2 = mContext.getResources().getDimensionPixelSize(R.dimen.search_expanded_level2_size);
+
+        L1 = mContext.getResources().getDimensionPixelSize(R.dimen.search_expanded_length_inner);
+
+        DISTANCE_EDGE = mContext.getResources().getDimensionPixelSize(R.dimen.search_expanded_distance_outer);
+
+        MIN_EXPANDED_LENGTH = R1 + D2 + L1 + DISTANCE_EDGE;
+
+        TRANSLATE_LENGTH = R1 + D2 / 2 + L1;
+
+        CORNER_WINDOW_SIZE = R1 * 2 + L1 + D2 + DISTANCE_EDGE * 2;
+
+        MIDDLE_WINDOW_SIZE = (R1 + L1 + D2 + DISTANCE_EDGE) * 2;
     }
 
     private void initCheckUnTouchedHandler() {
@@ -103,17 +174,24 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
         } else {
             x = locations[0] - (normalSize / 2);
         }
-        ValueAnimator animator = alignAnimator(x, locations[1]);
+        ValueAnimator animator = alignAnimator(x, locations[1] + Utils.getStatusBarHeight(mContext));
         animator.start();
     }
 
     private void normalFloatButton() {
         mState = STATE_NORMAL;
+        mWm.removeView(mSearchView);
+        mSearchView = mInflater.inflate(R.layout.layout_floating_button_normal, null);
+        resizeSearchView(R1 * 2);
+
+        mLayoutParams.x = mFloatingButtonNormalPoint.x;
+        mLayoutParams.y = mFloatingButtonNormalPoint.y;
+        mWm.addView(mSearchView, mLayoutParams);
     }
 
     /**
      *  六种展开形态
-     *  定义一级菜单半径为R1, 一个二级菜单的直径为R2, 与一级圆球距离为L1. DISTANCE为二级菜单与屏幕边界间距。
+     *  定义一级菜单半径为R1, 一个二级菜单的直径为D2, 与一级圆球距离为L1. DISTANCE为二级菜单与屏幕边界间距。
      *  二级菜单分别定义为：M1, M2, M3
      *
      *  （0,0）
@@ -123,20 +201,20 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
      *  |
      *  ↓Y坐标, 90°
      *
-     *  左上角形态：条件： x = 0, y <  R1 + R2 + L1 + DISTANCE  弹射角度：M1 → 0° M2 → 45°M3 → 90°
+     *  左上角形态：条件： x = 0, y <  R1 + D2 + L1 + DISTANCE  弹射角度：M1 → 0° M2 → 45°M3 → 90°
      *  | 一 一 → M1
      *  |  ↘
      *  ↓    ↘ M2
      *  M3
      *
-     *  右上角形态：条件： x = width, y < R1 + R2 + L1 + DISTANCE  弹射角度：M1 → 180° M2 → 135°M3 → 90°
+     *  右上角形态：条件： x = width, y < R1 + D2 + L1 + DISTANCE  弹射角度：M1 → 180° M2 → 135°M3 → 90°
      *   M1 ← 一 一|
      *           ↙ |
      *     M2 ↙    ↓
      *              M3
      *
      *
-     *  右中角形态：条件： x = width, R1 + R2 + L1 + DISTANCE <= y <=  height - (R1 +R2 + L1 + DISTANCE)
+     *  右中角形态：条件： x = width, R1 + D2 + L1 + DISTANCE <= y <=  height - (R1 +D2 + L1 + DISTANCE)
      *  弹射角度：M1 → 270° M2 → 180°M3 → 90°
      *
      *          M1
@@ -145,21 +223,21 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
      *          ↓
      *          M3
      *
-     *  右下角形态：条件：x = width, y > height - (R1 +R2 + L1 + DISTANCE)  弹射角度：M1 → 270° M2 → 225°M3 → 180°
+     *  右下角形态：条件：x = width, y > height - (R1 +D2 + L1 + DISTANCE)  弹射角度：M1 → 270° M2 → 225°M3 → 180°
      *
      *              M1
      *    M2 ↖    ↑
      *          ↖ |
      *  M3 ← 一 一|
      *
-     *  左下角形态：条件：x = 0, y > height - (R1 +R2 + L1 + DISTANCE)  弹射角度：M1 → 270° M2 → 315°M3 → 0°
+     *  左下角形态：条件：x = 0, y > height - (R1 +D2 + L1 + DISTANCE)  弹射角度：M1 → 270° M2 → 315°M3 → 0°
      *
      *   M1
      *  ↑    ↗ M2
      *  |  ↗
      *  | 一 一 → M3
      *
-     *  左中角形态：条件： x = 0, R1 + R2 + L1 + DISTANCE <= y <=  height - (R1 +R2 + L1 + DISTANCE)
+     *  左中角形态：条件： x = 0, R1 + D2 + L1 + DISTANCE <= y <=  height - (R1 +D2 + L1 + DISTANCE)
      *  弹射角度：M1 → 270° M2 → 0°M3 → 90°
      *
      *  M1
@@ -171,6 +249,165 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
     private void expandFloatButton() {
         mState = STATE_EXPANDED;
 
+        //[1]  init some variables
+        final int[] locations = new int[2];
+        mSearchView.getLocationOnScreen(locations);
+        mFloatingButtonNormalPoint.x = locations[0];
+        mFloatingButtonNormalPoint.y = locations[1];
+
+        final int screenHeight = Utils.getScreenHeight(mContext);
+        final int centerY = locations[1] + mSearchView.getMeasuredHeight() / 2;
+
+        Log.d(TAG, "expandFloatButton: screenHeight = " + screenHeight + ", centerY = " + centerY);
+
+        //[2] remove old view and add new expanded view
+        //init some views
+        mWm.removeView(mSearchView);
+        mSearchView = mInflater.inflate(R.layout.layout_floating_button_expanded, null);
+
+        ImageView center = (ImageView) mSearchView.findViewById(R.id.center);
+        ImageView search = (ImageView) mSearchView.findViewById(R.id.search);
+        ImageView select = (ImageView) mSearchView.findViewById(R.id.select);
+        ImageView exit = (ImageView) mSearchView.findViewById(R.id.exit);
+        center.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                normalFloatButton();
+            }
+        });
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
+        select.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
+        mWm.addView(mSearchView, mLayoutParams);
+
+        //[3] animation of the expanded button
+        //four animation : alpha , translationX, Y, rotation, scaleX , Y
+        MenuAnimator searchAnimator = new MenuAnimator(search, MODE_MENU_EXPAND);
+        MenuAnimator selectAnimator = new MenuAnimator(select, MODE_MENU_EXPAND);
+        MenuAnimator exitAnimator = new MenuAnimator(exit, MODE_MENU_EXPAND);
+
+        boolean inCorner = false;
+        int relativeRule1;
+        int relativeRule2;
+        relativeRule1 = relativeRule2 = RelativeLayout.ALIGN_PARENT_TOP;
+
+        if (mInRight) {
+            relativeRule1 = RelativeLayout.ALIGN_PARENT_RIGHT;
+            if (centerY < MIN_EXPANDED_LENGTH) {
+                searchAnimator.setTranslation(-TRANSLATE_LENGTH, 0);
+                selectAnimator.setTranslation(
+                        (float) (Math.sin(45) * (-TRANSLATE_LENGTH)),
+                        (float) (Math.sin(45) * (TRANSLATE_LENGTH)));
+                exitAnimator.setTranslation(0, TRANSLATE_LENGTH);
+
+                inCorner = true;
+                relativeRule2 = RelativeLayout.ALIGN_PARENT_TOP;
+
+            } else if (centerY >= MIN_EXPANDED_LENGTH
+                    && centerY <= screenHeight - MIN_EXPANDED_LENGTH){
+                searchAnimator.setTranslation(0, -TRANSLATE_LENGTH);
+                selectAnimator.setTranslation(-TRANSLATE_LENGTH, 0);
+                exitAnimator.setTranslation(0, TRANSLATE_LENGTH);
+
+                inCorner = false;
+                relativeRule2 = RelativeLayout.CENTER_VERTICAL;
+
+                mLayoutParams.y -= MIDDLE_WINDOW_SIZE / 2 - R1;
+
+            } else if (centerY > screenHeight - MIN_EXPANDED_LENGTH) {
+                searchAnimator.setTranslation(0, -TRANSLATE_LENGTH);
+                selectAnimator.setTranslation(
+                        (float) (Math.sin(45) * (-TRANSLATE_LENGTH)),
+                        (float) (Math.sin(45) * (-TRANSLATE_LENGTH)));
+                exitAnimator.setTranslation(-TRANSLATE_LENGTH, 0);
+
+                inCorner = true;
+                relativeRule2 = RelativeLayout.ALIGN_PARENT_BOTTOM;
+
+                mLayoutParams.y -= MIDDLE_WINDOW_SIZE / 2 - R1;
+            }
+        } else {
+            relativeRule1 = RelativeLayout.ALIGN_PARENT_LEFT;
+            if (centerY < MIN_EXPANDED_LENGTH) {
+                searchAnimator.setTranslation(TRANSLATE_LENGTH, 0);
+                selectAnimator.setTranslation(
+                        (float) (Math.sin(45) * (TRANSLATE_LENGTH)),
+                        (float) (Math.sin(45) * (TRANSLATE_LENGTH)));
+                exitAnimator.setTranslation(0, TRANSLATE_LENGTH);
+
+                inCorner = true;
+                relativeRule2 = RelativeLayout.ALIGN_PARENT_TOP;
+
+            } else if (centerY >= MIN_EXPANDED_LENGTH
+                    && centerY <= screenHeight - MIN_EXPANDED_LENGTH){
+                searchAnimator.setTranslation(0, -TRANSLATE_LENGTH);
+                selectAnimator.setTranslation(TRANSLATE_LENGTH, 0);
+                exitAnimator.setTranslation(0, TRANSLATE_LENGTH);
+
+                inCorner = false;
+                relativeRule2 = RelativeLayout.CENTER_VERTICAL;
+                mLayoutParams.y -= MIDDLE_WINDOW_SIZE / 2 - R1;
+
+            } else if (centerY > screenHeight - MIN_EXPANDED_LENGTH) {
+                searchAnimator.setTranslation(0, -TRANSLATE_LENGTH);
+                selectAnimator.setTranslation(
+                        (float) (Math.sin(45) * (TRANSLATE_LENGTH)),
+                        (float) (Math.sin(45) * (-TRANSLATE_LENGTH)));
+                exitAnimator.setTranslation(TRANSLATE_LENGTH, 0);
+
+                inCorner = true;
+                relativeRule2 = RelativeLayout.ALIGN_PARENT_BOTTOM;
+                mLayoutParams.y -= MIDDLE_WINDOW_SIZE / 2 - R1;
+            }
+        }
+
+        relayoutChild(center, relativeRule1, relativeRule2);
+        relayoutChild(search, relativeRule1, relativeRule2);
+        relayoutChild(select, relativeRule1, relativeRule2);
+        relayoutChild(exit, relativeRule1, relativeRule2);
+
+        resizeSearchView(inCorner? CORNER_WINDOW_SIZE : MIDDLE_WINDOW_SIZE);
+
+        mWm.updateViewLayout(mSearchView, mLayoutParams);
+        searchAnimator.start();
+        selectAnimator.start();
+        exitAnimator.start();
+    }
+
+    private void resizeSearchView(int size) {
+        ViewGroup.LayoutParams pa = mSearchView.getLayoutParams();
+        pa.width = pa.height = size;
+        mSearchView.setLayoutParams(pa);
+    }
+
+    private void relayoutChild(View view, int rule1, int rule2) {
+        if (mSearchView instanceof ViewGroup) {
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
+            params.addRule(rule1);
+            params.addRule(rule2);
+            if (mInRight) {
+                if (view.getId() != R.id.center) {
+                    params.rightMargin = R1 - D2 / 2;
+                }
+            } else {
+                if (view.getId() != R.id.center) {
+                    params.leftMargin = R1 - D2 / 2;
+                }
+            }
+            ((ViewGroup) mSearchView).updateViewLayout(view,params);
+        }
     }
 
     private void initView() throws InflaterNotReadyException {
@@ -178,7 +415,7 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
         if (mInflater == null) {
             throw new InflaterNotReadyException();
         }
-        mSearchView = mInflater.inflate(R.layout.layout_floating_button, null);
+        mSearchView = mInflater.inflate(R.layout.layout_floating_button_normal, null);
         mSearchView.setOnTouchListener(this);
     }
 
@@ -278,6 +515,7 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
                 return;
             }
             mWm.removeView(mSearchView);
+            mHandler.removeMessages(WHAT_CHECK_UNTOUCHED_TIME);
             if (mMainPanelVisibleListener != null) {
                 mMainPanelVisibleListener.onHide();
             }
@@ -287,6 +525,7 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
     public void forceCloseFloatButton() {
         if (mIsShowing) {
             mWm.removeView(mSearchView);
+            mHandler.removeMessages(WHAT_CHECK_UNTOUCHED_TIME);
             mMainPanel.destroy();
 
             mIsShowing = false;
@@ -383,5 +622,82 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
 
     public void setViewVisibleListener(OnFloatPanelVisibleListener listener) {
         mMainPanelVisibleListener = listener;
+    }
+
+    private class MenuAnimator {
+
+        private int mode;
+        private View targetView;
+
+        ObjectAnimator alphaExpandedAnimator;
+        ObjectAnimator transXAnimator;
+        ObjectAnimator transYAnimator;
+        ObjectAnimator rotationAnimator;
+        ObjectAnimator scaleXAnimator;
+        ObjectAnimator scaleYAnimator;
+
+        private AnimatorSet set = new AnimatorSet();
+
+        public MenuAnimator(View view, int mode) {
+            this.targetView = view;
+            this.mode = mode;
+            initAnimator();
+        }
+
+        private void initAnimator() {
+            if (mode == MODE_MENU_EXPAND) {
+                alphaExpandedAnimator = ObjectAnimator.ofFloat(targetView, "alpha", 0.4f, 1f);
+                rotationAnimator = ObjectAnimator.ofFloat(targetView, "rotation", 0f, 1080f);
+                rotationAnimator.setInterpolator(new OvershootInterpolator());
+                scaleXAnimator = ObjectAnimator.ofFloat(targetView, "scaleX", 0f, 1f);
+                scaleYAnimator = ObjectAnimator.ofFloat(targetView, "scaleY", 0f, 1f);
+
+            } else if (mode == MODE_MENU_COLLAPSE) {
+                alphaExpandedAnimator = ObjectAnimator.ofFloat(targetView, "alpha", 1f, 0f);
+                rotationAnimator = ObjectAnimator.ofFloat(targetView, "rotation", 360f, 0f);
+                rotationAnimator.setInterpolator(new OvershootInterpolator());
+                scaleXAnimator = ObjectAnimator.ofFloat(targetView, "scaleX", 1f, 0f);
+                scaleYAnimator = ObjectAnimator.ofFloat(targetView, "scaleY", 1f, 0f);
+            }
+        }
+
+        public void setTranslation(float xLength, float yLength) {
+            transXAnimator = ObjectAnimator.ofFloat(targetView, "translationX", xLength);
+            transXAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+
+            transYAnimator = ObjectAnimator.ofFloat(targetView, "translationY", yLength);
+            transYAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        }
+
+        public void start() {
+            if (transXAnimator == null || transYAnimator == null) {
+                throw new IllegalStateException("Method setTranslation should be called before");
+            }
+            set.playTogether(
+                    alphaExpandedAnimator,
+                    transXAnimator,
+                    transYAnimator,
+                    rotationAnimator,
+                    scaleXAnimator,
+                    scaleYAnimator);
+            alphaExpandedAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    Log.d(TAG, "onAnimationUpdate: " + valueAnimator.getAnimatedValue() + " , height = " + mSearchView.getMeasuredHeight());
+                }
+            });
+            set.setDuration(400);
+            set.setInterpolator(new OvershootInterpolator());
+            set.start();
+        }
+
+        public void reverse() {
+            alphaExpandedAnimator.reverse();
+            transXAnimator.reverse();
+            transYAnimator.reverse();
+            rotationAnimator.reverse();
+            scaleXAnimator.reverse();
+            scaleYAnimator.reverse();
+        }
     }
 }
