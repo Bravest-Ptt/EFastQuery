@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/float_button"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/search_floating_selector"
-    android:orientation="horizontal"
     android:clickable="true">
 
     <ImageView
@@ -13,4 +12,4 @@
         android:layout_height="@dimen/float_button_size"
         android:src="@drawable/ic_playstore_icon"
         android:clickable="false" />
-</LinearLayout>
+</RelativeLayout>

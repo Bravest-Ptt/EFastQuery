@@ -9,6 +9,7 @@ import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import bravest.ptt.androidlib.net.URLData;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.listeners.OnFloatPanelVisibleListener;
 import bravest.ptt.efastquery.utils.Utils;
@@ -32,6 +34,8 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
     public static final int STATE_EXPANDED = 2;
 
     public static final int WHAT_CHECK_UNTOUCHED_TIME = 0;
+    public static final int WHAT_EXPAND_REVERSE_END = 1;
+    public static final int WHAT_NORMAL = 2;
 
     public static final int MODE_MENU_EXPAND = 1;
     public static final int MODE_MENU_COLLAPSE = 2;
@@ -108,8 +112,14 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
                     if (System.currentTimeMillis() - mUpTimeMillis > 4000
                             && mState == STATE_NORMAL) {
                         collapseFloatButton();
+                    } else {
+                        mHandler.sendEmptyMessageDelayed(WHAT_CHECK_UNTOUCHED_TIME, 2000);
                     }
-                    mHandler.sendEmptyMessageDelayed(WHAT_CHECK_UNTOUCHED_TIME, 2000);
+                    break;
+                case WHAT_EXPAND_REVERSE_END:
+                case WHAT_NORMAL:
+                    Log.d(TAG, "handleMessage: WHAT_EXPAND_REVERSE_END WHAT_NORMAL");
+                    normalFloatButton();
                     break;
                 default:
                     break;
@@ -156,7 +166,7 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
         Log.d(TAG, "collapseFloatButton: ");
         //get normal button position.
         final int[] locations = new int[2];
-        final int normalSize = mSearchView.getMeasuredWidth();
+        final int normalSize = R1 * 2;
         mSearchView.getLocationOnScreen(locations);
         mWm.removeView(mSearchView);
 
@@ -166,6 +176,8 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
             mSearchView = mInflater.inflate(R.layout.layout_floating_button_collapsed_left, null);
         }
         mSearchView.setOnTouchListener(this);
+        mLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        mLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
         mWm.addView(mSearchView, mLayoutParams);
 
         float x;
@@ -174,18 +186,23 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
         } else {
             x = locations[0] - (normalSize / 2);
         }
+        Log.d(TAG, "collapseFloatButton:  x = " + x);
         ValueAnimator animator = alignAnimator(x, locations[1] + Utils.getStatusBarHeight(mContext));
         animator.start();
     }
 
     private void normalFloatButton() {
+        mHandler.sendEmptyMessageDelayed(WHAT_CHECK_UNTOUCHED_TIME, 1000);
         mState = STATE_NORMAL;
         mWm.removeView(mSearchView);
         mSearchView = mInflater.inflate(R.layout.layout_floating_button_normal, null);
-        resizeSearchView(R1 * 2);
+        mSearchView.setOnTouchListener(this);
 
         mLayoutParams.x = mFloatingButtonNormalPoint.x;
-        mLayoutParams.y = mFloatingButtonNormalPoint.y;
+        mLayoutParams.y = mFloatingButtonNormalPoint.y - Utils.getStatusBarHeight(mContext);
+        mLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        mLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
         mWm.addView(mSearchView, mLayoutParams);
     }
 
@@ -266,13 +283,20 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
         mSearchView = mInflater.inflate(R.layout.layout_floating_button_expanded, null);
 
         ImageView center = (ImageView) mSearchView.findViewById(R.id.center);
-        ImageView search = (ImageView) mSearchView.findViewById(R.id.search);
+        final ImageView search = (ImageView) mSearchView.findViewById(R.id.search);
         ImageView select = (ImageView) mSearchView.findViewById(R.id.select);
         ImageView exit = (ImageView) mSearchView.findViewById(R.id.exit);
+
+        final  MenuAnimator searchAnimator = new MenuAnimator(search, MODE_MENU_EXPAND);
+        final MenuAnimator selectAnimator = new MenuAnimator(select, MODE_MENU_EXPAND);
+        final MenuAnimator exitAnimator = new MenuAnimator(exit, MODE_MENU_EXPAND);
+
         center.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                normalFloatButton();
+                searchAnimator.reverse();
+                selectAnimator.reverse();
+                exitAnimator.reverse();
             }
         });
         search.setOnClickListener(new View.OnClickListener() {
@@ -294,9 +318,7 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
 
         //[3] animation of the expanded button
         //four animation : alpha , translationX, Y, rotation, scaleX , Y
-        MenuAnimator searchAnimator = new MenuAnimator(search, MODE_MENU_EXPAND);
-        MenuAnimator selectAnimator = new MenuAnimator(select, MODE_MENU_EXPAND);
-        MenuAnimator exitAnimator = new MenuAnimator(exit, MODE_MENU_EXPAND);
+
 
         boolean inCorner = false;
         int relativeRule1;
@@ -380,7 +402,6 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
 
         resizeSearchView(inCorner? CORNER_WINDOW_SIZE : MIDDLE_WINDOW_SIZE);
 
-        mWm.updateViewLayout(mSearchView, mLayoutParams);
         searchAnimator.start();
         selectAnimator.start();
         exitAnimator.start();
@@ -390,6 +411,7 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
         ViewGroup.LayoutParams pa = mSearchView.getLayoutParams();
         pa.width = pa.height = size;
         mSearchView.setLayoutParams(pa);
+        mWm.updateViewLayout(mSearchView, mLayoutParams);
     }
 
     private void relayoutChild(View view, int rule1, int rule2) {
@@ -603,12 +625,28 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
         if (!(x >= mDownX - DISTANCE && x <= mDownX + DISTANCE
                 && y >= mDownY - DISTANCE && y <= mDownY + DISTANCE)) {
             updateFloatLocation((int)x, (int)y);
+            if (mState == STATE_COLLAPSED) {
+                mUpTimeMillis = System.currentTimeMillis();
+                mHandler.sendEmptyMessage(WHAT_NORMAL);
+            }
         }
     }
 
     private void updateFloatLocation(int x, int y) {
-        mLayoutParams.x = x - mSearchView.getMeasuredWidth() / 2;
-        mLayoutParams.y = y - Utils.getStatusBarHeight(mContext) - (mSearchView.getMeasuredHeight() / 2);
+        Log.d(TAG, "updateFloatLocation:  = " +mSearchView.getMeasuredWidth());
+        int width, height;
+        if(mState == STATE_COLLAPSED) {
+            width = mContext.getResources().getDimensionPixelSize(R.dimen.search_collapsed);
+            height = R1 * 2;
+        } else if (mState == STATE_NORMAL) {
+            width = R1 * 2;
+            height = R1 * 2;
+        } else {
+            width = mSearchView.getMeasuredWidth();
+            height = mSearchView.getMeasuredHeight();
+        }
+        mLayoutParams.x = x - width / 2;
+        mLayoutParams.y = y - Utils.getStatusBarHeight(mContext) - (height / 2);
         mWm.updateViewLayout(mSearchView, mLayoutParams);
     }
 
@@ -625,6 +663,8 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
     }
 
     private class MenuAnimator {
+
+        private static final float END_ALPHA = 0.4f;
 
         private int mode;
         private View targetView;
@@ -654,7 +694,7 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
 
             } else if (mode == MODE_MENU_COLLAPSE) {
                 alphaExpandedAnimator = ObjectAnimator.ofFloat(targetView, "alpha", 1f, 0f);
-                rotationAnimator = ObjectAnimator.ofFloat(targetView, "rotation", 360f, 0f);
+                rotationAnimator = ObjectAnimator.ofFloat(targetView, "rotation", 1080f, 0f);
                 rotationAnimator.setInterpolator(new OvershootInterpolator());
                 scaleXAnimator = ObjectAnimator.ofFloat(targetView, "scaleX", 1f, 0f);
                 scaleYAnimator = ObjectAnimator.ofFloat(targetView, "scaleY", 1f, 0f);
@@ -684,6 +724,12 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
                 @Override
                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
                     Log.d(TAG, "onAnimationUpdate: " + valueAnimator.getAnimatedValue() + " , height = " + mSearchView.getMeasuredHeight());
+                    if (isReversing) {
+                        float endValue = (float)valueAnimator.getAnimatedValue();
+                        if (endValue == END_ALPHA) {
+                            mHandler.sendEmptyMessage(WHAT_EXPAND_REVERSE_END);
+                        }
+                    }
                 }
             });
             set.setDuration(400);
@@ -692,6 +738,7 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
         }
 
         public void reverse() {
+            isReversing = true;
             alphaExpandedAnimator.reverse();
             transXAnimator.reverse();
             transYAnimator.reverse();
@@ -699,5 +746,7 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
             scaleXAnimator.reverse();
             scaleYAnimator.reverse();
         }
+
+        private boolean isReversing = false;
     }
 }

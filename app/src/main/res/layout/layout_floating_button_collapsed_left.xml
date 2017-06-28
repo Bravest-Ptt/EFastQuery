@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/float_button"
-    android:paddingRight="@dimen/margin_dp_10"
+    android:paddingRight="@dimen/margin_dp_16"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:clickable="true">
 
     <ImageView
-        android:id="@+id/float_button_background"
+        android:id="@+id/float_button_collapsed"
         android:layout_width="@dimen/search_collapsed"
         android:layout_height="@dimen/search_expanded_level1_size"
         android:src="@drawable/search_floating_collapsed"
         android:clickable="false" />
-</LinearLayout>
+</RelativeLayout>
