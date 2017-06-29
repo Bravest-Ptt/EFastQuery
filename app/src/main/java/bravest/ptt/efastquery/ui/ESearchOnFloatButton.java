@@ -9,7 +9,6 @@ import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -22,10 +21,11 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import bravest.ptt.androidlib.net.URLData;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.listeners.OnFloatPanelVisibleListener;
+import bravest.ptt.efastquery.service.EFastQueryMonitorService;
 import bravest.ptt.efastquery.utils.Utils;
+import okhttp3.internal.Util;
 
 public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTouchListener, OnFloatPanelVisibleListener {
 
@@ -39,6 +39,10 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
 
     public static final int MODE_MENU_EXPAND = 1;
     public static final int MODE_MENU_COLLAPSE = 2;
+
+    public static final long LONG_CLICK_TIME = 1200;
+    public static final long CHECK_NORMAL_UNTOUCHED_TIME = 2000;
+    public static final long COLLAPSED_TIME = 4000;
 
     private static final String TAG = "ESearchOnFloatButton";
 
@@ -99,7 +103,7 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
     private long mDownTimeMillis;
 
     private int mState = STATE_NORMAL;
-    private long mUpTimeMillis = System.currentTimeMillis();
+    private long mNormalActiveTime = System.currentTimeMillis();
     private boolean mInRight = true;
 
     private Handler mHandler = new Handler() {
@@ -109,11 +113,12 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
             switch (msg.what) {
                 case WHAT_CHECK_UNTOUCHED_TIME:
                     Log.d(TAG, "handleMessage: ");
-                    if (System.currentTimeMillis() - mUpTimeMillis > 4000
+                    if (System.currentTimeMillis() - mNormalActiveTime > COLLAPSED_TIME
                             && mState == STATE_NORMAL) {
                         collapseFloatButton();
                     } else {
-                        mHandler.sendEmptyMessageDelayed(WHAT_CHECK_UNTOUCHED_TIME, 2000);
+                        mHandler.sendEmptyMessageDelayed(
+                                WHAT_CHECK_UNTOUCHED_TIME, CHECK_NORMAL_UNTOUCHED_TIME);
                     }
                     break;
                 case WHAT_EXPAND_REVERSE_END:
@@ -157,7 +162,7 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
     }
 
     private void initCheckUnTouchedHandler() {
-        mUpTimeMillis = System.currentTimeMillis();
+        updateActiveTime();
         mHandler.sendEmptyMessageDelayed(WHAT_CHECK_UNTOUCHED_TIME, 1000);
     }
 
@@ -175,7 +180,12 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
         } else {
             mSearchView = mInflater.inflate(R.layout.layout_floating_button_collapsed_left, null);
         }
-        mSearchView.setOnTouchListener(this);
+        mSearchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                expandFloatButton();
+            }
+        });
         mLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
         mLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
         mWm.addView(mSearchView, mLayoutParams);
@@ -194,9 +204,12 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
     private void normalFloatButton() {
         mHandler.sendEmptyMessageDelayed(WHAT_CHECK_UNTOUCHED_TIME, 1000);
         mState = STATE_NORMAL;
-        mWm.removeView(mSearchView);
+        if (mSearchView != null) {
+            mWm.removeView(mSearchView);
+        }
         mSearchView = mInflater.inflate(R.layout.layout_floating_button_normal, null);
         mSearchView.setOnTouchListener(this);
+        mSearchView.setOnLongClickListener(this);
 
         mLayoutParams.x = mFloatingButtonNormalPoint.x;
         mLayoutParams.y = mFloatingButtonNormalPoint.y - Utils.getStatusBarHeight(mContext);
@@ -297,21 +310,25 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
                 searchAnimator.reverse();
                 selectAnimator.reverse();
                 exitAnimator.reverse();
+                updateActiveTime();
             }
         });
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                updateActiveTime();
             }
         });
         select.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                updateActiveTime();
             }
         });
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                updateActiveTime();
             }
         });
         mWm.addView(mSearchView, mLayoutParams);
@@ -439,6 +456,7 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
         }
         mSearchView = mInflater.inflate(R.layout.layout_floating_button_normal, null);
         mSearchView.setOnTouchListener(this);
+        mSearchView.setOnLongClickListener(this);
     }
 
     private void initLayoutParams() {
@@ -454,7 +472,7 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
         mLayoutParams.format = PixelFormat.RGBA_8888;
         mLayoutParams.alpha = 1.0f;
         mLayoutParams.x = Utils.getScreenWidth(mContext);
-        mLayoutParams.y = Utils.getScreenHeight(mContext) * 2 / 4;
+        mLayoutParams.y = Utils.getScreenHeight(mContext) / 4;
     }
 
     private void initMainPanel() {
@@ -578,6 +596,11 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
         return false;
     }
 
+    private void updateActiveTime() {
+        if (mState != STATE_COLLAPSED) {
+            mNormalActiveTime = System.currentTimeMillis();
+        }
+    }
 
     private void down(MotionEvent event) {
         mDownX = event.getRawX();
@@ -585,16 +608,26 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
         mLayoutParams.alpha = 1.0f;
         mDownTimeMillis = System.currentTimeMillis();
         mWm.updateViewLayout(mSearchView, mLayoutParams);
+        updateActiveTime();
+    }
+
+    private void gotoAccessibilitySettings() {
+        if (!Utils.isAccessibilitySettingsOn(mContext, EFastQueryMonitorService.class)) {
+            Utils.powerAccessibilityPermission(mContext);
+        }
     }
 
     private void up(MotionEvent event) {
         float x = event.getRawX();
         float y = event.getRawY();
-        mUpTimeMillis = System.currentTimeMillis();
+        updateActiveTime();
         if (x >= mDownX - DISTANCE && x <= mDownX + DISTANCE
                 && y >= mDownY - DISTANCE && y <= mDownY + DISTANCE) {
-            if (System.currentTimeMillis() - mDownTimeMillis > 1200) {
+            if (System.currentTimeMillis() - mDownTimeMillis > LONG_CLICK_TIME) {
                 //long click
+                if (mState != STATE_COLLAPSED) {
+                    gotoAccessibilitySettings();
+                }
             } else {
                 //click
                 Log.d(TAG, "up: click");
@@ -602,9 +635,6 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
                     mMainPanel.hideSearchPanel();
                 } else {
                     switch (mState) {
-                        case STATE_COLLAPSED:
-                            expandFloatButton();
-                            break;
                         case STATE_NORMAL:
                             expandFloatButton();
                             break;
@@ -622,12 +652,19 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
     private void move(MotionEvent event) {
         float x = event.getRawX();
         float y = event.getRawY();
+        updateActiveTime();
+
         if (!(x >= mDownX - DISTANCE && x <= mDownX + DISTANCE
                 && y >= mDownY - DISTANCE && y <= mDownY + DISTANCE)) {
             updateFloatLocation((int)x, (int)y);
             if (mState == STATE_COLLAPSED) {
-                mUpTimeMillis = System.currentTimeMillis();
                 mHandler.sendEmptyMessage(WHAT_NORMAL);
+            }
+        } else if (System.currentTimeMillis() - mDownTimeMillis > LONG_CLICK_TIME){
+            //long click
+
+            if (mState != STATE_COLLAPSED) {
+                gotoAccessibilitySettings();
             }
         }
     }
@@ -652,6 +689,9 @@ public class ESearchOnFloatButton implements View.OnLongClickListener, View.OnTo
 
     @Override
     public boolean onLongClick(View view) {
+        if (mState == STATE_NORMAL) {
+            gotoAccessibilitySettings();
+        }
         return false;
     }
 

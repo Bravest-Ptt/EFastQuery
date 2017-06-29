@@ -1,5 +1,6 @@
 package bravest.ptt.efastquery.utils;
 
+import android.accessibilityservice.AccessibilityService;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -30,6 +31,8 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import org.apache.poi.ss.formula.functions.T;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -355,5 +358,47 @@ public class Utils {
             long memory = rowBytes * height;
             Log.d("maopei", "calculateMemoryToken: " + memory + "B");
         }
+    }
+
+    public static boolean isAccessibilitySettingsOn(Context context, Class<? extends AccessibilityService> accessibilityServiceClass) {
+        int accessibilityEnabled = 0;
+        // TestService为对应的服务
+        final String service = context.getPackageName() + "/" + accessibilityServiceClass.getCanonicalName();
+        Log.i(TAG, "service:" + service);
+        try {
+            accessibilityEnabled = Settings.Secure.getInt(context.getApplicationContext().getContentResolver(),
+                    android.provider.Settings.Secure.ACCESSIBILITY_ENABLED);
+            Log.v(TAG, "accessibilityEnabled = " + accessibilityEnabled);
+        } catch (Settings.SettingNotFoundException e) {
+            Log.e(TAG, "Error finding setting, default accessibility to not found: " + e.getMessage());
+        }
+        TextUtils.SimpleStringSplitter mStringColonSplitter = new TextUtils.SimpleStringSplitter(':');
+
+        if (accessibilityEnabled == 1) {
+            Log.v(TAG, "***ACCESSIBILITY IS ENABLED*** -----------------");
+            String settingValue = Settings.Secure.getString(context.getApplicationContext().getContentResolver(),
+                    Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
+            if (settingValue != null) {
+                mStringColonSplitter.setString(settingValue);
+                while (mStringColonSplitter.hasNext()) {
+                    String accessibilityService = mStringColonSplitter.next();
+
+                    Log.v(TAG, "-------------- > accessibilityService :: " + accessibilityService + " " + service);
+                    if (accessibilityService.equalsIgnoreCase(service)) {
+                        Log.v(TAG, "We've found the correct setting - accessibility is switched on!");
+                        return true;
+                    }
+                }
+            }
+        } else {
+            Log.v(TAG, "***ACCESSIBILITY IS DISABLED***");
+        }
+        return false;
+    }
+
+    public static void powerAccessibilityPermission(Context context) {
+        Intent intent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 }

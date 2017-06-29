@@ -168,4 +168,6 @@
     <string name="favorite">收藏</string>
     <string name="export_import">导入和导出</string>
     <string name="listen_translate">汉英听译</string>
+    
+    <string name="accessibility_des">开启后，在微信、QQ等聊天页面点击或长按聊天记录，即可查词。</string>
 </resources>
