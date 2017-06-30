@@ -434,6 +434,8 @@ public class HomeActivity extends BaseActivity
                         R.color.favorite_purple_600_4_status_bar,
                         R.color.nav_favorite_selector);
                 break;
+            case R.id.nav_listen_write:
+                break;
             default:
                 break;
         }
