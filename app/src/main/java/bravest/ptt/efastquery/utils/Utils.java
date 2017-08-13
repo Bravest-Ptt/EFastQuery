@@ -42,7 +42,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -400,5 +403,29 @@ public class Utils {
         Intent intent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+    }
+
+    public static int daysOfTwo(Date originalDate, Date compareDateDate) {
+        Calendar aCalendar = Calendar.getInstance();
+        aCalendar.setTime(originalDate);
+        int originalDay = aCalendar.get(Calendar.DAY_OF_YEAR);
+        aCalendar.setTime(compareDateDate);
+        int compareDay = aCalendar.get(Calendar.DAY_OF_YEAR);
+
+        return originalDay - compareDay;
+    }
+
+    public static String friendlyDate(Date compareDate) {
+        Date nowDate = new Date();
+        int dayDiff = daysOfTwo(nowDate, compareDate);
+
+        if (dayDiff <= 0)
+            return "今日";
+        else if (dayDiff == 1)
+            return "昨日";
+        else if (dayDiff == 2)
+            return "前日";
+        else
+            return new SimpleDateFormat("M月d日 E").format(compareDate);
     }
 }

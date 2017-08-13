@@ -37,9 +37,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 
 import bravest.ptt.efastquery.R;
+import bravest.ptt.efastquery.adapter.decoration.ArticleItemDecoration;
 import bravest.ptt.efastquery.adapter.recycler.AbsAdapter;
 import bravest.ptt.efastquery.adapter.recycler.ArticleAdapter;
 import bravest.ptt.efastquery.entity.Article;
@@ -100,6 +102,7 @@ public class MainFragment extends BaseFragment implements OnItemClickListener{
         layoutManager.setAutoMeasureEnabled(true);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.addItemDecoration(new ArticleItemDecoration(getResources().getColor(R.color.transparent)));
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -112,6 +115,14 @@ public class MainFragment extends BaseFragment implements OnItemClickListener{
             article.setImageUrl(url);
             article.setTitle("勇敢跳出自己的舒适区！7种方式挑战自己" + ++i);
             article.setTag("美女");
+            article.setType(Article.TYPE_NORMAL);
+            article.setCreatedAt(new Date(System.currentTimeMillis()));
+            if (i == 1) {
+                article.setType(Article.TYPE_BIG_IMAGE);
+            } else {
+                article.setType(Article.TYPE_NORMAL);
+            }
+
             article.setReadCount(random.nextInt(100000));
             mData.add(article);
         }

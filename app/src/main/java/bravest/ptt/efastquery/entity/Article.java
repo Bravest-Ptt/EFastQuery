@@ -12,6 +12,9 @@ public class Article {
     public static final int TYPE_NORMAL = 0;
     public static final int TYPE_BIG_IMAGE = 1;
     public static final int TYPE_MULTI_IMAGE = 2;
+    public static final int TYPE_NORMAL_GROUP = 3;
+    public static final int TYPE_BIG_IMAGE_GROUP = 4;
+    public static final int TYPE_MULTI_IMAGE_GROUP = 5;
 
     private String id;
     private int type;
@@ -22,8 +25,7 @@ public class Article {
     private String contentChina;
     private String contentAudio;
     private int readCount;
-    private Date releaseTime;
-    private Date createTime;
+    private Date createdAt;
 
     public String getId() {
         return id;
@@ -97,19 +99,11 @@ public class Article {
         this.readCount = readCount;
     }
 
-    public Date getReleaseTime() {
-        return releaseTime;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
-    public void setReleaseTime(Date releaseTime) {
-        this.releaseTime = releaseTime;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 }
