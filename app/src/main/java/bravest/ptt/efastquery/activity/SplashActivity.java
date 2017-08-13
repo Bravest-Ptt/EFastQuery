@@ -119,11 +119,13 @@ public class SplashActivity extends BaseActivity {
         User user = User.getInstance(mContext);
         if (user != null) {
             if (NetworkUtils.isConnectedByState(mContext)) {
-                verifyIsExpired(user);
+                //verifyIsExpired(user);
+                goHome();
             } else {
                 ToastUtils.showToast(mContext, R.string.network_unreachable);
             }
         } else {
+            goHome();
             switchViewToNext();
         }
     }

@@ -3,13 +3,13 @@
     android:id="@+id/float_button"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/search_floating_selector"
     android:clickable="true">
 
     <ImageView
-        android:id="@+id/float_button_background"
+        android:id="@+id/float_button_image"
         android:layout_width="@dimen/float_button_size"
         android:layout_height="@dimen/float_button_size"
-        android:src="@drawable/ic_playstore_icon"
-        android:clickable="false" />
+        android:background="@drawable/search_floating_selector"
+        android:clickable="false"
+        android:src="@drawable/ic_playstore_icon" />
 </RelativeLayout>

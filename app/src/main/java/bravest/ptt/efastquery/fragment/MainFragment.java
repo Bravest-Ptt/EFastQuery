@@ -94,6 +94,13 @@ public class MainFragment extends BaseFragment implements OnItemClickListener{
         mRefresher = (SwipeRefreshLayout) mRootView.findViewById(R.id.article_refresher);
 
         initRecyclerView();
+        View test = mRootView.findViewById(R.id.test);
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getContext().sendBroadcast(new Intent("test"));
+            }
+        });
         return mRootView;
     }
 

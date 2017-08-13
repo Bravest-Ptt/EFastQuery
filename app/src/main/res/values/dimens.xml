@@ -62,4 +62,5 @@
     <dimen name="search_expanded_level2_size">35dp</dimen>
     <dimen name="search_expanded_length_inner">10dp</dimen>
     <dimen name="search_expanded_distance_outer">10dp</dimen>
+    <dimen name="search_translation_width">120dp</dimen>
 </resources>
