@@ -40,6 +40,7 @@ import java.util.HashMap;
 import bravest.ptt.efastquery.activity.base.BaseActivity;
 import bravest.ptt.efastquery.entity.ProfileEntity;
 import bravest.ptt.efastquery.entity.User;
+import bravest.ptt.efastquery.fragment.FragmentContainer;
 import bravest.ptt.efastquery.service.FloatingQueryService;
 import bravest.ptt.efastquery.R;
 import bravest.ptt.efastquery.fragment.BaseFragment;
@@ -68,7 +69,8 @@ public class HomeActivity extends BaseActivity
 
     private HashMap<Integer, BaseFragment> mFragmentMap;
 
-    private MainFragment mMainFragment;
+    //private MainFragment mMainFragment;
+    private FragmentContainer mContainerFragment;
 
     private ExportFragment mExportFragment;
 
@@ -165,12 +167,13 @@ public class HomeActivity extends BaseActivity
         //Init fragment
         mFragmentManager = getSupportFragmentManager();
         mFragmentMap = new HashMap<>();
-        mMainFragment = new MainFragment();
+        //mMainFragment = new MainFragment();
+        mContainerFragment = new FragmentContainer();
         //mFileManagerFragment = new FileManagerFragment();
         mExportFragment = new ExportFragment();
         mImportFragment = new ImportFragment();
         mFavoriteFragment = new FavoriteFragment();
-        mFragmentMap.put(R.id.nav_home, mMainFragment);
+        mFragmentMap.put(R.id.nav_home, mContainerFragment);
         mFragmentMap.put(R.id.nav_export, mExportFragment);
         mFragmentMap.put(R.id.nav_import, mImportFragment);
         mFragmentMap.put(R.id.nav_favorite_book, mFavoriteFragment);
