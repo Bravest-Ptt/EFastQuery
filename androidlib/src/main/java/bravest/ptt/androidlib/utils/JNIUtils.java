@@ -6,7 +6,7 @@ package bravest.ptt.androidlib.utils;
 
 public class JNIUtils {
     static{
-        System.loadLibrary("androidLib");
+        System.loadLibrary("AndroidLib");
     }
 
     public static native String getApplicationId();
