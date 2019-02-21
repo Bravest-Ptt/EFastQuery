@@ -2,7 +2,7 @@
 A float window for query English words which based on YouDao Translation OPEN API。
 
 Support: </br>
-1、History reco: </br>
+1、History record </br>
 2、Favourite record </br>
 3、words voice output </br>
 4、voice input </br>
